@@ -17,7 +17,7 @@ class MaterialNaturezaDespesaRecord(BaseModel):
 
     cod_pdm: int
     cod_natureza_despesa: str
-    nome_natureza_despesa: str
+    nome_natureza_despesa: str | None
     status_natureza_despesa: str | None
 
     @field_validator("cod_natureza_despesa")
@@ -30,10 +30,12 @@ class MaterialNaturezaDespesaRecord(BaseModel):
 
     @field_validator("nome_natureza_despesa")
     @classmethod
-    def nome_must_be_upper(cls, value: str) -> str:
+    def nome_upper_optional(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
         cleaned = value.strip()
         if not cleaned:
-            raise ValueError("nome_natureza_despesa must be non-empty")
+            raise ValueError("nome_natureza_despesa must be non-empty when provided")
         return cleaned.upper()
 
     @field_validator("status_natureza_despesa")

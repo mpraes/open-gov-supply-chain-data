@@ -27,6 +27,13 @@ def test_material_natureza_despesa_rejects_empty_nome() -> None:
         MaterialNaturezaDespesaRecord(**kwargs)  # type: ignore[arg-type]
 
 
+def test_material_natureza_despesa_accepts_null_nome() -> None:
+    kwargs = _valid_kwargs()
+    kwargs["nome_natureza_despesa"] = None
+    record = MaterialNaturezaDespesaRecord(**kwargs)  # type: ignore[arg-type]
+    assert record.nome_natureza_despesa is None
+
+
 def test_material_natureza_despesa_rejects_non_int_cod_pdm() -> None:
     kwargs = _valid_kwargs()
     kwargs["cod_pdm"] = "1001"
