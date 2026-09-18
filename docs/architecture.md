@@ -1,6 +1,7 @@
 # Architecture — Open Gov Supply Chain Data (CATMAT)
 
-Snapshot of the material ETL architecture as of 2026-09-18.
+Snapshot of the material ETL architecture as of 2026-09-18
+(updated after the shared API→upsert ingestion refactor).
 
 ## System layers
 
@@ -31,14 +32,20 @@ flowchart TB
       C7["MaterialCaracteristicaRecord"]
     end
 
-    subgraph etl_material["etl/material"]
-      E1["material_group"]
-      E2["material_class"]
-      E3["material_pdm"]
-      E4["material_item"]
-      E5["material_natureza_despesa"]
-      E6["material_unidade_fornecimento"]
-      E7["material_caracteristica"]
+    subgraph ingestion["etl/ingestion"]
+      DB["db.connect_postgres"]
+      PIPE["pipeline.run_api_upsert_ingestion"]
+      RUN["script_runner.run_script_ingestion"]
+
+      subgraph material["material/*.py"]
+        E1["material_group"]
+        E2["material_class"]
+        E3["material_pdm"]
+        E4["material_item"]
+        E5["material_natureza_despesa"]
+        E6["material_unidade_fornecimento"]
+        E7["material_caracteristica"]
+      end
     end
 
     subgraph observability
@@ -47,12 +54,16 @@ flowchart TB
   end
 
   ENV --> SK
-  SK --> etl_material
-  etl_material --> CA
+  SK --> RUN
+  material --> RUN
+  RUN --> DB
+  RUN --> PIPE
+  PIPE --> CA
   CA --> API
-  etl_material --> contracts
-  etl_material --> LOG
-  etl_material --> PG
+  material --> contracts
+  PIPE --> LOG
+  DB --> PG
+  PIPE --> PG
 ```
 
 ## Load order and table FKs (CATMAT hierarchy)
@@ -76,29 +87,38 @@ flowchart LR
 
 **Recommended run order:** group → class → pdm → (item | natureza | unidade) → caracteristica (after item).
 
-## Single ETL pipeline (shared pattern)
+## Shared ingestion pipeline
+
+Reusable for any paginated `resultado` API → Postgres upsert ETL
+(not only material). See also [ingestion-api-upsert-refactor.md](./ingestion-api-upsert-refactor.md).
 
 ```mermaid
 sequenceDiagram
-  participant ETL as etl/material/*.py
+  participant SCR as material/*.py main()
+  participant RUN as script_runner
   participant CFG as config
+  participant PIPE as pipeline
   participant CLI as clients/compras_api
   participant API as compras.gov.br
-  participant CTR as contracts
+  participant MAP as map_*_row + contracts
   participant LOG as observability
   participant DB as Postgres
 
-  ETL->>CFG: load API + Postgres secrets
-  ETL->>CLI: fetch_all_resultado_pages
+  SCR->>RUN: run_script_ingestion(...)
+  RUN->>CFG: load API + Postgres secrets
+  RUN->>DB: connect_postgres
+  RUN->>PIPE: run_api_upsert_ingestion
+  PIPE->>CLI: fetch_all_resultado_pages
   CLI->>API: GET pagina / tamanhoPagina
   API-->>CLI: resultado[]
-  CLI-->>ETL: all rows
-  ETL->>LOG: api_fetch_ok
+  CLI-->>PIPE: all rows
+  PIPE->>LOG: api_fetch_ok
   loop each row
-    ETL->>CTR: validate + normalize
-    ETL->>DB: UPSERT
+    PIPE->>MAP: map_row + validate
+    PIPE->>DB: UPSERT
   end
-  ETL->>LOG: upsert_ok / errors to files
+  PIPE->>LOG: upsert_ok / errors
+  RUN->>DB: conn.close()
 ```
 
 ## Module map
@@ -108,6 +128,15 @@ sequenceDiagram
 | Config | `src/config/load_secret_key.py` | Load secrets from `.env` |
 | Client | `src/clients/compras_api.py` | Paginated API fetch |
 | Contracts | `src/contracts/material_*.py` | Pydantic validation / normalization |
-| ETL | `src/etl/material/*.py` | Extract → validate → upsert |
+| DB wrapper | `src/etl/ingestion/db.py` | Injectable Postgres connect |
+| Pipeline | `src/etl/ingestion/pipeline.py` | Fetch → map → upsert |
+| Script runner | `src/etl/ingestion/script_runner.py` | Wire secrets + DB for CLI/Airflow scripts |
+| ETL scripts | `src/etl/ingestion/material/*.py` | Endpoint, SQL, `map_row`, `main()` |
 | SQL | `src/sql/create_table_*.sql` | Table DDL |
 | Observability | `src/observability/logging_json.py` | JSON logs to stdout + per-level files |
+
+## Run a material script
+
+```bash
+PYTHONPATH=src python src/etl/ingestion/material/material_item.py
+```
