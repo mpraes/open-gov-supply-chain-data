@@ -1,0 +1,8174 @@
+/v3/api-docs
+Explore
+API Compras.gov.br
+ 1.0.0 
+OAS 3.1
+/v3/api-docs
+Compras Públicas em Dados Abertos
+
+Servers
+
+https://dadosabertos.compras.gov.br - Generated server url
+
+Authorize
+01 - CATÁLOGO - MATERIAL
+Catálogo de Materiais (CATMAT): Consulta itens de materiais com dados detalhados.
+
+
+
+GET
+/modulo-material/1_consultarGrupoMaterial
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoGrupo
+integer($int64)
+(query)
+codigoGrupo
+statusGrupo
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoGrupo": 0,
+      "nomeGrupo": "string",
+      "statusGrupo": true,
+      "dataHoraAtualizacao": "2024-01-15 10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-material/2_consultarClasseMaterial
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoGrupo
+integer($int64)
+(query)
+codigoGrupo
+codigoClasse
+integer($int64)
+(query)
+codigoClasse
+statusClasse
+boolean
+(query)
+
+--
+bps
+boolean
+(query)
+Default value : false
+
+
+false
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoClasse": 0,
+      "codigoGrupo": 0,
+      "nomeGrupo": "string",
+      "nomeClasse": "string",
+      "statusClasse": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-material/3_consultarPdmMaterial
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+statusPdm
+boolean
+(query)
+
+--
+codigoPdm
+integer($int64)
+(query)
+codigoPdm
+codigoGrupo
+integer($int64)
+(query)
+codigoGrupo
+codigoClasse
+integer($int64)
+(query)
+codigoClasse
+bps
+boolean
+(query)
+Default value : false
+
+
+false
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoGrupo": 0,
+      "nomeGrupo": "string",
+      "codigoClasse": 0,
+      "nomeClasse": "string",
+      "codigoPdm": 0,
+      "nomePdm": "string",
+      "statusPdm": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-material/4_consultarItemMaterial
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoItem
+integer($int64)
+(query)
+codigoItem
+codigoGrupo
+integer($int64)
+(query)
+codigoGrupo
+codigoClasse
+integer($int64)
+(query)
+codigoClasse
+codigoPdm
+integer($int64)
+(query)
+codigoPdm
+descricaoItem
+string
+(query)
+descricaoItem
+statusItem
+boolean
+(query)
+
+--
+bps
+boolean
+(query)
+Default value : false
+
+
+false
+codigo_ncm
+string
+(query)
+codigo_ncm
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoItem": 0,
+      "codigoGrupo": 0,
+      "nomeGrupo": "string",
+      "codigoClasse": 0,
+      "nomeClasse": "string",
+      "codigoPdm": 0,
+      "nomePdm": "string",
+      "descricaoItem": "string",
+      "statusItem": true,
+      "itemSustentavel": true,
+      "codigo_ncm": "string",
+      "descricao_ncm": "string",
+      "aplica_margem_preferencia": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-material/5_consultarMaterialNaturezaDespesa
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoPdm
+integer($int64)
+(query)
+codigoPdm
+codigoNaturezaDespesa
+string
+(query)
+codigoNaturezaDespesa
+statusNaturezaDespesa
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoPdm": 0,
+      "codigoNaturezaDespesa": "string",
+      "nomeNaturezaDespesa": "string",
+      "statusNaturezaDespesa": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-material/6_consultarMaterialUnidadeFornecimento
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoPdm
+integer($int64)
+(query)
+codigoPdm
+statusUnidadeFornecimentoPdm
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoPdm": 0,
+      "siglaUnidadeFornecimento": "string",
+      "nomeUnidadeFornecimento": "string",
+      "descricaoUnidadeFornecimento": "string",
+      "siglaUnidadeMedida": "string",
+      "capacidadeUnidadeFornecimento": 0,
+      "numeroSequencialUnidadeFornecimento": 0,
+      "statusUnidadeFornecimentoPdm": true,
+      "statusUnidadeFornecimento": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-material/7_consultarMaterialCaracteristicas
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoItem
+integer($int64)
+(query)
+codigoItem
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoItem": 0,
+      "itemSustentavel": true,
+      "statusItem": true,
+      "codigoCaracteristica": "string",
+      "nomeCaracteristica": "string",
+      "statusCaracteristica": true,
+      "codigoValorCaracteristica": "string",
+      "nomeValorCaracteristica": "string",
+      "statusValorCaracteristica": true,
+      "numeroCaracteristica": 0,
+      "siglaUnidadeMedida": "string",
+      "dataHoraAtualizacao": "2022-01-01T00:00:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+02 - CATÁLOGO - SERVIÇO
+Catálogo de Serviços (CATSER): Consulta serviços com informações detalhadas.
+
+
+
+GET
+/modulo-servico/1_consultarSecaoServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoSecao
+integer($int64)
+(query)
+codigoSecao
+statusSecao
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoSecao": 0,
+      "nomeSecao": "string",
+      "statusSecao": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-servico/2_consultarDivisaoServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoSecao
+integer($int64)
+(query)
+codigoSecao
+codigoDivisao
+integer($int64)
+(query)
+codigoDivisao
+statusDivisao
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoSecao": 0,
+      "nomeSecao": "string",
+      "codigoDivisao": 0,
+      "nomeDivisao": "string",
+      "statusDivisao": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-servico/3_consultarGrupoServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoDivisao
+integer($int64)
+(query)
+codigoDivisao
+codigoGrupo
+integer($int64)
+(query)
+codigoGrupo
+statusGrupo
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "nomeSecao": "string",
+      "codigoDivisao": 0,
+      "nomeDivisao": "string",
+      "codigoGrupo": 0,
+      "nomeGrupo": "string",
+      "statusGrupo": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-servico/4_consultarClasseServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoGrupo
+integer($int64)
+(query)
+codigoGrupo
+codigoClasse
+integer($int64)
+(query)
+codigoClasse
+statusGrupo
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoGrupo": 0,
+      "nomeGrupo": "string",
+      "codigoClasse": 0,
+      "nomeClasse": "string",
+      "statusGrupo": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-servico/5_consultarSubClasseServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoClasse
+integer($int64)
+(query)
+codigoClasse
+codigoSubclasse
+integer($int64)
+(query)
+codigoSubclasse
+statusSubclasse
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoClasse": 0,
+      "nomeClasse": "string",
+      "codigoSubclasse": 0,
+      "nomeSubclasse": "string",
+      "statusSubclasse": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-servico/6_consultarItemServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoSecao
+integer($int64)
+(query)
+codigoSecao
+codigoDivisao
+integer($int64)
+(query)
+codigoDivisao
+codigoGrupo
+integer($int64)
+(query)
+codigoGrupo
+codigoClasse
+integer($int64)
+(query)
+codigoClasse
+codigoSubclasse
+integer($int64)
+(query)
+codigoSubclasse
+codigoCpc
+integer($int64)
+(query)
+codigoCpc
+codigoServico
+integer($int64)
+(query)
+codigoServico
+exclusivoCentralCompras
+boolean
+(query)
+
+--
+statusServico
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoSecao": 0,
+      "nomeSecao": "string",
+      "codigoDivisao": 0,
+      "nomeDivisao": "string",
+      "codigoGrupo": 0,
+      "nomeGrupo": "string",
+      "codigoClasse": 0,
+      "nomeClasse": "string",
+      "codigoSubclasse": 0,
+      "nomeSubclasse": "string",
+      "codigoServico": 0,
+      "nomeServico": "string",
+      "codigoCpc": 0,
+      "exclusivoCentralCompras": true,
+      "statusServico": true,
+      "dataHoraAtualizacao": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-servico/7_consultarUndMedidaServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoServico
+integer($int64)
+(query)
+codigoServico
+statusUnidadeMedida
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoServico": 0,
+      "siglaUnidadeMedida": "string",
+      "nomeUnidadeMedida": "string",
+      "statusUnidadeMedida": true
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-servico/8_consultarNaturezaDespesaServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoServico
+integer($int64)
+(query)
+codigoServico
+codigoNaturezaDespesa
+string
+(query)
+codigoNaturezaDespesa
+statusNaturezaDespesa
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoServico": 0,
+      "codigoNaturezaDespesa": "string",
+      "nomeNaturezaDespesa": "string",
+      "statusNaturezaDespesa": true
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+03 - PESQUISA DE PREÇO - PREÇOS PRATICADOS
+Consulta preços praticados nas compras públicas por códigos de itens do CATMAT e CATSER.
+
+
+
+GET
+/modulo-pesquisa-preco/1_consultarMaterial
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+tipo *
+string
+(query)
+Available values : codigoItemCatalogo, codigoPdm
+
+
+codigoItemCatalogo
+codigo *
+string
+(query)
+codigo
+codigoUasg
+string
+(query)
+codigoUasg
+estado
+string
+(query)
+estado
+codigoMunicipio
+integer($int32)
+(query)
+codigoMunicipio
+dataResultado
+boolean
+(query)
+Default value : false
+
+
+false
+codigoClasse
+integer($int32)
+(query)
+codigoClasse
+poder
+string
+(query)
+poder
+esfera
+string
+(query)
+esfera
+idCompra
+string
+(query)
+idCompra
+dataCompraInicio
+string
+(query)
+YYYY-MM-DD
+
+dataCompraInicio
+dataCompraFim
+string
+(query)
+YYYY-MM-DD
+
+dataCompraFim
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "idCompra": 0,
+      "dataCompra": "2026-09-05",
+      "forma": "string",
+      "modalidade": 1073741824,
+      "dataHoraAtualizacaoCompra": "2024-01-15T10:30:00",
+      "idItemCompra": 0,
+      "numeroItemCompra": 0,
+      "niFornecedor": "string",
+      "codigoItemCatalogo": 0,
+      "quantidade": 0,
+      "precoUnitario": 0,
+      "descricaoItem": "string",
+      "siglaUnidadeFornecimento": "string",
+      "nomeUnidadeFornecimento": "string",
+      "capacidadeUnidadeFornecimento": 0,
+      "siglaUnidadeMedida": "string",
+      "nomeUnidadeMedida": "string",
+      "criterioJulgamento": "string",
+      "percentualMaiorDesconto": 0,
+      "nomeFornecedor": "string",
+      "marca": "string",
+      "dataResultado": "2026-09-05",
+      "dataHoraAtualizacaoItem": "2024-01-15T10:30:00",
+      "codigoUasg": "string",
+      "nomeUasg": "string",
+      "codigoOrgao": 0,
+      "nomeOrgao": "string",
+      "estado": "string",
+      "codigoMunicipio": 0,
+      "municipio": "string",
+      "poder": "string",
+      "esfera": "string",
+      "dataHoraAtualizacaoUasg": "2024-01-15T10:30:00",
+      "codigoClasse": 0,
+      "nomeClasse": "string",
+      "idCompraItem": "string",
+      "objetoCompra": "string",
+      "descricaoDetalhadaItem": "string",
+      "dataAtualizacaoFato": "2024-01-15T10:30:00",
+      "codigoPdm": "string",
+      "nomePdm": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-pesquisa-preco/1.1_consultarMaterial_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+tipo *
+string
+(query)
+Available values : codigoItemCatalogo, codigoPdm
+
+
+codigoItemCatalogo
+codigo *
+string
+(query)
+codigo
+codigoUasg
+string
+(query)
+codigoUasg
+estado
+string
+(query)
+estado
+codigoMunicipio
+integer($int32)
+(query)
+codigoMunicipio
+dataResultado
+boolean
+(query)
+Default value : false
+
+
+false
+codigoClasse
+integer($int32)
+(query)
+codigoClasse
+poder
+string
+(query)
+poder
+esfera
+string
+(query)
+esfera
+idCompra
+string
+(query)
+idCompra
+dataCompraInicio
+string
+(query)
+YYYY-MM-DD
+
+dataCompraInicio
+dataCompraFim
+string
+(query)
+YYYY-MM-DD
+
+dataCompraFim
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+
+GET
+/modulo-pesquisa-preco/2_consultarMaterialDetalhe
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoItemCatalogo *
+integer($int32)
+(query)
+codigoItemCatalogo
+dataCompraInicio
+string
+(query)
+YYYY-MM-DD
+
+dataCompraInicio
+dataCompraFim
+string
+(query)
+YYYY-MM-DD
+
+dataCompraFim
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "idCompra": "string",
+      "idItemCompra": 0,
+      "numeroItemCompra": 0,
+      "codigoItemCatalogo": 0,
+      "objetoCompra": "string",
+      "descricaoDetalhadaItem": "string",
+      "dataAtualizacaoFato": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-pesquisa-preco/2.1_consultarMaterialDetalhe_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoItemCatalogo
+integer($int32)
+(query)
+codigoItemCatalogo
+dataCompraInicio
+string
+(query)
+YYYY-MM-DD
+
+dataCompraInicio
+dataCompraFim
+string
+(query)
+YYYY-MM-DD
+
+dataCompraFim
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+
+GET
+/modulo-pesquisa-preco/3_consultarServico
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoItemCatalogo *
+integer($int32)
+(query)
+codigoItemCatalogo
+codigoUasg
+string
+(query)
+codigoUasg
+estado
+string
+(query)
+estado
+codigoMunicipio
+integer($int32)
+(query)
+codigoMunicipio
+dataResultado
+boolean
+(query)
+Default value : false
+
+
+false
+poder
+string
+(query)
+poder
+esfera
+string
+(query)
+esfera
+dataCompraInicio
+string
+(query)
+YYYY-MM-DD
+
+dataCompraInicio
+dataCompraFim
+string
+(query)
+YYYY-MM-DD
+
+dataCompraFim
+idCompra
+string
+(query)
+idCompra
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "idCompra": "string",
+      "idItemCompra": 0,
+      "forma": "string",
+      "modalidade": 0,
+      "criterioJulgamento": "string",
+      "numeroItemCompra": 0,
+      "descricaoItem": "string",
+      "codigoItemCatalogo": 0,
+      "nomeUnidadeMedida": "string",
+      "siglaUnidadeMedida": "string",
+      "quantidade": 0,
+      "precoUnitario": 0,
+      "percentualMaiorDesconto": 0,
+      "niFornecedor": "string",
+      "nomeFornecedor": "string",
+      "codigoUasg": "string",
+      "nomeUasg": "string",
+      "codigoMunicipio": 0,
+      "municipio": "string",
+      "estado": "string",
+      "codigoOrgao": 0,
+      "nomeOrgao": "string",
+      "poder": "string",
+      "esfera": "string",
+      "dataCompra": "2024-01-15",
+      "dataHoraAtualizacaoCompra": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoItem": "2024-01-15T10:30:00",
+      "dataResultado": "2024-01-1",
+      "dataHoraAtualizacaoUasg": "2024-01-15T10:30:00",
+      "objetoCompra": "string",
+      "descricaoDetalhadaItem": "string",
+      "dataAtualizacaoFato": "2026-09-05T19:14:51.339Z"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-pesquisa-preco/3.1_consultarServico_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoItemCatalogo *
+integer($int32)
+(query)
+codigoItemCatalogo
+codigoUasg
+string
+(query)
+codigoUasg
+estado
+string
+(query)
+estado
+codigoMunicipio
+integer($int32)
+(query)
+codigoMunicipio
+dataResultado
+boolean
+(query)
+Default value : false
+
+
+false
+poder
+string
+(query)
+poder
+esfera
+string
+(query)
+esfera
+dataCompraInicio
+string
+(query)
+YYYY-MM-DD
+
+dataCompraInicio
+dataCompraFim
+string
+(query)
+YYYY-MM-DD
+
+dataCompraFim
+idCompra
+string
+(query)
+idCompra
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+
+GET
+/modulo-pesquisa-preco/4_consultarServicoDetalhe
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoItemCatalogo *
+integer($int32)
+(query)
+codigoItemCatalogo
+dataCompraInicio
+string
+(query)
+YYYY-MM-DD
+
+dataCompraInicio
+dataCompraFim
+string
+(query)
+YYYY-MM-DD
+
+dataCompraFim
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "idCompra": "string",
+      "idItemCompra": 0,
+      "numeroItemCompra": 0,
+      "codigoItemCatalogo": 0,
+      "objetoCompra": "string",
+      "descricaoDetalhadaItem": "string",
+      "dataAtualizacaoFato": "2026-09-05T19:14:51.385Z"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-pesquisa-preco/4.1_consultarServicoDetalhe_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoItemCatalogo
+integer($int32)
+(query)
+codigoItemCatalogo
+dataCompraInicio
+string
+(query)
+YYYY-MM-DD
+
+dataCompraInicio
+dataCompraFim
+string
+(query)
+YYYY-MM-DD
+
+dataCompraFim
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+04 - PGC
+Consulta dados sobre Planejamento e Gerenciamento de Contratações (PGC).
+
+
+
+GET
+/modulo-pgc/1_consultarPgcDetalhe
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+orgao *
+string
+(query)
+orgao
+anoPcaProjetoCompra *
+integer($int32)
+(query)
+anoPcaProjetoCompra
+codigoUasg
+string
+(query)
+codigoUasg
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoUasg": "string",
+      "nomeUasg": "string",
+      "orgao": "string",
+      "numeroArtefato": 0,
+      "anoArtefato": 0,
+      "codigoEstadoArtefato": 0,
+      "codigoCategoriaArtefato": 0,
+      "descricaoArtefato": "string",
+      "codigoTipoArtefato": 0,
+      "ordemDfd": 0,
+      "descricaoObjetoDfd": "string",
+      "nivelPrioridadeDfd": 0,
+      "dataPrevistaFormalizacaoDemanda": "2024-01-15T10:30:00",
+      "codigoAreaDfd": "string",
+      "tipoItem": "string",
+      "itemSustentavel": true,
+      "codigoGrupoMaterial": 0,
+      "nomeGrupoMaterial": "string",
+      "codigoClasseMaterial": 0,
+      "nomeClasseMaterial": "string",
+      "codigoPdmMaterial": 0,
+      "nomePdmMaterial": "string",
+      "codigoSecaoServico": 0,
+      "nomeSecaoServico": "string",
+      "codigoDivisaoServico": 0,
+      "nomeDivisaoServico": "string",
+      "codigoGrupoServico": 0,
+      "nomeGrupoServico": "string",
+      "codigoClasseServico": 0,
+      "nomeClasseServico": "string",
+      "codigoSubclasseServico": 0,
+      "nomeSubclasseServico": "string",
+      "codigoItemCatalogo": "string",
+      "descricaoItemCatalogo": "string",
+      "siglaUnidadeFornecimento": "string",
+      "nomeUnidadeFornecimento": "string",
+      "quantidadeItem": 0,
+      "valorUnitarioItem": 0,
+      "valorTotalItem": 0,
+      "tituloProjetoCompra": "string",
+      "descricaoProjetoCompra": "string",
+      "anoPcaProjetoCompra": 0,
+      "dataInicioProcessoCompra": "2024-01-15T10:30:00",
+      "dataFimProcessoCompra": "2024-01-15T10:30:00",
+      "duracaoProcessoCompra": 0,
+      "numeroItemPncp": 0,
+      "statusContratacaoExecucao": 0,
+      "dataHoraPublicacaoPncp": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoArtefato": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoProjetoCompra": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoDfd": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoItem": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-pgc/1.1_consultarPgcDetalhe_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+orgao *
+string
+(query)
+orgao
+anoPcaProjetoCompra *
+integer($int32)
+(query)
+anoPcaProjetoCompra
+codigoUasg
+string
+(query)
+codigoUasg
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+
+GET
+/modulo-pgc/2_consultarPgcDetalheCatalogo
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+anoPcaProjetoCompra *
+integer($int32)
+(query)
+anoPcaProjetoCompra
+tipo *
+string
+(query)
+Available values : Servico, Material
+
+
+Servico
+codigo *
+integer($int32)
+(query)
+Código de classe para material ou código do grupo para serviço
+
+codigo
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoUasg": "string",
+      "nomeUasg": "string",
+      "orgao": "string",
+      "numeroArtefato": 0,
+      "anoArtefato": 0,
+      "codigoEstadoArtefato": 0,
+      "codigoCategoriaArtefato": 0,
+      "descricaoArtefato": "string",
+      "codigoTipoArtefato": 0,
+      "ordemDfd": 0,
+      "descricaoObjetoDfd": "string",
+      "nivelPrioridadeDfd": 0,
+      "dataPrevistaFormalizacaoDemanda": "2024-01-15T10:30:00",
+      "codigoAreaDfd": "string",
+      "tipoItem": "string",
+      "itemSustentavel": true,
+      "codigoGrupoMaterial": 0,
+      "nomeGrupoMaterial": "string",
+      "codigoClasseMaterial": 0,
+      "nomeClasseMaterial": "string",
+      "codigoPdmMaterial": 0,
+      "nomePdmMaterial": "string",
+      "codigoSecaoServico": 0,
+      "nomeSecaoServico": "string",
+      "codigoDivisaoServico": 0,
+      "nomeDivisaoServico": "string",
+      "codigoGrupoServico": 0,
+      "nomeGrupoServico": "string",
+      "codigoClasseServico": 0,
+      "nomeClasseServico": "string",
+      "codigoSubclasseServico": 0,
+      "nomeSubclasseServico": "string",
+      "codigoItemCatalogo": "string",
+      "descricaoItemCatalogo": "string",
+      "siglaUnidadeFornecimento": "string",
+      "nomeUnidadeFornecimento": "string",
+      "quantidadeItem": 0,
+      "valorUnitarioItem": 0,
+      "valorTotalItem": 0,
+      "tituloProjetoCompra": "string",
+      "descricaoProjetoCompra": "string",
+      "anoPcaProjetoCompra": 0,
+      "dataInicioProcessoCompra": "2024-01-15T10:30:00",
+      "dataFimProcessoCompra": "2024-01-15T10:30:00",
+      "duracaoProcessoCompra": 0,
+      "numeroItemPncp": 0,
+      "statusContratacaoExecucao": 0,
+      "dataHoraPublicacaoPncp": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoArtefato": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoProjetoCompra": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoDfd": "2024-01-15T10:30:00",
+      "dataHoraAtualizacaoItem": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-pgc/2.1_consultarPgcDetalheCatalogo_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+anoPcaProjetoCompra *
+integer($int32)
+(query)
+anoPcaProjetoCompra
+tipo *
+string
+(query)
+Available values : Servico, Material
+
+
+Servico
+codigo *
+integer($int32)
+(query)
+Código de classe para material ou código do grupo para serviço
+
+codigo
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+
+GET
+/modulo-pgc/3_consultarPgcAgregacao
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+orgao *
+string
+(query)
+orgao
+ano *
+integer($int32)
+(query)
+ano
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "orgao": "string",
+      "ano": 0,
+      "poder": "string",
+      "esfera": "string",
+      "dataHoraPublicacaoPncp": "2024-01-15T10:30:00",
+      "dataHoraAtualizacao": "2024-01-15T10:30:00",
+      "quantidadeTotalItens": 0,
+      "valorTotalEstimado": 0
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-pgc/3.1_consultarPgcAgregacao_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+orgao *
+string
+(query)
+orgao
+ano *
+integer($int32)
+(query)
+ano
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+05 - UASG
+Consulta dados sobre Unidades Administrativas de Serviços Gerais (UASG).
+
+
+
+GET
+/modulo-uasg/1_consultarUasg
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoUasg
+string
+(query)
+codigoUasg
+usoSisg
+boolean
+(query)
+
+--
+cnpjCpfOrgao
+string
+(query)
+cnpjCpfOrgao
+cnpjCpfOrgaoVinculado
+string
+(query)
+cnpjCpfOrgaoVinculado
+cnpjCpfOrgaoSuperior
+string
+(query)
+cnpjCpfOrgaoSuperior
+siglaUf
+string
+(query)
+siglaUf
+statusUasg *
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoUasg": "string",
+      "nomeUasg": "string",
+      "usoSisg": true,
+      "adesaoSiasg": true,
+      "siglaUf": "string",
+      "codigoMunicipio": 0,
+      "codigoMunicipioIbge": 0,
+      "nomeMunicipioIbge": "string",
+      "codigoUnidadePolo": 0,
+      "nomeUnidadePolo": "string",
+      "codigoUnidadeEspelho": 0,
+      "nomeUnidadeEspelho": "string",
+      "uasgCadastradora": true,
+      "cnpjCpfUasg": "string",
+      "codigoOrgao": 0,
+      "cnpjCpfOrgao": "string",
+      "cnpjCpfOrgaoVinculado": "string",
+      "cnpjCpfOrgaoSuperior": "string",
+      "codigoSiorg": "string",
+      "statusUasg": true,
+      "dataImplantacaoSidec": "2026-09-05T19:14:51.511Z",
+      "dataHoraMovimento": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-uasg/1.1_consultarUasg_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+codigoUasg
+string
+(query)
+codigoUasg
+usoSisg
+boolean
+(query)
+
+--
+cnpjCpfOrgao
+string
+(query)
+cnpjCpfOrgao
+cnpjCpfOrgaoVinculado
+string
+(query)
+cnpjCpfOrgaoVinculado
+cnpjCpfOrgaoSuperior
+string
+(query)
+cnpjCpfOrgaoSuperior
+siglaUf
+string
+(query)
+siglaUf
+statusUasg *
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+
+GET
+/modulo-uasg/2_consultarOrgao
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+cnpjCpfOrgao
+string
+(query)
+cnpjCpfOrgao
+cnpjCpfOrgaoVinculado
+string
+(query)
+cnpjCpfOrgaoVinculado
+cnpjCpfOrgaoSuperior
+string
+(query)
+cnpjCpfOrgaoSuperior
+codigoOrgao
+integer($int32)
+(query)
+codigoOrgao
+statusOrgao *
+boolean
+(query)
+
+--
+usoSisg
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoOrgao": 0,
+      "nomeOrgao": "string",
+      "nomeMnemonicoOrgao": "string",
+      "cnpjCpfOrgao": "string",
+      "codigoOrgaoVinculado": 0,
+      "cnpjCpfOrgaoVinculado": "string",
+      "nomeOrgaoVinculado": "string",
+      "codigoOrgaoSuperior": 0,
+      "cnpjCpfOrgaoSuperior": "string",
+      "nomeOrgaoSuperior": "string",
+      "codigoTipoAdministracao": 0,
+      "nomeTipoAdministracao": "string",
+      "poder": "string",
+      "esfera": "string",
+      "usoSisg": true,
+      "statusOrgao": true,
+      "dataHoraMovimento": "2024-01-15T10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-uasg/2.1_consultarOrgao_CSV
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+cnpjCpfOrgao
+string
+(query)
+cnpjCpfOrgao
+cnpjCpfOrgaoVinculado
+string
+(query)
+cnpjCpfOrgaoVinculado
+cnpjCpfOrgaoSuperior
+string
+(query)
+cnpjCpfOrgaoSuperior
+codigoOrgao
+integer($int32)
+(query)
+codigoOrgao
+statusOrgao *
+boolean
+(query)
+
+--
+usoSisg
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/csv
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+06 - LEGADO
+Consulta licitações realizadas sob a Lei nº 8.666/1993 e leis anteriores à Lei nº 14.133/2021.
+
+
+
+GET
+/modulo-legado/1_consultarLicitacao
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+uasg
+integer($int32)
+(query)
+uasg
+numero_aviso
+integer($int32)
+(query)
+numero_aviso
+modalidade
+integer($int32)
+(query)
+modalidade
+data_publicacao_inicial *
+string
+(query)
+YYYY-MM-DD
+
+data_publicacao_inicial
+data_publicacao_final *
+string
+(query)
+YYYY-MM-DD
+
+data_publicacao_final
+pertence14133
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "id_compra": "string",
+      "identificador": "string",
+      "numero_processo": "string",
+      "uasg": 0,
+      "modalidade": 0,
+      "nome_modalidade": "string",
+      "numero_aviso": 0,
+      "situacao_aviso": "string",
+      "tipo_pregao": "string",
+      "tipo_recurso": "string",
+      "nome_responsavel": "string",
+      "funcao_responsavel": "string",
+      "numero_itens": 0,
+      "valor_estimado_total": 0,
+      "valor_homologado_total": 0,
+      "informacoes_gerais": "string",
+      "objeto": "string",
+      "endereco_entrega_edital": "string",
+      "codigo_municipio_uasg": 0,
+      "data_abertura_proposta": "2024-01-15",
+      "data_entrega_edital": "2024-01-15",
+      "data_entrega_proposta": "2024-01-15",
+      "data_publicacao": "2024-01-15",
+      "dt_alteracao": "2024-01-15T10:30:00",
+      "pertence14133": true
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/1.1_consultarLicitacao_Id
+
+Parameters
+Try it out
+Name	Description
+id_compra *
+string
+(query)
+id_compra
+dt_alteracao
+string
+(query)
+YYYY-MM-DD
+
+dt_alteracao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "id_compra": "string",
+      "identificador": "string",
+      "numero_processo": "string",
+      "uasg": 0,
+      "modalidade": 0,
+      "nome_modalidade": "string",
+      "numero_aviso": 0,
+      "situacao_aviso": "string",
+      "tipo_pregao": "string",
+      "tipo_recurso": "string",
+      "nome_responsavel": "string",
+      "funcao_responsavel": "string",
+      "numero_itens": 0,
+      "valor_estimado_total": 0,
+      "valor_homologado_total": 0,
+      "informacoes_gerais": "string",
+      "objeto": "string",
+      "endereco_entrega_edital": "string",
+      "codigo_municipio_uasg": 0,
+      "data_abertura_proposta": "2024-01-15",
+      "data_entrega_edital": "2024-01-15",
+      "data_entrega_proposta": "2024-01-15",
+      "data_publicacao": "2024-01-15",
+      "dt_alteracao": "2024-01-15T10:30:00",
+      "pertence14133": true
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/2_consultarItemLicitacao
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+uasg
+integer($int32)
+(query)
+uasg
+numero_aviso
+integer($int32)
+(query)
+numero_aviso
+modalidade *
+integer($int32)
+(query)
+modalidade
+decreto_7174
+boolean
+(query)
+
+--
+codigo_item_material
+integer($int32)
+(query)
+codigo_item_material
+codigo_item_servico
+integer($int32)
+(query)
+codigo_item_servico
+cnpj_fornecedor
+string
+(query)
+cnpj_fornecedor
+cpfVencedor
+string
+(query)
+cpfVencedor
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numero_licitacao": "string",
+      "uasg": 0,
+      "nome_uasg": "string",
+      "modalidade": 0,
+      "nome_modalidade": "string",
+      "numero_aviso": 0,
+      "numero_item_licitacao": 0,
+      "codigo_item_material": 0,
+      "nome_material": "string",
+      "codigo_item_servico": 0,
+      "nome_servico": "string",
+      "cnpj_fornecedor": "string",
+      "nome_fornecedor": "string",
+      "quantidade": 0,
+      "unidade": "string",
+      "descricao_item": "string",
+      "beneficio": "string",
+      "valor_estimado": 0,
+      "decreto_7174": "string",
+      "criterio_julgamento": "string",
+      "cpf_vencedor": "string",
+      "nome_vencedor_pf": "string",
+      "sustentavel": 0,
+      "dt_alteracao": "2024-01-15T10:30:00",
+      "id_compra": "string",
+      "id_compra_item": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/2.1_consultarItemLicitacao_Id
+
+Parameters
+Try it out
+Name	Description
+id_compra *
+string
+(query)
+id_compra
+id_compra_item
+string
+(query)
+id_compra_item
+dt_alteracao
+string
+(query)
+YYYY-MM-DD
+
+dt_alteracao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numero_licitacao": "string",
+      "uasg": 0,
+      "nome_uasg": "string",
+      "modalidade": 0,
+      "nome_modalidade": "string",
+      "numero_aviso": 0,
+      "numero_item_licitacao": 0,
+      "codigo_item_material": 0,
+      "nome_material": "string",
+      "codigo_item_servico": 0,
+      "nome_servico": "string",
+      "cnpj_fornecedor": "string",
+      "nome_fornecedor": "string",
+      "quantidade": 0,
+      "unidade": "string",
+      "descricao_item": "string",
+      "beneficio": "string",
+      "valor_estimado": 0,
+      "decreto_7174": "string",
+      "criterio_julgamento": "string",
+      "cpf_vencedor": "string",
+      "nome_vencedor_pf": "string",
+      "sustentavel": 0,
+      "dt_alteracao": "2024-01-15T10:30:00",
+      "id_compra": "string",
+      "id_compra_item": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/3_consultarPregoes
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+co_uasg
+integer($int32)
+(query)
+co_uasg
+co_orgao
+integer($int32)
+(query)
+co_orgao
+numero
+integer($int32)
+(query)
+numero
+ds_tipo_pregao_compra
+string
+(query)
+ds_tipo_pregao_compra
+dt_data_edital_inicial *
+string
+(query)
+YYYY-MM-DD
+
+dt_data_edital_inicial
+dt_data_edital_final *
+string
+(query)
+YYYY-MM-DD
+
+dt_data_edital_final
+pertence14133
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "id_compra": "string",
+      "co_processo": "string",
+      "co_portaria": "string",
+      "co_uasg": 0,
+      "no_ausg": "string",
+      "co_orgao": 0,
+      "no_orgao": "string",
+      "numero": 0,
+      "ds_situacao_pregao": "string",
+      "ds_tipo_pregao": "string",
+      "ds_tipo_pregao_compra": "string",
+      "tx_objeto": "string",
+      "valor_estimado_total": "string",
+      "valor_homologado_total": "string",
+      "dt_portaria": "2026-09-05T19:14:51.665Z",
+      "dt_data_edital": "2026-09-05T19:14:51.665Z",
+      "dt_inicio_proposta": "2026-09-05T19:14:51.665Z",
+      "dt_fim_proposta": "2026-09-05T19:14:51.665Z",
+      "dt_alteracao": "2026-09-05T19:14:51.665Z",
+      "dt_encerramento": "2026-09-05T19:14:51.665Z",
+      "dt_resultado": "2026-09-05T19:14:51.665Z",
+      "pertence14133": true
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/3.1_consultarPregoes_Id
+
+Parameters
+Try it out
+Name	Description
+id_compra *
+string
+(query)
+id_compra
+dt_alteracao
+string
+(query)
+YYYY-MM-DD
+
+dt_alteracao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "id_compra": "string",
+      "co_processo": "string",
+      "co_portaria": "string",
+      "co_uasg": 0,
+      "no_ausg": "string",
+      "co_orgao": 0,
+      "no_orgao": "string",
+      "numero": 0,
+      "ds_situacao_pregao": "string",
+      "ds_tipo_pregao": "string",
+      "ds_tipo_pregao_compra": "string",
+      "tx_objeto": "string",
+      "valor_estimado_total": "string",
+      "valor_homologado_total": "string",
+      "dt_portaria": "2026-09-05T19:14:51.676Z",
+      "dt_data_edital": "2026-09-05T19:14:51.676Z",
+      "dt_inicio_proposta": "2026-09-05T19:14:51.676Z",
+      "dt_fim_proposta": "2026-09-05T19:14:51.676Z",
+      "dt_alteracao": "2026-09-05T19:14:51.676Z",
+      "dt_encerramento": "2026-09-05T19:14:51.676Z",
+      "dt_resultado": "2026-09-05T19:14:51.676Z",
+      "pertence14133": true
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/4_consultarItensPregoes
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+co_uasg
+integer($int32)
+(query)
+co_uasg
+decreto_7174
+string
+(query)
+decreto_7174
+fornecedor_vencedor
+string
+(query)
+fornecedor_vencedor
+dt_hom_inicial *
+string
+(query)
+YYYY-MM-DD
+
+dt_hom_inicial
+dt_hom_final *
+string
+(query)
+YYYY-MM-DD
+
+dt_hom_final
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "id_compra": "string",
+      "id_compra_item": "string",
+      "decreto_7174": "string",
+      "situacao_item": "string",
+      "descricao_item": "string",
+      "descricao_detalhada_item": "string",
+      "margem_preferencial": "string",
+      "tratamento_diferenciado": "string",
+      "quantidade_item": "string",
+      "unidade_fornecimento": "string",
+      "valor_estimado_item": "string",
+      "menor_lance": "string",
+      "valor_negociado": "string",
+      "valor_homologado_item": "string",
+      "fornecedor_vencedor": "string",
+      "no_adjudic": "string",
+      "no_hom": "string",
+      "dt_encerramento": "2026-07-06T19:53:33.156Z",
+      "dt_adjudic": "2026-07-06T19:53:33.156Z",
+      "dt_hom": "2026-07-06T19:53:33.156Z",
+      "dt_alteracao": "2026-07-06T19:53:33.156Z"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/4.1_consultarItensPregoes_Id
+
+Parameters
+Try it out
+Name	Description
+id_compra *
+string
+(query)
+id_compra
+id_compra_item
+string
+(query)
+id_compra_item
+dt_alteracao
+string
+(query)
+YYYY-MM-DD
+
+dt_alteracao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "id_compra": "string",
+      "id_compra_item": "string",
+      "decreto_7174": "string",
+      "situacao_item": "string",
+      "descricao_item": "string",
+      "descricao_detalhada_item": "string",
+      "margem_preferencial": "string",
+      "tratamento_diferenciado": "string",
+      "quantidade_item": "string",
+      "unidade_fornecimento": "string",
+      "valor_estimado_item": "string",
+      "menor_lance": "string",
+      "valor_negociado": "string",
+      "valor_homologado_item": "string",
+      "fornecedor_vencedor": "string",
+      "no_adjudic": "string",
+      "no_hom": "string",
+      "dt_encerramento": "2026-07-06T19:53:33.156Z",
+      "dt_adjudic": "2026-07-06T19:53:33.156Z",
+      "dt_hom": "2026-07-06T19:53:33.156Z",
+      "dt_alteracao": "2026-07-06T19:53:33.156Z"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/5_consultarComprasSemLicitacao
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+dt_ano_aviso *
+integer($int32)
+(query)
+dt_ano_aviso
+nu_aviso_licitacao
+integer($int64)
+(query)
+nu_aviso_licitacao
+co_modalidade_licitacao
+integer($int32)
+(query)
+co_modalidade_licitacao
+co_orgao
+string
+(query)
+co_orgao
+co_orgao_superior
+string
+(query)
+co_orgao_superior
+co_uasg
+integer($int64)
+(query)
+co_uasg
+dtDeclaracaoDispensaInicial
+string
+(query)
+YYYY-MM-DD
+
+dtDeclaracaoDispensaInicial
+dtDeclaracaoDispensaFinal
+string
+(query)
+YYYY-MM-DD
+
+dtDeclaracaoDispensaFinal
+dtRatificacao
+string
+(query)
+YYYY-MM-DD
+
+dtRatificacao
+dtPublicacao
+string
+(query)
+YYYY-MM-DD
+
+dtPublicacao
+pertence14133
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "id_compra": "string",
+      "co_orgao": "string",
+      "co_orgao_superior": "string",
+      "co_uasg": 0,
+      "no_ausg": "string",
+      "co_modalidade_licitacao": 0,
+      "ds_lei": "string",
+      "nu_processo": "string",
+      "qt_total_item": 0,
+      "vr_estimado": 0,
+      "nu_aviso_licitacao": 0,
+      "ds_objeto_licitacao": "string",
+      "ds_fundamento_legal": "string",
+      "ds_justificativa": "string",
+      "no_responsavel_decl_disp": "string",
+      "no_cargo_resp_decl_disp": "string",
+      "no_responsavel_ratificacao": "string",
+      "no_cargo_resp_ratificacao": "string",
+      "dt_declaracao_dispensa": "2024-01-15",
+      "dt_ratificacao": "2024-01-15",
+      "dt_publicacao": "2024-01-15",
+      "dt_ano_aviso": 1073741824,
+      "dt_alteracao": "2024-01-15",
+      "pertence14133": true
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/5.1_consultarCompraSemLicitacao_Id
+
+Parameters
+Try it out
+Name	Description
+idCompra *
+string
+(query)
+idCompra
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "id_compra": "string",
+      "co_orgao": "string",
+      "co_orgao_superior": "string",
+      "co_uasg": 0,
+      "no_ausg": "string",
+      "co_modalidade_licitacao": 0,
+      "ds_lei": "string",
+      "nu_processo": "string",
+      "qt_total_item": 0,
+      "vr_estimado": 0,
+      "nu_aviso_licitacao": 0,
+      "ds_objeto_licitacao": "string",
+      "ds_fundamento_legal": "string",
+      "ds_justificativa": "string",
+      "no_responsavel_decl_disp": "string",
+      "no_cargo_resp_decl_disp": "string",
+      "no_responsavel_ratificacao": "string",
+      "no_cargo_resp_ratificacao": "string",
+      "dt_declaracao_dispensa": "2024-01-15",
+      "dt_ratificacao": "2024-01-15",
+      "dt_publicacao": "2024-01-15",
+      "dt_ano_aviso": 1073741824,
+      "dt_alteracao": "2024-01-15",
+      "pertence14133": true
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/6_consultarCompraItensSemLicitacao
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+co_uasg
+integer
+(query)
+co_uasg
+co_orgao
+string
+(query)
+co_orgao
+dt_ano_aviso_licitacao *
+integer($int32)
+(query)
+dt_ano_aviso_licitacao
+co_modalidade_licitacao
+integer($int32)
+(query)
+co_modalidade_licitacao
+co_conjunto_materiais
+integer($int32)
+(query)
+co_conjunto_materiais
+co_servico
+integer($int32)
+(query)
+co_servico
+nu_cpf_cnpj_fornecedor
+string
+(query)
+nu_cpf_cnpj_fornecedor
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "co_conjunto_materiais": 0,
+      "co_servico": 0,
+      "ds_detalhada": "string",
+      "in_tipo_fornecedor_vencedor": "string",
+      "no_fornecedor_vencedor": "string",
+      "no_conjunto_materiais": "string",
+      "no_marca_material": "string",
+      "no_servico": "string",
+      "no_unidade_medida": "string",
+      "nu_cnpj_vencedor": "string",
+      "nu_cpf_vencedor": "string",
+      "qt_material_alt": 0,
+      "vr_estimado": 0,
+      "in_material_servico": "string",
+      "dt_publicacao": "2026-09-05",
+      "id_compra": "string",
+      "id_compra_item": "string",
+      "co_uasg": 0,
+      "co_modalidade_licitacao": 0,
+      "no_modalidade_licitacao": "string",
+      "nu_aviso_licitacao": 0,
+      "dt_ano_aviso_licitacao": 0,
+      "nu_inciso": "string",
+      "nu_processo": "string",
+      "qt_total_item": 0,
+      "ds_objeto_licitacao": "string",
+      "ds_fundamento_legal": "string",
+      "ds_justificativa": "string",
+      "nu_cpf_resp_decl_disp": "string",
+      "nu_cpf_resp_ratificacao": "string",
+      "nu_cpf_resp_publicacao": "string",
+      "no_responsavel_decl_disp": "string",
+      "no_cargo_resp_decl_disp": "string",
+      "no_responsavel_ratificacao": "string",
+      "no_cargo_resp_ratificacao": "string",
+      "nu_item_material": 0,
+      "vr_estimado_item": 0,
+      "ds_fabricante": "string",
+      "dt_alteracao": "2024-01-15T10:30:00",
+      "co_orgao": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/6.1_consultarItensComprasSemLicitacao_Id
+
+Parameters
+Try it out
+Name	Description
+id_compra *
+string
+(query)
+id_compra
+id_compra_item
+string
+(query)
+id_compra_item
+dt_alteracao
+string
+(query)
+YYYY-MM-DD
+
+dt_alteracao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "co_conjunto_materiais": 0,
+      "co_servico": 0,
+      "ds_detalhada": "string",
+      "in_tipo_fornecedor_vencedor": "string",
+      "no_fornecedor_vencedor": "string",
+      "no_conjunto_materiais": "string",
+      "no_marca_material": "string",
+      "no_servico": "string",
+      "no_unidade_medida": "string",
+      "nu_cnpj_vencedor": "string",
+      "nu_cpf_vencedor": "string",
+      "qt_material_alt": 0,
+      "vr_estimado": 0,
+      "in_material_servico": "string",
+      "dt_publicacao": "2026-09-05",
+      "id_compra": "string",
+      "id_compra_item": "string",
+      "co_uasg": 0,
+      "co_modalidade_licitacao": 0,
+      "no_modalidade_licitacao": "string",
+      "nu_aviso_licitacao": 0,
+      "dt_ano_aviso_licitacao": 0,
+      "nu_inciso": "string",
+      "nu_processo": "string",
+      "qt_total_item": 0,
+      "ds_objeto_licitacao": "string",
+      "ds_fundamento_legal": "string",
+      "ds_justificativa": "string",
+      "nu_cpf_resp_decl_disp": "string",
+      "nu_cpf_resp_ratificacao": "string",
+      "nu_cpf_resp_publicacao": "string",
+      "no_responsavel_decl_disp": "string",
+      "no_cargo_resp_decl_disp": "string",
+      "no_responsavel_ratificacao": "string",
+      "no_cargo_resp_ratificacao": "string",
+      "nu_item_material": 0,
+      "vr_estimado_item": 0,
+      "ds_fabricante": "string",
+      "dt_alteracao": "2024-01-15T10:30:00",
+      "co_orgao": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-legado/7_consultarRdc
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+data_publicacao_min *
+string
+(query)
+YYYY-MM-DD
+
+data_publicacao_min
+data_publicacao_max *
+string
+(query)
+YYYY-MM-DD
+
+data_publicacao_max
+endereco_entrega_edital
+string
+(query)
+endereco_entrega_edital
+forma_de_realizacao
+string
+(query)
+forma_de_realizacao
+funcao_responsavel
+string
+(query)
+funcao_responsavel
+modalidade
+integer($int32)
+(query)
+modalidade
+nome_responsavel
+string
+(query)
+nome_responsavel
+numero_aviso
+integer($int32)
+(query)
+numero_aviso
+objeto
+string
+(query)
+objeto
+orgao
+integer($int32)
+(query)
+orgao
+situacao_aviso
+string
+(query)
+situacao_aviso
+uasg
+integer($int32)
+(query)
+uasg
+uf_uasg
+string
+(query)
+uf_uasg
+valor_estimado_total_max
+number
+(query)
+valor_estimado_total_max
+valor_estimado_total_min
+number
+(query)
+valor_estimado_total_min
+valor_homologado_total_max
+number
+(query)
+valor_homologado_total_max
+valor_homologado_total_min
+number
+(query)
+valor_homologado_total_min
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "data_abertura_proposta": "2024-01-15",
+      "data_entrega_edital": "2024-01-15",
+      "data_entrega_proposta": "2024-01-15",
+      "data_publicacao": "2024-01-15",
+      "endereco_entrega_edital": "string",
+      "forma_de_realizacao_licitacao": "string",
+      "funcao_responsavel": "string",
+      "identificador": "string",
+      "informacoes_gerais": "string",
+      "modalidade": 0,
+      "nome_responsavel": "0",
+      "numero_aviso": 0,
+      "numero_itens": 0,
+      "numero_processo": "string",
+      "objeto": "string",
+      "situacao_aviso": "string",
+      "tipo_recurso": "string",
+      "uasg": 0,
+      "orgao_uasg": 0,
+      "uf_uasg": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+07 - CONTRATAÇÕES
+Consulta contratações realizadas sob a Lei nº 14.133/2021.
+
+
+
+GET
+/modulo-contratacoes/1_consultarContratacoes_PNCP_14133
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+unidadeOrgaoCodigoUnidade
+string
+(query)
+unidadeOrgaoCodigoUnidade
+codigoOrgao
+integer($int32)
+(query)
+codigoOrgao
+orgaoEntidadeCnpj
+string
+(query)
+orgaoEntidadeCnpj
+dataPublicacaoPncpInicial *
+string
+(query)
+YYYY-MM-DD
+
+dataPublicacaoPncpInicial
+dataPublicacaoPncpFinal *
+string
+(query)
+YYYY-MM-DD
+
+dataPublicacaoPncpFinal
+codigoModalidade *
+integer($int32)
+(query)
+codigoModalidade
+unidadeOrgaoCodigoIbge
+integer
+(query)
+unidadeOrgaoCodigoIbge
+unidadeOrgaoUfSigla
+string
+(query)
+unidadeOrgaoUfSigla
+dataAualizacaoPncp
+string
+(query)
+YYYY-MM-DD
+
+dataAualizacaoPncp
+amparoLegalCodigoPncp
+integer($int32)
+(query)
+amparoLegalCodigoPncp
+contratacaoExcluida
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "idCompra": "string",
+      "numeroControlePNCP": "string",
+      "anoCompraPncp": 0,
+      "sequencialCompraPncp": 0,
+      "orgaoEntidadeCnpj": "string",
+      "orgaoSubrogadoCnpj": "string",
+      "codigoOrgao": 0,
+      "orgaoEntidadeRazaoSocial": "string",
+      "orgaoSubrogadoRazaoSocial": "string",
+      "orgaoEntidadeEsferaId": "string",
+      "orgaoSubrogadoEsferaId": "string",
+      "orgaoEntidadePoderId": "string",
+      "orgaoSubrogadoPoderId": "string",
+      "unidadeOrgaoCodigoUnidade": "string",
+      "unidadeSubrogadaCodigoUnidade": "string",
+      "unidadeOrgaoNomeUnidade": "string",
+      "unidadeSubrogadaNomeUnidade": "string",
+      "unidadeOrgaoUfSigla": "string",
+      "unidadeSubrogadaUfSigla": "string",
+      "unidadeOrgaoMunicipioNome": "string",
+      "unidadeSubrogadaMunicipioNome": "string",
+      "unidadeOrgaoCodigoIbge": 0,
+      "unidadeSubrogadaCodigoIbge": 0,
+      "numeroCompra": "string",
+      "modalidadeIdPncp": 0,
+      "codigoModalidade": 0,
+      "modalidadeNome": "string",
+      "srp": 0,
+      "modoDisputaIdPncp": 0,
+      "codigoModoDisputa": 0,
+      "amparoLegalCodigoPncp": 0,
+      "amparoLegalNome": "string",
+      "amparoLegalDescricao": "string",
+      "informacaoComplementar": "string",
+      "processo": "string",
+      "objetoCompra": "string",
+      "existeResultado": 0,
+      "orcamentoSigilosoCodigo": 0,
+      "orcamentoSigilosoDescricao": "string",
+      "situacaoCompraIdPncp": 0,
+      "situacaoCompraNomePncp": "string",
+      "tipoInstrumentoConvocatorioCodigoPncp": 0,
+      "tipoInstrumentoConvocatorioNome": "string",
+      "modoDisputaNomePncp": "string",
+      "valorTotalEstimado": 0,
+      "valorTotalHomologado": 0,
+      "dataInclusaoPncp": "2024-01-15 10:30:00",
+      "dataAtualizacaoPncp": "2024-01-15 10:30:00",
+      "dataPublicacaoPncp": "2024-01-15 10:30:00",
+      "dataAberturaPropostaPncp": "2024-01-15 10:30:00",
+      "dataEncerramentoPropostaPncp": "2024-01-15 10:30:00",
+      "contratacaoExcluida": 0
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-contratacoes/1.1_consultarContratacoes_PNCP_14133_Id
+
+Parameters
+Try it out
+Name	Description
+tipo *
+string
+(query)
+Available values : idCompra, numeroControlePNCPCompra
+
+
+idCompra
+codigo *
+string
+(query)
+codigo
+dataAtualizacaoPncp
+string
+(query)
+YYYY-MM-DD
+
+dataAtualizacaoPncp
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "idCompra": "string",
+      "numeroControlePNCP": "string",
+      "anoCompraPncp": 0,
+      "sequencialCompraPncp": 0,
+      "orgaoEntidadeCnpj": "string",
+      "orgaoSubrogadoCnpj": "string",
+      "codigoOrgao": 0,
+      "orgaoEntidadeRazaoSocial": "string",
+      "orgaoSubrogadoRazaoSocial": "string",
+      "orgaoEntidadeEsferaId": "string",
+      "orgaoSubrogadoEsferaId": "string",
+      "orgaoEntidadePoderId": "string",
+      "orgaoSubrogadoPoderId": "string",
+      "unidadeOrgaoCodigoUnidade": "string",
+      "unidadeSubrogadaCodigoUnidade": "string",
+      "unidadeOrgaoNomeUnidade": "string",
+      "unidadeSubrogadaNomeUnidade": "string",
+      "unidadeOrgaoUfSigla": "string",
+      "unidadeSubrogadaUfSigla": "string",
+      "unidadeOrgaoMunicipioNome": "string",
+      "unidadeSubrogadaMunicipioNome": "string",
+      "unidadeOrgaoCodigoIbge": 0,
+      "unidadeSubrogadaCodigoIbge": 0,
+      "numeroCompra": "string",
+      "modalidadeIdPncp": 0,
+      "codigoModalidade": 0,
+      "modalidadeNome": "string",
+      "srp": 0,
+      "modoDisputaIdPncp": 0,
+      "codigoModoDisputa": 0,
+      "amparoLegalCodigoPncp": 0,
+      "amparoLegalNome": "string",
+      "amparoLegalDescricao": "string",
+      "informacaoComplementar": "string",
+      "processo": "string",
+      "objetoCompra": "string",
+      "existeResultado": 0,
+      "orcamentoSigilosoCodigo": 0,
+      "orcamentoSigilosoDescricao": "string",
+      "situacaoCompraIdPncp": 0,
+      "situacaoCompraNomePncp": "string",
+      "tipoInstrumentoConvocatorioCodigoPncp": 0,
+      "tipoInstrumentoConvocatorioNome": "string",
+      "modoDisputaNomePncp": "string",
+      "valorTotalEstimado": 0,
+      "valorTotalHomologado": 0,
+      "dataInclusaoPncp": "2024-01-15 10:30:00",
+      "dataAtualizacaoPncp": "2024-01-15 10:30:00",
+      "dataPublicacaoPncp": "2024-01-15 10:30:00",
+      "dataAberturaPropostaPncp": "2024-01-15 10:30:00",
+      "dataEncerramentoPropostaPncp": "2024-01-15 10:30:00",
+      "contratacaoExcluida": 0
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-contratacoes/2_consultarItensContratacoes_PNCP_14133
+
+
+GET
+/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id
+
+
+GET
+/modulo-contratacoes/3_consultarResultadoItensContratacoes_PNCP_14133
+
+
+GET
+/modulo-contratacoes/3.1_consultarResultadoItensContratacoes_PNCP_14133_Id
+
+08 - ARP
+Consulta Atas de Registro de Preços (ARP) e seus respectivos itens.
+
+
+
+GET
+/modulo-arp/1_consultarARP
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoUnidadeGerenciadora
+string
+(query)
+codigoUnidadeGerenciadora
+codigoModalidadeCompra
+string
+(query)
+codigoModalidadeCompra
+numeroAtaRegistroPreco
+string
+(query)
+numeroAtaRegistroPreco
+dataVigenciaInicialMin *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaInicialMin
+dataVigenciaInicialMax *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaInicialMax
+dataAssinaturaInicial
+string
+(query)
+YYYY-MM-DD
+
+dataAssinaturaInicial
+dataAssinaturaFinal
+string
+(query)
+YYYY-MM-DD
+
+dataAssinaturaFinal
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numeroAtaRegistroPreco": "string",
+      "codigoUnidadeGerenciadora": "string",
+      "nomeUnidadeGerenciadora": "string",
+      "codigoOrgao": 1073741824,
+      "nomeOrgao": "string",
+      "linkAtaPNCP": "string",
+      "linkCompraPNCP": "string",
+      "numeroCompra": "string",
+      "anoCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "nomeModalidadeCompra": "string",
+      "dataAssinatura": "2024-01-15",
+      "dataVigenciaInicial": "2024-01-15",
+      "dataVigenciaFinal": "2024-01-15",
+      "valorTotal": 0,
+      "statusAta": "string",
+      "objeto": "string",
+      "quantidadeItens": 0,
+      "dataHoraAtualizacao": "2024-01-15 10:30:00",
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "dataHoraExclusao": "2024-01-15 10:30:00",
+      "ataExcluido": true,
+      "numeroControlePncpAta": "string",
+      "numeroControlePncpCompra": "string",
+      "idCompra": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-arp/1.1_consultarARP_Id
+
+Parameters
+Try it out
+Name	Description
+numeroControlePncpAta *
+string
+(query)
+numeroControlePncpAta
+dataAtualizacao
+string
+(query)
+YYYY-MM-DD
+
+dataAtualizacao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numeroAtaRegistroPreco": "string",
+      "codigoUnidadeGerenciadora": "string",
+      "nomeUnidadeGerenciadora": "string",
+      "codigoOrgao": 1073741824,
+      "nomeOrgao": "string",
+      "linkAtaPNCP": "string",
+      "linkCompraPNCP": "string",
+      "numeroCompra": "string",
+      "anoCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "nomeModalidadeCompra": "string",
+      "dataAssinatura": "2024-01-15",
+      "dataVigenciaInicial": "2024-01-15",
+      "dataVigenciaFinal": "2024-01-15",
+      "valorTotal": 0,
+      "statusAta": "string",
+      "objeto": "string",
+      "quantidadeItens": 0,
+      "dataHoraAtualizacao": "2024-01-15 10:30:00",
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "dataHoraExclusao": "2024-01-15 10:30:00",
+      "ataExcluido": true,
+      "numeroControlePncpAta": "string",
+      "numeroControlePncpCompra": "string",
+      "idCompra": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-arp/1.2_consultarARP_FimVigencia
+
+
+GET
+/modulo-arp/2_consultarARPItem
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoUnidadeGerenciadora
+integer($int32)
+(query)
+codigoUnidadeGerenciadora
+codigoModalidadeCompra
+string
+(query)
+codigoModalidadeCompra
+dataVigenciaInicialMin *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaInicialMin
+dataVigenciaInicialMax *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaInicialMax
+dataAssinaturaInicial
+string
+(query)
+YYYY-MM-DD
+
+dataAssinaturaInicial
+dataAssinaturaFinal
+string
+(query)
+YYYY-MM-DD
+
+dataAssinaturaFinal
+numeroItem
+string
+(query)
+numeroItem
+codigoItem
+integer($int32)
+(query)
+codigoItem
+tipoItem
+string
+(query)
+tipoItem
+niFornecedor
+string
+(query)
+niFornecedor
+codigoPdm
+integer($int32)
+(query)
+codigoPdm
+numeroCompra
+string
+(query)
+numeroCompra
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numeroAtaRegistroPreco": "string",
+      "codigoUnidadeGerenciadora": "string",
+      "numeroCompra": "string",
+      "anoCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "dataAssinatura": "2024-01-15 10:30:00",
+      "dataVigenciaInicial": "2026-09-05",
+      "dataVigenciaFinal": "2026-09-05",
+      "numeroItem": "string",
+      "codigoItem": 0,
+      "descricaoItem": "string",
+      "tipoItem": "string",
+      "quantidadeHomologadaItem": 0,
+      "classificacaoFornecedor": "string",
+      "niFornecedor": "string",
+      "nomeRazaoSocialFornecedor": "string",
+      "quantidadeHomologadaVencedor": 0,
+      "valorUnitario": 0,
+      "valorTotal": 0,
+      "maximoAdesao": 0,
+      "nomeUnidadeGerenciadora": "string",
+      "nomeModalidadeCompra": "string",
+      "idCompra": "string",
+      "numeroControlePncpCompra": "string",
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "dataHoraAtualizacao": "2024-01-15 10:30:00",
+      "quantidadeEmpenhada": 0,
+      "percentualMaiorDesconto": 0,
+      "situacaoSicaf": "string",
+      "dataHoraExclusao": "2024-01-15 10:30:00",
+      "itemExcluido": true,
+      "numeroControlePncpAta": "string",
+      "codigoPdm": 0,
+      "nomePdm": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-arp/2.1_consultarARPItem_Id
+
+Parameters
+Try it out
+Name	Description
+numeroControlePncpAta *
+string
+(query)
+numeroControlePncpAta
+dataAtualizacao
+string
+(query)
+YYYY-MM-DD
+
+dataAtualizacao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numeroAtaRegistroPreco": "string",
+      "codigoUnidadeGerenciadora": "string",
+      "numeroCompra": "string",
+      "anoCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "dataAssinatura": "2024-01-15 10:30:00",
+      "dataVigenciaInicial": "2026-09-05",
+      "dataVigenciaFinal": "2026-09-05",
+      "numeroItem": "string",
+      "codigoItem": 0,
+      "descricaoItem": "string",
+      "tipoItem": "string",
+      "quantidadeHomologadaItem": 0,
+      "classificacaoFornecedor": "string",
+      "niFornecedor": "string",
+      "nomeRazaoSocialFornecedor": "string",
+      "quantidadeHomologadaVencedor": 0,
+      "valorUnitario": 0,
+      "valorTotal": 0,
+      "maximoAdesao": 0,
+      "nomeUnidadeGerenciadora": "string",
+      "nomeModalidadeCompra": "string",
+      "idCompra": "string",
+      "numeroControlePncpCompra": "string",
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "dataHoraAtualizacao": "2024-01-15 10:30:00",
+      "quantidadeEmpenhada": 0,
+      "percentualMaiorDesconto": 0,
+      "situacaoSicaf": "string",
+      "dataHoraExclusao": "2024-01-15 10:30:00",
+      "itemExcluido": true,
+      "numeroControlePncpAta": "string",
+      "codigoPdm": 0,
+      "nomePdm": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-arp/3_consultarUnidadesItem
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+numeroAta *
+string
+(query)
+numeroAta
+unidadeGerenciadora *
+string
+(query)
+unidadeGerenciadora
+numeroItem *
+string
+(query)
+numeroItem
+dataAtualizacao
+string
+(query)
+YYYY-MM-DD
+
+dataAtualizacao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numeroAta": "string",
+      "unidadeGerenciadora": "string",
+      "numeroItem": "string",
+      "codigoPdm": "string",
+      "descricaoItem": "string",
+      "fornecedor": "string",
+      "quantidadeRegistrada": 0,
+      "saldoAdesoes": 0,
+      "saldoRemanejamentoEmpenho": 0,
+      "qtdLimiteAdesao": 0,
+      "qtdLimiteInformadoCompra": 0,
+      "aceitaAdesao": true,
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "dataHoraAtualizacao": "2024-01-15 10:30:00",
+      "dataHoraExclusao": "2024-01-15 10:30:00",
+      "codigoUnidade": "string",
+      "nomeUnidade": "string",
+      "tipoUnidade": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-arp/4_consultarEmpenhosSaldoItem
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+numeroAta *
+string
+(query)
+numeroAta
+unidadeGerenciadora *
+string
+(query)
+unidadeGerenciadora
+dataAtualizacao
+string
+(query)
+YYYY-MM-DD
+
+dataAtualizacao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numeroItem": "string",
+      "unidade": "string",
+      "tipo": "string",
+      "quantidadeRegistrada": 0,
+      "quantidadeEmpenhada": 0,
+      "saldoEmpenho": 0,
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "dataHoraAtualizacao": "2024-01-15 10:30:00"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-arp/5_consultarAdesoesItem
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+numeroAta *
+string
+(query)
+numeroAta
+unidadeGerenciadora *
+string
+(query)
+unidadeGerenciadora
+numeroItem *
+string
+(query)
+numeroItem
+unidade
+string
+(query)
+unidade
+dataAtualizacao
+string
+(query)
+YYYY-MM-DD
+
+dataAtualizacao
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "numeroAta": "string",
+      "unidadeGerenciadora": "string",
+      "unidadeNaoParticipante": "string",
+      "dataAprovacaoAnalise": "2024-01-15 10:30:00",
+      "quantidadeAprovadaAdesao": 0
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+09 - CONTRATOS
+Consulta contratos e seus respectivos itens.
+
+
+
+GET
+/modulo-contratos/1_consultarContratos
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoOrgao *
+string
+(query)
+codigoOrgao
+codigoUnidadeGestora
+string
+(query)
+codigoUnidadeGestora
+codigoUnidadeGestoraOrigemContrato
+string
+(query)
+codigoUnidadeGestoraOrigemContrato
+codigoUnidadeRealizadoraCompra
+string
+(query)
+codigoUnidadeRealizadoraCompra
+numeroContrato
+string
+(query)
+numeroContrato
+codigoModalidadeCompra
+string
+(query)
+codigoModalidadeCompra
+codigoTipo
+string
+(query)
+codigoTipo
+codigoCategoria
+string
+(query)
+codigoCategoria
+niFornecedor
+string
+(query)
+niFornecedor
+dataVigenciaInicialMin *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaInicialMin
+dataVigenciaInicialMax *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaInicialMax
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoOrgao": "string",
+      "nomeOrgao": "string",
+      "codigoUnidadeGestora": "string",
+      "nomeUnidadeGestora": "string",
+      "codigoUnidadeGestoraOrigemContrato": "string",
+      "nomeUnidadeGestoraOrigemContrato": "string",
+      "receitaDespesa": "string",
+      "numeroContrato": "string",
+      "codigoUnidadeRealizadoraCompra": "string",
+      "nomeUnidadeRealizadoraCompra": "string",
+      "numeroCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "nomeModalidadeCompra": "string",
+      "codigoTipo": "string",
+      "nomeTipo": "string",
+      "codigoCategoria": "string",
+      "nomeCategoria": "string",
+      "codigoSubcategoria": "string",
+      "nomeSubcategoria": "string",
+      "niFornecedor": "string",
+      "nomeRazaoSocialFornecedor": "string",
+      "processo": "string",
+      "objeto": "string",
+      "informacoesComplementares": "string",
+      "dataVigenciaInicial": "2024-01-15 10:30:00",
+      "dataVigenciaFinal": "2024-01-15 10:30:00",
+      "valorGlobal": 0,
+      "numeroParcelas": 0,
+      "valorParcela": 0,
+      "valorAcumulado": 0,
+      "totalDespesasAcessorias": 0,
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "numeroControlePncpContrato": "string",
+      "numeroControlePncpCompra": "string",
+      "idCompra": "string",
+      "dataHoraExclusao": "2024-01-15 10:30:00",
+      "contratoExcluido": true,
+      "unidadesRequisitantes": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-contratos/1.1_consultarContratos_Id
+
+Parameters
+Try it out
+Name	Description
+codigo *
+string
+(query)
+codigo
+tipo *
+string
+(query)
+Available values : idCompra, numeroControlePncpContrato
+
+
+idCompra
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoOrgao": "string",
+      "nomeOrgao": "string",
+      "codigoUnidadeGestora": "string",
+      "nomeUnidadeGestora": "string",
+      "codigoUnidadeGestoraOrigemContrato": "string",
+      "nomeUnidadeGestoraOrigemContrato": "string",
+      "receitaDespesa": "string",
+      "numeroContrato": "string",
+      "codigoUnidadeRealizadoraCompra": "string",
+      "nomeUnidadeRealizadoraCompra": "string",
+      "numeroCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "nomeModalidadeCompra": "string",
+      "codigoTipo": "string",
+      "nomeTipo": "string",
+      "codigoCategoria": "string",
+      "nomeCategoria": "string",
+      "codigoSubcategoria": "string",
+      "nomeSubcategoria": "string",
+      "niFornecedor": "string",
+      "nomeRazaoSocialFornecedor": "string",
+      "processo": "string",
+      "objeto": "string",
+      "informacoesComplementares": "string",
+      "dataVigenciaInicial": "2024-01-15 10:30:00",
+      "dataVigenciaFinal": "2024-01-15 10:30:00",
+      "valorGlobal": 0,
+      "numeroParcelas": 0,
+      "valorParcela": 0,
+      "valorAcumulado": 0,
+      "totalDespesasAcessorias": 0,
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "numeroControlePncpContrato": "string",
+      "numeroControlePncpCompra": "string",
+      "idCompra": "string",
+      "dataHoraExclusao": "2024-01-15 10:30:00",
+      "contratoExcluido": true,
+      "unidadesRequisitantes": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-contratos/1.2_consultarContratos_FimVigencia
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoOrgao *
+string
+(query)
+codigoOrgao
+codigoUnidadeGestora
+string
+(query)
+codigoUnidadeGestora
+codigoUnidadeGestoraOrigemContrato
+string
+(query)
+codigoUnidadeGestoraOrigemContrato
+codigoUnidadeRealizadoraCompra
+string
+(query)
+codigoUnidadeRealizadoraCompra
+numeroContrato
+string
+(query)
+numeroContrato
+codigoModalidadeCompra
+string
+(query)
+codigoModalidadeCompra
+codigoTipo
+string
+(query)
+codigoTipo
+codigoCategoria
+string
+(query)
+codigoCategoria
+niFornecedor
+string
+(query)
+niFornecedor
+dataVigenciaFinalMin *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaFinalMin
+dataVigenciaFinalMax *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaFinalMax
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoOrgao": "string",
+      "nomeOrgao": "string",
+      "codigoUnidadeGestora": "string",
+      "nomeUnidadeGestora": "string",
+      "codigoUnidadeGestoraOrigemContrato": "string",
+      "nomeUnidadeGestoraOrigemContrato": "string",
+      "receitaDespesa": "string",
+      "numeroContrato": "string",
+      "codigoUnidadeRealizadoraCompra": "string",
+      "nomeUnidadeRealizadoraCompra": "string",
+      "numeroCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "nomeModalidadeCompra": "string",
+      "codigoTipo": "string",
+      "nomeTipo": "string",
+      "codigoCategoria": "string",
+      "nomeCategoria": "string",
+      "codigoSubcategoria": "string",
+      "nomeSubcategoria": "string",
+      "niFornecedor": "string",
+      "nomeRazaoSocialFornecedor": "string",
+      "processo": "string",
+      "objeto": "string",
+      "informacoesComplementares": "string",
+      "dataVigenciaInicial": "2024-01-15 10:30:00",
+      "dataVigenciaFinal": "2024-01-15 10:30:00",
+      "valorGlobal": 0,
+      "numeroParcelas": 0,
+      "valorParcela": 0,
+      "valorAcumulado": 0,
+      "totalDespesasAcessorias": 0,
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "numeroControlePncpContrato": "string",
+      "numeroControlePncpCompra": "string",
+      "idCompra": "string",
+      "dataHoraExclusao": "2024-01-15 10:30:00",
+      "contratoExcluido": true,
+      "unidadesRequisitantes": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-contratos/2_consultarContratosItem
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+codigoOrgao *
+string
+(query)
+codigoOrgao
+codigoUnidadeGestora
+string
+(query)
+codigoUnidadeGestora
+codigoUnidadeGestoraOrigemContrato
+string
+(query)
+codigoUnidadeGestoraOrigemContrato
+codigoUnidadeRealizadoraCompra
+string
+(query)
+codigoUnidadeRealizadoraCompra
+numeroContrato
+string
+(query)
+numeroContrato
+codigoModalidadeCompra
+string
+(query)
+codigoModalidadeCompra
+tipoItem
+string
+(query)
+tipoItem
+codigoItem
+integer($int32)
+(query)
+codigoItem
+niFornecedor
+string
+(query)
+niFornecedor
+dataVigenciaInicialMin *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaInicialMin
+dataVigenciaInicialMax *
+string
+(query)
+YYYY-MM-DD
+
+dataVigenciaInicialMax
+poder
+string
+(query)
+Available values : Executivo, Legislativo, Judiciário
+
+
+--
+esfera
+string
+(query)
+Available values : Federal, Estadual, Municipal
+
+
+--
+idCompra
+string
+(query)
+idCompra
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoOrgao": "string",
+      "codigoUnidadeGestora": "string",
+      "codigoUnidadeGestoraOrigemContrato": "string",
+      "codigoUnidadeRealizadoraCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "numeroContrato": "string",
+      "niFornecedor": "string",
+      "nomeRazaoSocialFornecedor": "string",
+      "processo": "string",
+      "dataVigenciaInicial": "2024-01-15 10:30:00",
+      "dataVigenciaFinal": "2024-01-15 10:30:00",
+      "valorGlobal": 0,
+      "tipoItem": "string",
+      "codigoItem": 0,
+      "descricaoIitem": "string",
+      "quantidadeItem": 0,
+      "valorUnitarioItem": 0,
+      "valorTotalItem": 0,
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "numeroControlePncpContrato": "string",
+      "idCompra": "string",
+      "dataHoraExclusaoContrato": "2024-01-15 10:30:00",
+      "contratoExcluido": true,
+      "nomeOrgao": "string",
+      "nomeUnidadeGestora": "string",
+      "nomeUnidadeGestoraOrigemContrato": "string",
+      "nomeUnidadeRealizadoraCompra": "string",
+      "nomeModalidadeCompra": "string",
+      "numeroCompra": "string",
+      "dataHoraExclusaoItem": "2024-01-15 10:30:00",
+      "contratoItemExcluido": true,
+      "numeroItem": "string",
+      "esfera": "string",
+      "poder": "string",
+      "numeroControlePncpCompra": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-contratos/2.1_consultarContratosItem_Id
+
+Parameters
+Try it out
+Name	Description
+tipo *
+string
+(query)
+Available values : idCompra, numeroControlePncpContrato
+
+
+idCompra
+codigo *
+string
+(query)
+codigo
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "codigoOrgao": "string",
+      "codigoUnidadeGestora": "string",
+      "codigoUnidadeGestoraOrigemContrato": "string",
+      "codigoUnidadeRealizadoraCompra": "string",
+      "codigoModalidadeCompra": "string",
+      "numeroContrato": "string",
+      "niFornecedor": "string",
+      "nomeRazaoSocialFornecedor": "string",
+      "processo": "string",
+      "dataVigenciaInicial": "2024-01-15 10:30:00",
+      "dataVigenciaFinal": "2024-01-15 10:30:00",
+      "valorGlobal": 0,
+      "tipoItem": "string",
+      "codigoItem": 0,
+      "descricaoIitem": "string",
+      "quantidadeItem": 0,
+      "valorUnitarioItem": 0,
+      "valorTotalItem": 0,
+      "dataHoraInclusao": "2024-01-15 10:30:00",
+      "numeroControlePncpContrato": "string",
+      "idCompra": "string",
+      "dataHoraExclusaoContrato": "2024-01-15 10:30:00",
+      "contratoExcluido": true,
+      "nomeOrgao": "string",
+      "nomeUnidadeGestora": "string",
+      "nomeUnidadeGestoraOrigemContrato": "string",
+      "nomeUnidadeRealizadoraCompra": "string",
+      "nomeModalidadeCompra": "string",
+      "numeroCompra": "string",
+      "dataHoraExclusaoItem": "2024-01-15 10:30:00",
+      "contratoItemExcluido": true,
+      "numeroItem": "string",
+      "esfera": "string",
+      "poder": "string",
+      "numeroControlePncpCompra": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+10 - FORNECEDOR
+Consulta fornecedores registrados.
+
+
+
+GET
+/modulo-fornecedor/1_consultarFornecedor
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+cnpj
+string
+(query)
+cnpj
+cpf
+string
+(query)
+cpf
+naturezaJuridicaId
+integer($int64)
+(query)
+naturezaJuridicaId
+porteEmpresaId
+integer($int64)
+(query)
+porteEmpresaId
+codigoCnae
+integer
+(query)
+codigoCnae
+ativo *
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "ativo": true,
+      "cnpj": "string",
+      "cpf": "string",
+      "habilitadoLicitar": true,
+      "codigoCnae": 0,
+      "nomeCnae": "string",
+      "nomeMunicipio": "string",
+      "naturezaJuridicaId": 0,
+      "naturezaJuridicaNome": "string",
+      "porteEmpresaId": 0,
+      "porteEmpresaNome": "string",
+      "nomeRazaoSocialFornecedor": "string",
+      "ufSigla": "string"
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+11 - OCDS
+Consulta contratações no formato OCDS (Open Contracting Data Standard).
+
+
+
+GET
+/modulo-ocds/1_releases
+
+Parameters
+Try it out
+Name	Description
+page
+integer($int32)
+(query)
+Default value : 1
+
+1
+offSet
+integer($int32)
+(query)
+Default value : 10
+
+10
+buyerID *
+string
+(query)
+BR-CNPJ
+
+buyerID
+releaseStartDate *
+string
+(query)
+YYYY-MM-DD
+
+releaseStartDate
+releaseEndDate *
+string
+(query)
+YYYY-MM-DD
+
+releaseEndDate
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "publisherDTO": {
+    "name": "string",
+    "uri": "string"
+  },
+  "publishedDate": "2026-09-05T19:14:52.097Z",
+  "version": "string",
+  "publicationPolicy": "string",
+  "license": "string",
+  "extensions": [
+    "string"
+  ],
+  "releases": [
+    {
+      "ocid": "string",
+      "id": "string",
+      "date": "2026-09-05T19:14:52.097Z",
+      "tag": [
+        "string"
+      ],
+      "initiationType": "string",
+      "buyer": {
+        "id": "string",
+        "name": "string"
+      },
+      "language": "string",
+      "parties": [
+        {
+          "id": "string",
+          "name": "string",
+          "identifier": {
+            "scheme": "string",
+            "id": "string",
+            "legalName": "string"
+          },
+          "additionalIdentifiers": [
+            {
+              "id": "string",
+              "legalName": "string"
+            }
+          ],
+          "address": {
+            "region": "string",
+            "locality": "string",
+            "countryName": "string"
+          },
+          "roles": [
+            "string"
+          ],
+          "details": {
+            "classifications": [
+              {
+                "scheme": "string",
+                "id": "string",
+                "uri": "string"
+              }
+            ]
+          },
+          "suppliers": [
+            {
+              "id": "string",
+              "name": "string"
+            }
+          ]
+        }
+      ],
+      "tender": {
+        "id": "string",
+        "title": "string",
+        "description": "string",
+        "procuringEntity": {
+          "name": "string",
+          "id": "string"
+        },
+        "value": {
+          "amount": 0,
+          "currency": "string"
+        },
+        "procurementMethod": "string",
+        "procurementMethodDetails": "string",
+        "procurementMethodRationale": "string",
+        "submissionMethod": [
+          "string"
+        ],
+        "tenderPeriod": {
+          "startDate": "2026-09-05T19:14:52.098Z",
+          "endDate": "2026-09-05T19:14:52.098Z",
+          "maxExtentDate": "2026-09-05T19:14:52.098Z",
+          "durationInDays": 1073741824
+        },
+        "items": [
+          {
+            "id": "string",
+            "description": "string",
+            "statusDetails": "string",
+            "quantity": 0,
+            "unit": {
+              "name": "string",
+              "value": {
+                "amount": 0,
+                "currency": "string"
+              }
+            },
+            "relatedLot": "string"
+          }
+        ],
+        "lots": [
+          {
+            "id": "string",
+            "statusDetailsId": "string",
+            "statusDetails": "string",
+            "value": {
+              "amount": 0,
+              "currency": "string"
+            },
+            "confidentialBudget": true,
+            "asset": "string",
+            "realEstateRegistrationCode": "string",
+            "standardPreferenceMarginApplicability": true,
+            "standardPreferenceMarginPercentage": 0,
+            "additionalPreferenceMarginApplicability": true,
+            "additionalPreferenceMarginPercentage": 0,
+            "ncmNbsCode": "string",
+            "ncmNbsDescription": "string",
+            "catalogItemCategoryId": 1073741824,
+            "catalogItemCategoryName": "string",
+            "catalogItemCode": 1073741824,
+            "awardCriteria": "string",
+            "awardCriteriaDetails": "string",
+            "sustainability": [
+              {
+                "goal": "string",
+                "strategies": [
+                  "string"
+                ]
+              }
+            ],
+            "otherRequirements": {
+              "reservedParticipation": [
+                "string"
+              ]
+            },
+            "subcontractingTerms": {
+              "description": "string"
+            }
+          }
+        ]
+      },
+      "awards": [
+        {
+          "id": "string",
+          "title": "string",
+          "description": "string",
+          "date": "2026-09-05T19:14:52.098Z",
+          "hasSubcontracting": true,
+          "value": {
+            "amount": 0,
+            "currency": "string"
+          },
+          "suppliers": [
+            {
+              "id": "string",
+              "name": "string"
+            }
+          ],
+          "items": [
+            {
+              "id": "string",
+              "description": "string",
+              "statusDetails": "string",
+              "quantity": 0,
+              "unit": {
+                "name": "string",
+                "value": {
+                  "amount": 0,
+                  "currency": "string"
+                }
+              },
+              "relatedLot": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "links": {
+    "next": "string",
+    "prev": "string"
+  },
+  "uri": "string"
+}
+No links
+97 - INDICADORES
+Este módulo expõe endpoints de indicadores de uso e desempenho da API Compras V2.
+
+
+
+GET
+/modulo-indicadores/1_consultarIndicadoresConsolidados
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "anoMesInicio": "string",
+      "anoMesFim": "string",
+      "2026-04-26": "2026-09-05",
+      "totalServicos": 0,
+      "totalRequisicoes": 0,
+      "percentualSucesso": 0,
+      "mediaTempoRespostaMs": 0,
+      "totalDownloadGb": 0,
+      "mediaDownloadMesGb": 0
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+
+GET
+/modulo-indicadores/2_consultarIndicadoresPorPeriodo
+
+Parameters
+Try it out
+Name	Description
+pagina
+integer($int32)
+(query)
+Default value : 1
+
+1
+tamanhoPagina
+integer($int32)
+(query)
+Default value : 10
+
+10
+ano *
+integer($int32)
+(query)
+ano
+mes
+integer($int32)
+(query)
+mes
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "resultado": [
+    {
+      "anoMes": "string",
+      "ano": 0,
+      "mes": 0,
+      "totalServicos": 0,
+      "totalRequisicoes": 0,
+      "percentualSucesso": 0,
+      "mediaTempoRespostaMs": 0,
+      "totalDownloadGb": 0,
+      "totalDownloadMbytes": 0
+    }
+  ],
+  "totalRegistros": 0,
+  "totalPaginas": 0,
+  "paginasRestantes": 0
+}
+No links
+98 - ALICE
+Serviços de integração Analisador de Licitações, Contratos e Editais (Alice) e Compras.gov.
+
+
+
+GET
+/alice/avisos-restritos
+
+
+Parameters
+Try it out
+Name	Description
+dataInicioIntervalo *
+string
+(query)
+DD/MM/YYYY HH:MM:SS
+
+dataInicioIntervalo
+dataFimIntervalo *
+string
+(query)
+DD/MM/YYYY HH:MM:SS
+
+dataFimIntervalo
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "msgErro": "string",
+    "dataSolicitacaoAnalise": "string",
+    "dataEncerramentoAnalise": "string",
+    "ticketAnalise": "string",
+    "tipoAnalise": 1073741824,
+    "codigoStatusAnalise": 1073741824,
+    "descricaoStatusAnalise": "string",
+    "chaveCompra": "string"
+  }
+]
+No links
+
+GET
+/alice/compras
+
+
+Parameters
+Try it out
+Name	Description
+chavesCompra *
+array[string]
+(query)
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "msgErro": "string",
+    "dataSolicitacaoAnalise": "string",
+    "dataEncerramentoAnalise": "string",
+    "ticketAnalise": "string",
+    "tipoAnalise": 1073741824,
+    "codigoStatusAnalise": 1073741824,
+    "descricaoStatusAnalise": "string",
+    "chaveCompra": "string"
+  }
+]
+No links
+
+GET
+/alice/tickets
+
+
+Parameters
+Try it out
+Name	Description
+tickets *
+array[string]
+(query)
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "msgErro": "string",
+    "dataSolicitacaoAnalise": "string",
+    "dataEncerramentoAnalise": "string",
+    "ticketAnalise": "string",
+    "tipoAnalise": 1073741824,
+    "codigoStatusAnalise": 1073741824,
+    "descricaoStatusAnalise": "string",
+    "chaveCompra": "string",
+    "itens": [
+      {
+        "idAviso": 9007199254740991,
+        "codigoTipoAviso": 1073741824,
+        "nomeTipoAviso": "string",
+        "texto": "string",
+        "descricao": "string",
+        "fundamentacao": "string",
+        "numeroSequencialAviso": 1073741824
+      }
+    ]
+  }
+]
+No links
+99 - USUARIOS
+Serviço de gestão de usuários.
+
+
+
+PATCH
+/usuarios/atualizar/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "nome": "string",
+  "cpfCnpj": "string",
+  "email": "string",
+  "telefone": "string",
+  "administrador": true,
+  "dataInclusao": "2026-09-05T19:14:52.139Z",
+  "dataAtualizacao": "2026-09-05T19:14:52.139Z",
+  "dataDelecaoSuspensao": "2026-09-05T19:14:52.139Z",
+  "excluidoSuspenso": true,
+  "razaoExclusaoSuspensao": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": 1073741824,
+  "nome": "string",
+  "cpfCnpj": "string",
+  "email": "string",
+  "telefone": "string",
+  "login": "string",
+  "administrador": true,
+  "dataInclusao": "2026-09-05T19:14:52.142Z",
+  "dataAtualizacao": "2026-09-05T19:14:52.142Z",
+  "dataDelecaoSuspensao": "2026-09-05T19:14:52.142Z",
+  "excluidoSuspenso": true,
+  "razaoExclusaoSuspensao": "string"
+}
+No links
+
+GET
+/usuarios/consultar
+
+
+Parameters
+Try it out
+Name	Description
+id
+integer($int32)
+(query)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": 1073741824,
+    "nome": "string",
+    "cpfCnpj": "string",
+    "email": "string",
+    "telefone": "string",
+    "login": "string",
+    "administrador": true,
+    "dataInclusao": "2026-09-05T19:14:52.146Z",
+    "dataAtualizacao": "2026-09-05T19:14:52.146Z",
+    "dataDelecaoSuspensao": "2026-09-05T19:14:52.146Z",
+    "excluidoSuspenso": true,
+    "razaoExclusaoSuspensao": "string"
+  }
+]
+No links
+
+POST
+/usuarios/criar
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "nome": "string",
+  "cpfCnpj": "string",
+  "email": "string",
+  "telefone": "string",
+  "administrador": true,
+  "dataInclusao": "2026-09-05T19:14:52.153Z",
+  "dataAtualizacao": "2026-09-05T19:14:52.153Z",
+  "dataDelecaoSuspensao": "2026-09-05T19:14:52.153Z",
+  "excluidoSuspenso": true,
+  "razaoExclusaoSuspensao": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "nome": "string",
+  "cpfCnpj": "string",
+  "email": "string",
+  "telefone": "string",
+  "administrador": true,
+  "dataInclusao": "2026-09-05T19:14:52.155Z",
+  "dataAtualizacao": "2026-09-05T19:14:52.155Z",
+  "dataDelecaoSuspensao": "2026-09-05T19:14:52.155Z",
+  "excluidoSuspenso": true,
+  "razaoExclusaoSuspensao": "string",
+  "login": "string",
+  "senha": "string"
+}
+No links
+
+PATCH
+/usuarios/resetSenha/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+AUTENTICACAO
+Descrição do serviço de autenticação de usuários
+
+
+
+POST
+/autenticacao/login
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "login": "string",
+  "senha": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+
+Schemas
+UsuariosDTOCollapse allobject
+nomestring
+cpfCnpjstring
+emailstring
+telefonestring
+administradorboolean
+dataInclusaostringdate-time
+dataAtualizacaostringdate-time
+dataDelecaoSuspensaostringdate-time
+excluidoSuspensoboolean
+razaoExclusaoSuspensaostring
+UsuariosDTOResponseCollapse allobject
+nomestring
+cpfCnpjstring
+emailstring
+telefonestring
+administradorboolean
+dataInclusaostringdate-time
+dataAtualizacaostringdate-time
+dataDelecaoSuspensaostringdate-time
+excluidoSuspensoboolean
+razaoExclusaoSuspensaostring
+loginstring
+senhastring
+AutenticacaoDTOCollapse allobject
+loginstring
+senhastring
+UsuariosResponseDTOCollapse allobject
+idintegerint32
+nomestring
+cpfCnpjstring
+emailstring
+telefonestring
+loginstring
+administradorboolean
+dataInclusaostringdate-time
+dataAtualizacaostringdate-time
+dataDelecaoSuspensaostringdate-time
+excluidoSuspensoboolean
+razaoExclusaoSuspensaostring
+DmCorpOrgaoDTOCollapse allobject
+codigoOrgaoExpand allintegerint32
+nomeOrgaostring
+nomeMnemonicoOrgaostring
+cnpjCpfOrgaostring
+codigoOrgaoVinculadoExpand allintegerint32
+cnpjCpfOrgaoVinculadostring
+nomeOrgaoVinculadostring
+codigoOrgaoSuperiorExpand allintegerint32
+cnpjCpfOrgaoSuperiorstring
+nomeOrgaoSuperiorstring
+codigoTipoAdministracaoExpand allintegerint32
+nomeTipoAdministracaostring
+poderstring
+esferastring
+usoSisgboolean
+statusOrgaoboolean
+dataHoraMovimentoExpand allstringdate-time
+GenericAPIResponseDTODmCorpOrgaoDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmCorpUasgDTOCollapse allobject
+codigoUasgstring
+nomeUasgstring
+usoSisgboolean
+adesaoSiasgboolean
+siglaUfstring
+codigoMunicipioExpand allintegerint32
+codigoMunicipioIbgeExpand allintegerint32
+nomeMunicipioIbgestring
+codigoUnidadePoloExpand allintegerint32
+nomeUnidadePolostring
+codigoUnidadeEspelhoExpand allintegerint32
+nomeUnidadeEspelhostring
+uasgCadastradoraboolean
+cnpjCpfUasgstring
+codigoOrgaoExpand allintegerint32
+cnpjCpfOrgaostring
+cnpjCpfOrgaoVinculadostring
+cnpjCpfOrgaoSuperiorstring
+codigoSiorgstring
+statusUasgboolean
+dataImplantacaoSidecstringdate-time
+dataHoraMovimentoExpand allstringdate-time
+GenericAPIResponseDTODmCorpUasgDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoNaturezaDespesaAPIResponseDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoNaturezaDespesaDTOCollapse allobject
+codigoServicoExpand allintegerint64
+codigoNaturezaDespesastring
+nomeNaturezaDespesastring
+statusNaturezaDespesaboolean
+DmServicoUndMedidaAPIResponseDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoUndMedidaDTOExpand allobject
+DmServicoItemDTOCollapse allobject
+codigoSecaoExpand allintegerint64
+nomeSecaostring
+codigoDivisaoExpand allintegerint64
+nomeDivisaostring
+codigoGrupoExpand allintegerint64
+nomeGrupostring
+codigoClasseExpand allintegerint64
+nomeClassestring
+codigoSubclasseExpand allintegerint64
+nomeSubclassestring
+codigoServicoExpand allintegerint64
+nomeServicostring
+codigoCpcExpand allintegerint64
+exclusivoCentralComprasboolean
+statusServicoboolean
+dataHoraAtualizacaoExpand allstringdate-time
+GenericAPIResponseDTODmServicoItemDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoSubClasseAPIResponseDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoSubClasseDTOCollapse allobject
+codigoClasseExpand allintegerint64
+nomeClassestring
+codigoSubclasseExpand allintegerint64
+nomeSubclassestring
+statusSubclasseboolean
+dataHoraAtualizacaoExpand allstringdate-time
+DmServicoClasseAPIResponseDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoClasseDTOCollapse allobject
+codigoGrupoExpand allintegerint64
+nomeGrupostring
+codigoClasseExpand allintegerint64
+nomeClassestring
+statusGrupoboolean
+dataHoraAtualizacaoExpand allstringdate-time
+DmServicoGrupoAPIResponseDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoGrupoDTOCollapse allobject
+nomeSecaostring
+codigoDivisaoExpand allintegerint64
+nomeDivisaostring
+codigoGrupoExpand allintegerint64
+nomeGrupostring
+statusGrupoboolean
+dataHoraAtualizacaoExpand allstringdate-time
+DmServicoDivisaoAPIResponseDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoDivisaoDTOCollapse allobject
+codigoSecaoExpand allintegerint64
+nomeSecaostring
+codigoDivisaoExpand allintegerint64
+nomeDivisaostring
+statusDivisaoboolean
+dataHoraAtualizacaoExpand allstringdate-time
+DmServicoSecaoAPIResponseDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+DmServicoSecaoDTOCollapse allobject
+codigoSecaoExpand allintegerint64
+nomeSecaostring
+statusSecaoboolean
+dataHoraAtualizacaoExpand allstringdate-time
+FtPgcAgregacaoDTOCollapse allobject
+orgaostring
+anoExpand allintegerint32
+poderstring
+esferastring
+dataHoraPublicacaoPncpExpand allstringdate-time
+dataHoraAtualizacaoExpand allstringdate-time
+quantidadeTotalItensnumber
+valorTotalEstimadonumber
+GenericAPIResponseDTOFtPgcAgregacaoDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+FtPgcDetalheDTOCollapse allobject
+codigoUasgstring
+nomeUasgstring
+orgaostring
+numeroArtefatoExpand allintegerint32
+anoArtefatoExpand allintegerint32
+codigoEstadoArtefatoExpand allintegerint32
+codigoCategoriaArtefatoExpand allintegerint32
+descricaoArtefatostring
+codigoTipoArtefatonumber
+ordemDfdExpand allintegerint32
+descricaoObjetoDfdstring
+nivelPrioridadeDfdExpand allintegerint32
+dataPrevistaFormalizacaoDemandaExpand allstringdate-time
+codigoAreaDfdstring
+tipoItemstring
+itemSustentavelboolean
+codigoGrupoMaterialExpand allintegerint32
+nomeGrupoMaterialstring
+codigoClasseMaterialExpand allintegerint32
+nomeClasseMaterialstring
+codigoPdmMaterialExpand allintegerint32
+nomePdmMaterialstring
+codigoSecaoServicoExpand allintegerint32
+nomeSecaoServicostring
+codigoDivisaoServicoExpand allintegerint32
+nomeDivisaoServicostring
+codigoGrupoServicoExpand allintegerint32
+nomeGrupoServicostring
+codigoClasseServicoExpand allintegerint32
+nomeClasseServicostring
+codigoSubclasseServicoExpand allintegerint32
+nomeSubclasseServicostring
+codigoItemCatalogostring
+descricaoItemCatalogostring
+siglaUnidadeFornecimentostring
+nomeUnidadeFornecimentostring
+quantidadeItemnumber
+valorUnitarioItemnumber
+valorTotalItemnumber
+tituloProjetoComprastring
+descricaoProjetoComprastring
+anoPcaProjetoCompraExpand allintegerint32
+dataInicioProcessoCompraExpand allstringdate-time
+dataFimProcessoCompraExpand allstringdate-time
+duracaoProcessoCompraExpand allintegerint32
+numeroItemPncpExpand allintegerint32
+statusContratacaoExecucaoExpand allintegerint32
+dataHoraPublicacaoPncpExpand allstringdate-time
+dataHoraAtualizacaoArtefatoExpand allstringdate-time
+dataHoraAtualizacaoProjetoCompraExpand allstringdate-time
+dataHoraAtualizacaoDfdExpand allstringdate-time
+dataHoraAtualizacaoItemExpand allstringdate-time
+GenericAPIResponseDTOFtPgcDetalheDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+FtPesqPrecoCompraServicoDetalheDTOCollapse allobject
+idComprastring
+idItemComprainteger
+numeroItemCompraCollapse allintegerint32
+Example0
+codigoItemCatalogoExpand allintegerint32
+objetoComprastring
+descricaoDetalhadaItemstring
+dataAtualizacaoFatostringdate-time
+GenericAPIResponseDTOFtPesqPrecoCompraServicoDetalheDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+FtPesqPrecoCompraServicoDTOCollapse allobject
+idComprastring
+idItemComprainteger
+formastring
+modalidadeExpand allintegerint32
+criterioJulgamentostring
+numeroItemCompraExpand allintegerint32
+descricaoItemstring
+codigoItemCatalogoExpand allintegerint32
+nomeUnidadeMedidastring
+siglaUnidadeMedidastring
+quantidadenumber
+precoUnitarionumber
+percentualMaiorDescontonumber
+niFornecedorstring
+nomeFornecedorstring
+codigoUasgstring
+nomeUasgstring
+codigoMunicipioExpand allintegerint32
+municipiostring
+estadostring
+codigoOrgaoExpand allintegerint32
+nomeOrgaostring
+poderstring
+esferastring
+dataCompraExpand allstringdate
+dataHoraAtualizacaoCompraExpand allstringdate-time
+dataHoraAtualizacaoItemExpand allstringdate-time
+dataResultadoExpand allstringdate
+dataHoraAtualizacaoUasgExpand allstringdate-time
+objetoComprastring
+descricaoDetalhadaItemstring
+dataAtualizacaoFatostringdate-time
+GenericAPIResponseDTOFtPesqPrecoCompraServicoDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+FtPesqPrecoCompraMaterialDetalheDTOCollapse allobject
+idComprastring
+idItemComprainteger
+numeroItemCompraExpand allintegerint32
+codigoItemCatalogoExpand allintegerint32
+objetoComprastring
+descricaoDetalhadaItemstring
+dataAtualizacaoFatoExpand allstringdate-time
+GenericAPIResponseDTOFtPesqPrecoCompraMaterialDetalheDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+FtPesqPrecoCompraMaterialDTOCollapse allobject
+idCompraExpand allintegerint64
+dataComprastringdate
+formastring
+modalidadeintegerint32
+dataHoraAtualizacaoCompraExpand allstringdate-time
+idItemCompraExpand allintegerint64
+numeroItemCompraExpand allintegerint32
+niFornecedorstring
+codigoItemCatalogoExpand allintegerint32
+quantidadenumber
+precoUnitarionumber
+descricaoItemstring
+siglaUnidadeFornecimentostring
+nomeUnidadeFornecimentostring
+capacidadeUnidadeFornecimentonumber
+siglaUnidadeMedidastring
+nomeUnidadeMedidastring
+criterioJulgamentostring
+percentualMaiorDescontonumber
+nomeFornecedorstring
+marcastring
+dataResultadostringdate
+dataHoraAtualizacaoItemExpand allstringdate-time
+codigoUasgstring
+nomeUasgstring
+codigoOrgaoExpand allintegerint32
+nomeOrgaostring
+estadostring
+codigoMunicipioExpand allintegerint32
+municipiostring
+poderstring
+esferastring
+dataHoraAtualizacaoUasgExpand allstringdate-time
+codigoClasseExpand allintegerint32
+nomeClassestring
+idCompraItemstring
+objetoComprastring
+descricaoDetalhadaItemstring
+dataAtualizacaoFatoExpand allstringdate-time
+codigoPdmstring
+nomePdmstring
+GenericAPIResponseDTOFtPesqPrecoCompraMaterialDTOExpand allobject
+AdditionalIdentifierDTOCollapse allobject
+idstring
+legalNamestring
+AddressDTOCollapse allobject
+regionstring
+localitystring
+countryNamestring
+AwardDTOCollapse allobject
+idstring
+titlestring
+descriptionstring
+datestringdate-time
+hasSubcontractingboolean
+valueExpand allobject
+suppliersExpand allarray<object>
+itemsExpand allarray<object>
+BuyerDTOCollapse allobject
+idstring
+namestring
+ClassificationDTOCollapse allobject
+schemestring
+idstring
+uristring
+DetailsDTOCollapse allobject
+classificationsExpand allarray<object>
+IdentifierDTOCollapse allobject
+schemestring
+idstring
+legalNamestring
+ItemDTOCollapse allobject
+idstring
+descriptionstring
+statusDetailsstring
+quantitynumber
+unitExpand allobject
+relatedLotstring
+LinksDTOCollapse allobject
+nextstring
+prevstring
+LotDTOCollapse allobject
+idstring
+statusDetailsIdstring
+statusDetailsstring
+valueExpand allobject
+confidentialBudgetboolean
+assetstring
+realEstateRegistrationCodestring
+standardPreferenceMarginApplicabilityboolean
+standardPreferenceMarginPercentagenumber
+additionalPreferenceMarginApplicabilityboolean
+additionalPreferenceMarginPercentagenumber
+ncmNbsCodestring
+ncmNbsDescriptionstring
+catalogItemCategoryIdintegerint32
+catalogItemCategoryNamestring
+catalogItemCodeintegerint32
+awardCriteriastring
+awardCriteriaDetailsstring
+sustainabilityExpand allarray<object>
+otherRequirementsExpand allobject
+subcontractingTermsExpand allobject
+OtherRequirementsCollapse allobject
+reservedParticipationExpand allarray<string>
+PartyDTOCollapse allobject
+idstring
+namestring
+identifierExpand allobject
+additionalIdentifiersExpand allarray<object>
+addressExpand allobject
+rolesExpand allarray<string>
+detailsExpand allobject
+suppliersExpand allarray<object>
+ProcuringEntityDTOCollapse allobject
+namestring
+idstring
+PublisherDTOCollapse allobject
+namestring
+uristring
+ReleaseDTOCollapse allobject
+ocidstring
+idstring
+datestringdate-time
+tagExpand allarray<string>
+initiationTypestring
+buyerExpand allobject
+languagestring
+partiesExpand allarray<object>
+tenderExpand allobject
+awardsExpand allarray<object>
+SubcontractingTermsCollapse allobject
+descriptionstring
+SupplierDTOCollapse allobject
+idstring
+namestring
+SustainabilityCollapse allobject
+goalstring
+strategiesExpand allarray<string>
+TenderDTOCollapse allobject
+idstring
+titlestring
+descriptionstring
+procuringEntityExpand allobject
+valueExpand allobject
+procurementMethodstring
+procurementMethodDetailsstring
+procurementMethodRationalestring
+submissionMethodExpand allarray<string>
+tenderPeriodExpand allobject
+itemsExpand allarray<object>
+lotsExpand allarray<object>
+TenderPeriodDTOCollapse allobject
+startDatestringdate-time
+endDatestringdate-time
+maxExtentDatestringdate-time
+durationInDaysintegerint32
+UnitDTOCollapse allobject
+namestring
+valueCollapse allobject
+amountnumber
+currencystring
+ValueDTOCollapse allobject
+amountnumber
+currencystring
+VwOCDSApiResponseDTOCollapse allobject
+publisherDTOCollapse allobject
+namestring
+uristring
+publishedDatestringdate-time
+versionstring
+publicationPolicystring
+licensestring
+extensionsCollapse allarray<string>
+Itemsstring
+releasesCollapse allarray<object>
+ItemsCollapse allobject
+ocidstring
+idstring
+datestringdate-time
+tagCollapse allarray<string>
+Itemsstring
+initiationTypestring
+buyerCollapse allobject
+idstring
+namestring
+languagestring
+partiesCollapse allarray<object>
+ItemsCollapse allobject
+idstring
+namestring
+identifierCollapse allobject
+schemestring
+idstring
+legalNamestring
+additionalIdentifiersCollapse allarray<object>
+ItemsCollapse allobject
+idstring
+legalNamestring
+addressCollapse allobject
+regionstring
+localitystring
+countryNamestring
+rolesCollapse allarray<string>
+Itemsstring
+detailsCollapse allobject
+classificationsCollapse allarray<object>
+ItemsCollapse allobject
+schemestring
+idstring
+uristring
+suppliersCollapse allarray<object>
+ItemsCollapse allobject
+idstring
+namestring
+tenderCollapse allobject
+idstring
+titlestring
+descriptionstring
+procuringEntityCollapse allobject
+namestring
+idstring
+valueCollapse allobject
+amountnumber
+currencystring
+procurementMethodstring
+procurementMethodDetailsstring
+procurementMethodRationalestring
+submissionMethodCollapse allarray<string>
+Itemsstring
+tenderPeriodCollapse allobject
+startDatestringdate-time
+endDatestringdate-time
+maxExtentDatestringdate-time
+durationInDaysintegerint32
+itemsCollapse allarray<object>
+ItemsCollapse allobject
+idstring
+descriptionstring
+statusDetailsstring
+quantitynumber
+unitCollapse allobject
+namestring
+valueCollapse allobject
+amountnumber
+currencystring
+relatedLotstring
+lotsCollapse allarray<object>
+ItemsCollapse allobject
+idstring
+statusDetailsIdstring
+statusDetailsstring
+valueCollapse allobject
+amountnumber
+currencystring
+confidentialBudgetboolean
+assetstring
+realEstateRegistrationCodestring
+standardPreferenceMarginApplicabilityboolean
+standardPreferenceMarginPercentagenumber
+additionalPreferenceMarginApplicabilityboolean
+additionalPreferenceMarginPercentagenumber
+ncmNbsCodestring
+ncmNbsDescriptionstring
+catalogItemCategoryIdintegerint32
+catalogItemCategoryNamestring
+catalogItemCodeintegerint32
+awardCriteriastring
+awardCriteriaDetailsstring
+sustainabilityCollapse allarray<object>
+ItemsCollapse allobject
+goalstring
+strategiesCollapse allarray<string>
+Itemsstring
+otherRequirementsCollapse allobject
+reservedParticipationCollapse allarray<string>
+Itemsstring
+subcontractingTermsCollapse allobject
+descriptionstring
+awardsCollapse allarray<object>
+ItemsCollapse allobject
+idstring
+titlestring
+descriptionstring
+datestringdate-time
+hasSubcontractingboolean
+valueCollapse allobject
+amountnumber
+currencystring
+suppliersCollapse allarray<object>
+ItemsCollapse allobject
+idstring
+namestring
+itemsCollapse allarray<object>
+ItemsCollapse allobject
+idstring
+descriptionstring
+statusDetailsstring
+quantitynumber
+unitCollapse allobject
+namestring
+valueCollapse allobject
+amountnumber
+currencystring
+relatedLotstring
+linksCollapse allobject
+nextstring
+prevstring
+uristring
+DmMaterialCaracteristicasDTOCollapse allobject
+codigoItemCollapse allintegerint64
+Example0
+itemSustentavelboolean
+statusItemboolean
+codigoCaracteristicastring
+nomeCaracteristicastring
+statusCaracteristicaboolean
+codigoValorCaracteristicastring
+nomeValorCaracteristicastring
+statusValorCaracteristicaboolean
+numeroCaracteristicaCollapse allintegerint32
+Example0
+siglaUnidadeMedidastring
+dataHoraAtualizacaoCollapse allstringdate-time
+Example"2022-01-01T00:00:00"
+GenericAPIResponseDTODmMaterialCaracteristicasDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoItemCollapse allintegerint64
+Example0
+itemSustentavelboolean
+statusItemboolean
+codigoCaracteristicastring
+nomeCaracteristicastring
+statusCaracteristicaboolean
+codigoValorCaracteristicastring
+nomeValorCaracteristicastring
+statusValorCaracteristicaboolean
+numeroCaracteristicaCollapse allintegerint32
+Example0
+siglaUnidadeMedidastring
+dataHoraAtualizacaoCollapse allstringdate-time
+Example"2022-01-01T00:00:00"
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+DmMaterialUnidadeFornecimentoDTOCollapse allobject
+codigoPdmCollapse allintegerint64
+Example0
+siglaUnidadeFornecimentostring
+nomeUnidadeFornecimentostring
+descricaoUnidadeFornecimentostring
+siglaUnidadeMedidastring
+capacidadeUnidadeFornecimentonumber
+numeroSequencialUnidadeFornecimentoCollapse allintegerint32
+Example0
+statusUnidadeFornecimentoPdmboolean
+statusUnidadeFornecimentoboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+GenericAPIResponseDTODmMaterialUnidadeFornecimentoDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoPdmCollapse allintegerint64
+Example0
+siglaUnidadeFornecimentostring
+nomeUnidadeFornecimentostring
+descricaoUnidadeFornecimentostring
+siglaUnidadeMedidastring
+capacidadeUnidadeFornecimentonumber
+numeroSequencialUnidadeFornecimentoCollapse allintegerint32
+Example0
+statusUnidadeFornecimentoPdmboolean
+statusUnidadeFornecimentoboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+DmMaterialNaturezaDespesaDTOCollapse allobject
+codigoPdmCollapse allintegerint64
+Example0
+codigoNaturezaDespesastring
+nomeNaturezaDespesastring
+statusNaturezaDespesastring
+GenericAPIResponseDTODmMaterialNaturezaDespesaDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoPdmCollapse allintegerint64
+Example0
+codigoNaturezaDespesastring
+nomeNaturezaDespesastring
+statusNaturezaDespesastring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+DmMaterialItemDTOCollapse allobject
+codigoItemCollapse allintegerint64
+Example0
+codigoGrupoCollapse allintegerint64
+Example0
+nomeGrupostring
+codigoClasseCollapse allintegerint64
+Example0
+nomeClassestring
+codigoPdmCollapse allintegerint64
+Example0
+nomePdmstring
+descricaoItemstring
+statusItemboolean
+itemSustentavelboolean
+codigo_ncmstring
+descricao_ncmstring
+aplica_margem_preferenciaboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+GenericAPIResponseDTODmMaterialItemDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoItemCollapse allintegerint64
+Example0
+codigoGrupoCollapse allintegerint64
+Example0
+nomeGrupostring
+codigoClasseCollapse allintegerint64
+Example0
+nomeClassestring
+codigoPdmCollapse allintegerint64
+Example0
+nomePdmstring
+descricaoItemstring
+statusItemboolean
+itemSustentavelboolean
+codigo_ncmstring
+descricao_ncmstring
+aplica_margem_preferenciaboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+DmMaterialPDMDTOCollapse allobject
+codigoGrupoCollapse allintegerint64
+Example0
+nomeGrupostring
+codigoClasseCollapse allintegerint64
+Example0
+nomeClassestring
+codigoPdmCollapse allintegerint64
+Example0
+nomePdmstring
+statusPdmboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+GenericAPIResponseDTODmMaterialPDMDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoGrupoCollapse allintegerint64
+Example0
+nomeGrupostring
+codigoClasseCollapse allintegerint64
+Example0
+nomeClassestring
+codigoPdmCollapse allintegerint64
+Example0
+nomePdmstring
+statusPdmboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+DmMaterialClasseDTOCollapse allobject
+codigoClasseCollapse allintegerint64
+Example0
+codigoGrupoCollapse allintegerint64
+Example0
+nomeGrupostring
+nomeClassestring
+statusClasseboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+GenericAPIResponseDTODmMaterialClasseDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoClasseCollapse allintegerint64
+Example0
+codigoGrupoCollapse allintegerint64
+Example0
+nomeGrupostring
+nomeClassestring
+statusClasseboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+DmMaterialGrupoDTOCollapse allobject
+codigoGrupoCollapse allintegerint64
+Example0
+nomeGrupostring
+statusGrupoboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+GenericAPIResponseDTODmMaterialGrupoDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoGrupoCollapse allintegerint64
+Example0
+nomeGrupostring
+statusGrupoboolean
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+GenericAPIResponseDTOTbVwRdcDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+data_abertura_propostaCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_entrega_editalCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_entrega_propostaCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_publicacaoCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+endereco_entrega_editalstring
+forma_de_realizacao_licitacaostring
+funcao_responsavelstring
+identificadorstring
+informacoes_geraisstring
+modalidadeCollapse allintegerint32
+Example0
+nome_responsavelCollapse allstring
+Example0
+numero_avisoCollapse allintegerint32
+Example0
+numero_itensCollapse allintegerint32
+Example0
+numero_processostring
+objetostring
+situacao_avisostring
+tipo_recursostring
+uasgCollapse allintegerint32
+Example0
+orgao_uasgCollapse allintegerint32
+Example0
+uf_uasgstring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+TbVwRdcDTOCollapse allobject
+data_abertura_propostaCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_entrega_editalCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_entrega_propostaCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_publicacaoCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+endereco_entrega_editalstring
+forma_de_realizacao_licitacaostring
+funcao_responsavelstring
+identificadorstring
+informacoes_geraisstring
+modalidadeCollapse allintegerint32
+Example0
+nome_responsavelCollapse allstring
+Example0
+numero_avisoCollapse allintegerint32
+Example0
+numero_itensCollapse allintegerint32
+Example0
+numero_processostring
+objetostring
+situacao_avisostring
+tipo_recursostring
+uasgCollapse allintegerint32
+Example0
+orgao_uasgCollapse allintegerint32
+Example0
+uf_uasgstring
+GenericAPIResponseDTOTbVwCompraItensSemLicitacaoDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+TbVwCompraItensSemLicitacaoDTOCollapse allobject
+co_conjunto_materiaisCollapse allintegerint32
+Example0
+co_servicoCollapse allintegerint32
+Example0
+ds_detalhadastring
+in_tipo_fornecedor_vencedorstring
+no_fornecedor_vencedorstring
+no_conjunto_materiaisstring
+no_marca_materialstring
+no_servicostring
+no_unidade_medidastring
+nu_cnpj_vencedorstring
+nu_cpf_vencedorstring
+qt_material_altCollapse allintegerint64
+Example0
+vr_estimadonumber
+in_material_servicostring
+dt_publicacaostringdate
+id_comprastring
+id_compra_itemstring
+co_uasginteger
+co_modalidade_licitacaoCollapse allintegerint32
+Example0
+no_modalidade_licitacaostring
+nu_aviso_licitacaointeger
+dt_ano_aviso_licitacaoCollapse allintegerint32
+Example0
+nu_incisostring
+nu_processostring
+qt_total_iteminteger
+ds_objeto_licitacaostring
+ds_fundamento_legalstring
+ds_justificativastring
+nu_cpf_resp_decl_dispstring
+nu_cpf_resp_ratificacaostring
+nu_cpf_resp_publicacaostring
+no_responsavel_decl_dispstring
+no_cargo_resp_decl_dispstring
+no_responsavel_ratificacaostring
+no_cargo_resp_ratificacaostring
+nu_item_materialCollapse allintegerint32
+Example0
+vr_estimado_itemnumber
+ds_fabricantestring
+dt_alteracaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+co_orgaostring
+GenericAPIResponseDTOTbVwComprasSemLicitacaoDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+TbVwComprasSemLicitacaoDTOCollapse allobject
+id_comprastring
+co_orgaostring
+co_orgao_superiorstring
+co_uasgExpand allintegerint64
+no_ausgstring
+co_modalidade_licitacaoExpand allintegerint32
+ds_leistring
+nu_processostring
+qt_total_itemExpand allintegerint64
+vr_estimadonumber
+nu_aviso_licitacaoExpand allintegerint64
+ds_objeto_licitacaostring
+ds_fundamento_legalstring
+ds_justificativastring
+no_responsavel_decl_dispstring
+no_cargo_resp_decl_dispstring
+no_responsavel_ratificacaostring
+no_cargo_resp_ratificacaostring
+dt_declaracao_dispensaExpand allstringdate
+dt_ratificacaoExpand allstringdate
+dt_publicacaoExpand allstringdate
+dt_ano_avisointegerint32
+dt_alteracaoExpand allstringdate
+pertence14133boolean
+GenericAPIResponseDTOTbVwItensPregaoDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+id_comprastring
+id_compra_itemstring
+decreto_7174string
+situacao_itemstring
+descricao_itemstring
+descricao_detalhada_itemstring
+margem_preferencialstring
+tratamento_diferenciadostring
+quantidade_itemstring
+unidade_fornecimentostring
+valor_estimado_itemstring
+menor_lancestring
+valor_negociadostring
+valor_homologado_itemstring
+fornecedor_vencedorstring
+no_adjudicstring
+no_homstring
+dt_encerramentoCollapse allstringdate
+ISO Date Time
+
+Example"2026-07-06T19:53:33.156Z"
+dt_adjudicCollapse allstringdate
+ISO Date Time
+
+Example"2026-07-06T19:53:33.156Z"
+dt_homCollapse allstringdate
+ISO Date Time
+
+Example"2026-07-06T19:53:33.156Z"
+dt_alteracaoCollapse allstringdate-time
+ISO Date Time
+
+Example"2026-07-06T19:53:33.156Z"
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+TbVwItensPregaoDTOCollapse allobject
+id_comprastring
+id_compra_itemstring
+decreto_7174string
+situacao_itemstring
+descricao_itemstring
+descricao_detalhada_itemstring
+margem_preferencialstring
+tratamento_diferenciadostring
+quantidade_itemstring
+unidade_fornecimentostring
+valor_estimado_itemstring
+menor_lancestring
+valor_negociadostring
+valor_homologado_itemstring
+fornecedor_vencedorstring
+no_adjudicstring
+no_homstring
+dt_encerramentoCollapse allstringdate
+ISO Date Time
+
+Example"2026-07-06T19:53:33.156Z"
+dt_adjudicCollapse allstringdate
+ISO Date Time
+
+Example"2026-07-06T19:53:33.156Z"
+dt_homCollapse allstringdate
+ISO Date Time
+
+Example"2026-07-06T19:53:33.156Z"
+dt_alteracaoCollapse allstringdate-time
+ISO Date Time
+
+Example"2026-07-06T19:53:33.156Z"
+GenericAPIResponseDTOTbVwPregaoDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+id_comprastring
+co_processostring
+co_portariastring
+co_uasgCollapse allintegerint32
+Example0
+no_ausgstring
+co_orgaoCollapse allintegerint32
+Example0
+no_orgaostring
+numeroCollapse allintegerint32
+Example0
+ds_situacao_pregaostring
+ds_tipo_pregaostring
+ds_tipo_pregao_comprastring
+tx_objetostring
+valor_estimado_totalstring
+valor_homologado_totalstring
+dt_portariastringdate-time
+dt_data_editalstringdate-time
+dt_inicio_propostastringdate-time
+dt_fim_propostastringdate-time
+dt_alteracaostringdate-time
+dt_encerramentostringdate-time
+dt_resultadostringdate-time
+pertence14133boolean
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+TbVwPregaoDTOCollapse allobject
+id_comprastring
+co_processostring
+co_portariastring
+co_uasgCollapse allintegerint32
+Example0
+no_ausgstring
+co_orgaoCollapse allintegerint32
+Example0
+no_orgaostring
+numeroCollapse allintegerint32
+Example0
+ds_situacao_pregaostring
+ds_tipo_pregaostring
+ds_tipo_pregao_comprastring
+tx_objetostring
+valor_estimado_totalstring
+valor_homologado_totalstring
+dt_portariastringdate-time
+dt_data_editalstringdate-time
+dt_inicio_propostastringdate-time
+dt_fim_propostastringdate-time
+dt_alteracaostringdate-time
+dt_encerramentostringdate-time
+dt_resultadostringdate-time
+pertence14133boolean
+GenericAPIResponseDTOTbVwItemLicitacaoDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+numero_licitacaostring
+uasgCollapse allintegerint64
+Example0
+nome_uasgstring
+modalidadeCollapse allintegerint32
+Example0
+nome_modalidadestring
+numero_avisoCollapse allintegerint32
+Example0
+numero_item_licitacaoCollapse allintegerint32
+Example0
+codigo_item_materialCollapse allintegerint64
+Example0
+nome_materialstring
+codigo_item_servicoCollapse allintegerint64
+Example0
+nome_servicostring
+cnpj_fornecedorstring
+nome_fornecedorstring
+quantidadenumber
+unidadestring
+descricao_itemstring
+beneficiostring
+valor_estimadonumber
+decreto_7174string
+criterio_julgamentostring
+cpf_vencedorstring
+nome_vencedor_pfstring
+sustentavelCollapse allintegerint32
+Example0
+dt_alteracaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+id_comprastring
+id_compra_itemstring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+TbVwItemLicitacaoDTOCollapse allobject
+numero_licitacaostring
+uasgCollapse allintegerint64
+Example0
+nome_uasgstring
+modalidadeCollapse allintegerint32
+Example0
+nome_modalidadestring
+numero_avisoCollapse allintegerint32
+Example0
+numero_item_licitacaoCollapse allintegerint32
+Example0
+codigo_item_materialCollapse allintegerint64
+Example0
+nome_materialstring
+codigo_item_servicoCollapse allintegerint64
+Example0
+nome_servicostring
+cnpj_fornecedorstring
+nome_fornecedorstring
+quantidadenumber
+unidadestring
+descricao_itemstring
+beneficiostring
+valor_estimadonumber
+decreto_7174string
+criterio_julgamentostring
+cpf_vencedorstring
+nome_vencedor_pfstring
+sustentavelCollapse allintegerint32
+Example0
+dt_alteracaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+id_comprastring
+id_compra_itemstring
+GenericAPIResponseDTOTbVwLicitacaoDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+id_comprastring
+identificadorstring
+numero_processostring
+uasgCollapse allintegerint32
+Example0
+modalidadeCollapse allintegerint32
+Example0
+nome_modalidadestring
+numero_avisoCollapse allintegerint32
+Example0
+situacao_avisostring
+tipo_pregaostring
+tipo_recursostring
+nome_responsavelstring
+funcao_responsavelstring
+numero_itensCollapse allintegerint32
+Example0
+valor_estimado_totalnumber
+valor_homologado_totalnumber
+informacoes_geraisstring
+objetostring
+endereco_entrega_editalstring
+codigo_municipio_uasgCollapse allintegerint32
+Example0
+data_abertura_propostaCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_entrega_editalCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_entrega_propostaCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_publicacaoCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+dt_alteracaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+pertence14133boolean
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+TbVwLicitacaoDTOCollapse allobject
+id_comprastring
+identificadorstring
+numero_processostring
+uasgCollapse allintegerint32
+Example0
+modalidadeCollapse allintegerint32
+Example0
+nome_modalidadestring
+numero_avisoCollapse allintegerint32
+Example0
+situacao_avisostring
+tipo_pregaostring
+tipo_recursostring
+nome_responsavelstring
+funcao_responsavelstring
+numero_itensCollapse allintegerint32
+Example0
+valor_estimado_totalnumber
+valor_homologado_totalnumber
+informacoes_geraisstring
+objetostring
+endereco_entrega_editalstring
+codigo_municipio_uasgCollapse allintegerint32
+Example0
+data_abertura_propostaCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_entrega_editalCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_entrega_propostaCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+data_publicacaoCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+dt_alteracaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15T10:30:00"
+pertence14133boolean
+GenericAPIResponseDTOVwKpisConsolidadosDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+anoMesstring
+anoCollapse allintegerint32
+Example0
+mesCollapse allintegerint32
+Example0
+totalServicosCollapse allintegerint32
+Example0
+totalRequisicoesCollapse allintegerint64
+Example0
+percentualSucessonumber
+mediaTempoRespostaMsnumber
+totalDownloadGbnumber
+totalDownloadMbytesnumber
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwKpisConsolidadosDTOCollapse allobject
+anoMesstring
+anoCollapse allintegerint32
+Example0
+mesCollapse allintegerint32
+Example0
+totalServicosCollapse allintegerint32
+Example0
+totalRequisicoesCollapse allintegerint64
+Example0
+percentualSucessonumber
+mediaTempoRespostaMsnumber
+totalDownloadGbnumber
+totalDownloadMbytesnumber
+GenericAPIResponseDTOVwKpisGeralDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+anoMesIniciostring
+anoMesFimstring
+2026-04-26Collapse allstringdate
+YYYY-MM-DD
+
+totalServicosCollapse allintegerint32
+Example0
+totalRequisicoesCollapse allintegerint64
+Example0
+percentualSucessonumber
+mediaTempoRespostaMsnumber
+totalDownloadGbnumber
+mediaDownloadMesGbnumber
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwKpisGeralDTOCollapse allobject
+anoMesIniciostring
+anoMesFimstring
+2026-04-26Collapse allstringdate
+YYYY-MM-DD
+
+totalServicosCollapse allintegerint32
+Example0
+totalRequisicoesCollapse allintegerint64
+Example0
+percentualSucessonumber
+mediaTempoRespostaMsnumber
+totalDownloadGbnumber
+mediaDownloadMesGbnumber
+GenericAPIResponseDTOVwFtFornecedorDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+ativoboolean
+cnpjstring
+cpfstring
+habilitadoLicitarboolean
+codigoCnaeinteger
+nomeCnaestring
+nomeMunicipiostring
+naturezaJuridicaIdCollapse allintegerint64
+Example0
+naturezaJuridicaNomestring
+porteEmpresaIdCollapse allintegerint64
+Example0
+porteEmpresaNomestring
+nomeRazaoSocialFornecedorstring
+ufSiglastring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwFtFornecedorDTOCollapse allobject
+ativoboolean
+cnpjstring
+cpfstring
+habilitadoLicitarboolean
+codigoCnaeinteger
+nomeCnaestring
+nomeMunicipiostring
+naturezaJuridicaIdCollapse allintegerint64
+Example0
+naturezaJuridicaNomestring
+porteEmpresaIdCollapse allintegerint64
+Example0
+porteEmpresaNomestring
+nomeRazaoSocialFornecedorstring
+ufSiglastring
+GenericAPIResponseDTOVwFtContratoItemDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoOrgaostring
+codigoUnidadeGestorastring
+codigoUnidadeGestoraOrigemContratostring
+codigoUnidadeRealizadoraComprastring
+codigoModalidadeComprastring
+numeroContratostring
+niFornecedorstring
+nomeRazaoSocialFornecedorstring
+processostring
+dataVigenciaInicialCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataVigenciaFinalCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+valorGlobalnumber
+tipoItemstring
+codigoItemCollapse allintegerint32
+Example0
+descricaoIitemstring
+quantidadeItemCollapse allintegerint32
+Example0
+valorUnitarioItemnumber
+valorTotalItemnumber
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+numeroControlePncpContratostring
+idComprastring
+dataHoraExclusaoContratoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+contratoExcluidoboolean
+nomeOrgaostring
+nomeUnidadeGestorastring
+nomeUnidadeGestoraOrigemContratostring
+nomeUnidadeRealizadoraComprastring
+nomeModalidadeComprastring
+numeroComprastring
+dataHoraExclusaoItemCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+contratoItemExcluidoboolean
+numeroItemstring
+esferastring
+poderstring
+numeroControlePncpComprastring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwFtContratoItemDTOCollapse allobject
+codigoOrgaostring
+codigoUnidadeGestorastring
+codigoUnidadeGestoraOrigemContratostring
+codigoUnidadeRealizadoraComprastring
+codigoModalidadeComprastring
+numeroContratostring
+niFornecedorstring
+nomeRazaoSocialFornecedorstring
+processostring
+dataVigenciaInicialCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataVigenciaFinalCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+valorGlobalnumber
+tipoItemstring
+codigoItemCollapse allintegerint32
+Example0
+descricaoIitemstring
+quantidadeItemCollapse allintegerint32
+Example0
+valorUnitarioItemnumber
+valorTotalItemnumber
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+numeroControlePncpContratostring
+idComprastring
+dataHoraExclusaoContratoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+contratoExcluidoboolean
+nomeOrgaostring
+nomeUnidadeGestorastring
+nomeUnidadeGestoraOrigemContratostring
+nomeUnidadeRealizadoraComprastring
+nomeModalidadeComprastring
+numeroComprastring
+dataHoraExclusaoItemCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+contratoItemExcluidoboolean
+numeroItemstring
+esferastring
+poderstring
+numeroControlePncpComprastring
+GenericAPIResponseDTOVwFtContratoDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+codigoOrgaostring
+nomeOrgaostring
+codigoUnidadeGestorastring
+nomeUnidadeGestorastring
+codigoUnidadeGestoraOrigemContratostring
+nomeUnidadeGestoraOrigemContratostring
+receitaDespesastring
+numeroContratostring
+codigoUnidadeRealizadoraComprastring
+nomeUnidadeRealizadoraComprastring
+numeroComprastring
+codigoModalidadeComprastring
+nomeModalidadeComprastring
+codigoTipostring
+nomeTipostring
+codigoCategoriastring
+nomeCategoriastring
+codigoSubcategoriastring
+nomeSubcategoriastring
+niFornecedorstring
+nomeRazaoSocialFornecedorstring
+processostring
+objetostring
+informacoesComplementaresstring
+dataVigenciaInicialCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataVigenciaFinalCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+valorGlobalnumber
+numeroParcelasCollapse allintegerint32
+Example0
+valorParcelanumber
+valorAcumuladonumber
+totalDespesasAcessoriasnumber
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+numeroControlePncpContratostring
+numeroControlePncpComprastring
+idComprastring
+dataHoraExclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+contratoExcluidoboolean
+unidadesRequisitantesstring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwFtContratoDTOCollapse allobject
+codigoOrgaostring
+nomeOrgaostring
+codigoUnidadeGestorastring
+nomeUnidadeGestorastring
+codigoUnidadeGestoraOrigemContratostring
+nomeUnidadeGestoraOrigemContratostring
+receitaDespesastring
+numeroContratostring
+codigoUnidadeRealizadoraComprastring
+nomeUnidadeRealizadoraComprastring
+numeroComprastring
+codigoModalidadeComprastring
+nomeModalidadeComprastring
+codigoTipostring
+nomeTipostring
+codigoCategoriastring
+nomeCategoriastring
+codigoSubcategoriastring
+nomeSubcategoriastring
+niFornecedorstring
+nomeRazaoSocialFornecedorstring
+processostring
+objetostring
+informacoesComplementaresstring
+dataVigenciaInicialCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataVigenciaFinalCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+valorGlobalnumber
+numeroParcelasCollapse allintegerint32
+Example0
+valorParcelanumber
+valorAcumuladonumber
+totalDespesasAcessoriasnumber
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+numeroControlePncpContratostring
+numeroControlePncpComprastring
+idComprastring
+dataHoraExclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+contratoExcluidoboolean
+unidadesRequisitantesstring
+GenericAPIResponseDTOVwDmPNCPItemResultadoDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+idCompraItemstring
+idComprastring
+idContratacaoPNCPstring
+unidadeOrgaoCodigoUnidadestring
+unidadeOrgaoUfSiglastring
+numeroItemPncpCollapse allintegerint32
+Example0
+sequencialResultadoCollapse allintegerint32
+Example0
+niFornecedorstring
+tipoPessoastring
+nomeRazaoSocialFornecedorstring
+codigoPaisstring
+indicadorSubcontratacaoboolean
+ordemClassificacaoSrpCollapse allintegerint32
+Example0
+quantidadeHomologadanumber
+valorUnitarioHomologadonumber
+valorTotalHomologadonumber
+percentualDescontonumber
+situacaoCompraItemResultadoIdinteger
+situacaoCompraItemResultadoNomestring
+motivoCancelamentostring
+porteFornecedorIdCollapse allintegerint32
+Example0
+porteFornecedorNomestring
+naturezaJuridicaNomestring
+naturezaJuridicaIdstring
+dataInclusaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataAtualizacaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataCancelamentoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataResultadoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+numeroControlePNCPComprastring
+orgaoEntidadeCnpjstring
+aplicacaoMargemPreferenciaboolean
+amparoLegalMargemPreferenciaIdCollapse allintegerint32
+Example0
+amparoLegalMargemPreferenciaNomestring
+aplicacaoBeneficioMeeppboolean
+aplicacaoCriterioDesempateboolean
+amparoLegalCriterioDesempateIdCollapse allintegerint32
+Example0
+amparoLegalCriterioDesempateNomestring
+moedaEstrangeiraIdCollapse allintegerint32
+Example0
+dataCotacaoMoedaEstrangeiraCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+valorNominalMoedaEstrangeiranumber
+paisOrigemProdutoServicoIdstring
+timezoneCotacaoMoedaEstrangeirastring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwDmPNCPItemResultadoDTOCollapse allobject
+idCompraItemstring
+idComprastring
+idContratacaoPNCPstring
+unidadeOrgaoCodigoUnidadestring
+unidadeOrgaoUfSiglastring
+numeroItemPncpCollapse allintegerint32
+Example0
+sequencialResultadoCollapse allintegerint32
+Example0
+niFornecedorstring
+tipoPessoastring
+nomeRazaoSocialFornecedorstring
+codigoPaisstring
+indicadorSubcontratacaoboolean
+ordemClassificacaoSrpCollapse allintegerint32
+Example0
+quantidadeHomologadanumber
+valorUnitarioHomologadonumber
+valorTotalHomologadonumber
+percentualDescontonumber
+situacaoCompraItemResultadoIdinteger
+situacaoCompraItemResultadoNomestring
+motivoCancelamentostring
+porteFornecedorIdCollapse allintegerint32
+Example0
+porteFornecedorNomestring
+naturezaJuridicaNomestring
+naturezaJuridicaIdstring
+dataInclusaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataAtualizacaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataCancelamentoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataResultadoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+numeroControlePNCPComprastring
+orgaoEntidadeCnpjstring
+aplicacaoMargemPreferenciaboolean
+amparoLegalMargemPreferenciaIdCollapse allintegerint32
+Example0
+amparoLegalMargemPreferenciaNomestring
+aplicacaoBeneficioMeeppboolean
+aplicacaoCriterioDesempateboolean
+amparoLegalCriterioDesempateIdCollapse allintegerint32
+Example0
+amparoLegalCriterioDesempateNomestring
+moedaEstrangeiraIdCollapse allintegerint32
+Example0
+dataCotacaoMoedaEstrangeiraCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+valorNominalMoedaEstrangeiranumber
+paisOrigemProdutoServicoIdstring
+timezoneCotacaoMoedaEstrangeirastring
+GenericAPIResponseDTOVwFtPNCPCompraItemDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+idComprastring
+idCompraItemstring
+idContratacaoPNCPstring
+unidadeOrgaoCodigoUnidadestring
+orgaoEntidadeCnpjstring
+numeroItemPncpCollapse allintegerint32
+Example0
+numeroItemCompraCollapse allintegerint32
+Example0
+numeroGrupoCollapse allintegerint32
+Example0
+descricaoResumidastring
+materialOuServicostring
+materialOuServicoNomestring
+codigoClasseCollapse allintegerint32
+Example0
+codigoGrupoCollapse allintegerint32
+Example0
+codItemCatalogoCollapse allintegerint32
+Example0
+descricaodetalhadastring
+unidadeMedidastring
+orcamentoSigilosoboolean
+itemCategoriaIdPncpCollapse allintegerint32
+Example0
+itemCategoriaNomestring
+criterioJulgamentoIdPncpCollapse allintegerint32
+Example0
+criterioJulgamentoNomestring
+situacaoCompraItemstring
+situacaoCompraItemNomestring
+tipoBeneficiostring
+tipoBeneficioNomestring
+incentivoProdutivoBasicoboolean
+quantidadenumber
+valorUnitarioEstimadonumber
+valorTotalnumber
+temResultadoboolean
+codFornecedorstring
+nomeFornecedorstring
+quantidadeResultadonumber
+valorUnitarioResultadonumber
+valorTotalResultadonumber
+dataInclusaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataAtualizacaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataResultadostring
+margemPreferenciaNormalboolean
+percentualMargemPreferenciaNormalnumber
+margemPreferenciaAdicionalboolean
+percentualMargemPreferenciaAdicionalnumber
+codigoNCMstring
+descricaoNCMstring
+numeroControlePNCPComprastring
+codigoPdmstring
+nomePdmstring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwFtPNCPCompraItemDTOCollapse allobject
+idComprastring
+idCompraItemstring
+idContratacaoPNCPstring
+unidadeOrgaoCodigoUnidadestring
+orgaoEntidadeCnpjstring
+numeroItemPncpCollapse allintegerint32
+Example0
+numeroItemCompraCollapse allintegerint32
+Example0
+numeroGrupoCollapse allintegerint32
+Example0
+descricaoResumidastring
+materialOuServicostring
+materialOuServicoNomestring
+codigoClasseCollapse allintegerint32
+Example0
+codigoGrupoCollapse allintegerint32
+Example0
+codItemCatalogoCollapse allintegerint32
+Example0
+descricaodetalhadastring
+unidadeMedidastring
+orcamentoSigilosoboolean
+itemCategoriaIdPncpCollapse allintegerint32
+Example0
+itemCategoriaNomestring
+criterioJulgamentoIdPncpCollapse allintegerint32
+Example0
+criterioJulgamentoNomestring
+situacaoCompraItemstring
+situacaoCompraItemNomestring
+tipoBeneficiostring
+tipoBeneficioNomestring
+incentivoProdutivoBasicoboolean
+quantidadenumber
+valorUnitarioEstimadonumber
+valorTotalnumber
+temResultadoboolean
+codFornecedorstring
+nomeFornecedorstring
+quantidadeResultadonumber
+valorUnitarioResultadonumber
+valorTotalResultadonumber
+dataInclusaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataAtualizacaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataResultadostring
+margemPreferenciaNormalboolean
+percentualMargemPreferenciaNormalnumber
+margemPreferenciaAdicionalboolean
+percentualMargemPreferenciaAdicionalnumber
+codigoNCMstring
+descricaoNCMstring
+numeroControlePNCPComprastring
+codigoPdmstring
+nomePdmstring
+GenericAPIResponseDTOVwFtPNCPCompraDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+idComprastring
+numeroControlePNCPstring
+anoCompraPncpCollapse allintegerint32
+Example0
+sequencialCompraPncpCollapse allintegerint32
+Example0
+orgaoEntidadeCnpjstring
+orgaoSubrogadoCnpjstring
+codigoOrgaoCollapse allintegerint32
+Example0
+orgaoEntidadeRazaoSocialstring
+orgaoSubrogadoRazaoSocialstring
+orgaoEntidadeEsferaIdstring
+orgaoSubrogadoEsferaIdstring
+orgaoEntidadePoderIdstring
+orgaoSubrogadoPoderIdstring
+unidadeOrgaoCodigoUnidadestring
+unidadeSubrogadaCodigoUnidadestring
+unidadeOrgaoNomeUnidadestring
+unidadeSubrogadaNomeUnidadestring
+unidadeOrgaoUfSiglastring
+unidadeSubrogadaUfSiglastring
+unidadeOrgaoMunicipioNomestring
+unidadeSubrogadaMunicipioNomestring
+unidadeOrgaoCodigoIbgeCollapse allintegerint32
+Example0
+unidadeSubrogadaCodigoIbgeCollapse allintegerint32
+Example0
+numeroComprastring
+modalidadeIdPncpCollapse allintegerint32
+Example0
+codigoModalidadeCollapse allintegerint32
+Example0
+modalidadeNomestring
+srpCollapse allboolean
+Example0
+modoDisputaIdPncpCollapse allintegerint32
+Example0
+codigoModoDisputaCollapse allintegerint32
+Example0
+amparoLegalCodigoPncpCollapse allintegerint32
+Example0
+amparoLegalNomestring
+amparoLegalDescricaostring
+informacaoComplementarstring
+processostring
+objetoComprastring
+existeResultadoCollapse allboolean
+Example0
+orcamentoSigilosoCodigoCollapse allintegerint32
+Example0
+orcamentoSigilosoDescricaostring
+situacaoCompraIdPncpCollapse allintegerint32
+Example0
+situacaoCompraNomePncpstring
+tipoInstrumentoConvocatorioCodigoPncpCollapse allintegerint32
+Example0
+tipoInstrumentoConvocatorioNomestring
+modoDisputaNomePncpstring
+valorTotalEstimadonumber
+valorTotalHomologadonumber
+dataInclusaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataAtualizacaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataPublicacaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataAberturaPropostaPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataEncerramentoPropostaPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+contratacaoExcluidaCollapse allboolean
+Example0
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwFtPNCPCompraDTOCollapse allobject
+idComprastring
+numeroControlePNCPstring
+anoCompraPncpCollapse allintegerint32
+Example0
+sequencialCompraPncpCollapse allintegerint32
+Example0
+orgaoEntidadeCnpjstring
+orgaoSubrogadoCnpjstring
+codigoOrgaoCollapse allintegerint32
+Example0
+orgaoEntidadeRazaoSocialstring
+orgaoSubrogadoRazaoSocialstring
+orgaoEntidadeEsferaIdstring
+orgaoSubrogadoEsferaIdstring
+orgaoEntidadePoderIdstring
+orgaoSubrogadoPoderIdstring
+unidadeOrgaoCodigoUnidadestring
+unidadeSubrogadaCodigoUnidadestring
+unidadeOrgaoNomeUnidadestring
+unidadeSubrogadaNomeUnidadestring
+unidadeOrgaoUfSiglastring
+unidadeSubrogadaUfSiglastring
+unidadeOrgaoMunicipioNomestring
+unidadeSubrogadaMunicipioNomestring
+unidadeOrgaoCodigoIbgeCollapse allintegerint32
+Example0
+unidadeSubrogadaCodigoIbgeCollapse allintegerint32
+Example0
+numeroComprastring
+modalidadeIdPncpCollapse allintegerint32
+Example0
+codigoModalidadeCollapse allintegerint32
+Example0
+modalidadeNomestring
+srpCollapse allboolean
+Example0
+modoDisputaIdPncpCollapse allintegerint32
+Example0
+codigoModoDisputaCollapse allintegerint32
+Example0
+amparoLegalCodigoPncpCollapse allintegerint32
+Example0
+amparoLegalNomestring
+amparoLegalDescricaostring
+informacaoComplementarstring
+processostring
+objetoComprastring
+existeResultadoCollapse allboolean
+Example0
+orcamentoSigilosoCodigoCollapse allintegerint32
+Example0
+orcamentoSigilosoDescricaostring
+situacaoCompraIdPncpCollapse allintegerint32
+Example0
+situacaoCompraNomePncpstring
+tipoInstrumentoConvocatorioCodigoPncpCollapse allintegerint32
+Example0
+tipoInstrumentoConvocatorioNomestring
+modoDisputaNomePncpstring
+valorTotalEstimadonumber
+valorTotalHomologadonumber
+dataInclusaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataAtualizacaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataPublicacaoPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataAberturaPropostaPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataEncerramentoPropostaPncpCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+contratacaoExcluidaCollapse allboolean
+Example0
+GenericAPIResponseDTOVwFtArpAdesoesItemDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+numeroAtastring
+unidadeGerenciadorastring
+unidadeNaoParticipantestring
+dataAprovacaoAnaliseCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+quantidadeAprovadaAdesaoCollapse allintegerint32
+Example0
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwFtArpAdesoesItemDTOCollapse allobject
+numeroAtastring
+unidadeGerenciadorastring
+unidadeNaoParticipantestring
+dataAprovacaoAnaliseCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+quantidadeAprovadaAdesaoCollapse allintegerint32
+Example0
+VwArpEmpenhosItemAPICollapse allobject
+resultadoCollapse allarray<object>
+ItemsCollapse allobject
+numeroItemstring
+unidadestring
+tipostring
+quantidadeRegistradanumber
+quantidadeEmpenhadanumber
+saldoEmpenhonumber
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwArpEmpenhosItemDTOCollapse allobject
+numeroItemstring
+unidadestring
+tipostring
+quantidadeRegistradanumber
+quantidadeEmpenhadanumber
+saldoEmpenhonumber
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+VwFtArpUnidadesItemAPIResponseDTOCollapse allobject
+resultadoCollapse allarray<object>
+ItemsCollapse allobject
+numeroAtastring
+unidadeGerenciadorastring
+numeroItemstring
+codigoPdmstring
+descricaoItemstring
+fornecedorstring
+quantidadeRegistradanumber
+saldoAdesoesnumber
+saldoRemanejamentoEmpenhonumber
+qtdLimiteAdesaonumber
+qtdLimiteInformadoCompranumber
+aceitaAdesaoboolean
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraExclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+codigoUnidadestring
+nomeUnidadestring
+tipoUnidadestring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwFtArpUnidadesItemDTOCollapse allobject
+numeroAtastring
+unidadeGerenciadorastring
+numeroItemstring
+codigoPdmstring
+descricaoItemstring
+fornecedorstring
+quantidadeRegistradanumber
+saldoAdesoesnumber
+saldoRemanejamentoEmpenhonumber
+qtdLimiteAdesaonumber
+qtdLimiteInformadoCompranumber
+aceitaAdesaoboolean
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraExclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+codigoUnidadestring
+nomeUnidadestring
+tipoUnidadestring
+GenericAPIResponseDTOVwFtArpItemDTOCollapse allobject
+resultadoExpand allarray<object>
+totalRegistrosExpand allintegerint64
+totalPaginasExpand allintegerint64
+paginasRestantesExpand allintegerint64
+VwFtArpItemDTOCollapse allobject
+numeroAtaRegistroPrecostring
+codigoUnidadeGerenciadorastring
+numeroComprastring
+anoComprastring
+codigoModalidadeComprastring
+dataAssinaturaCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataVigenciaInicialstringdate
+dataVigenciaFinalstringdate
+numeroItemstring
+codigoItemCollapse allintegerint32
+Example0
+descricaoItemstring
+tipoItemstring
+quantidadeHomologadaItemnumber
+classificacaoFornecedorstring
+niFornecedorstring
+nomeRazaoSocialFornecedorstring
+quantidadeHomologadaVencedornumber
+valorUnitarionumber
+valorTotalnumber
+maximoAdesaonumber
+nomeUnidadeGerenciadorastring
+nomeModalidadeComprastring
+idComprastring
+numeroControlePncpComprastring
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+quantidadeEmpenhadanumber
+percentualMaiorDescontonumber
+situacaoSicafstring
+dataHoraExclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+itemExcluidoboolean
+numeroControlePncpAtastring
+codigoPdmCollapse allintegerint32
+Example0
+nomePdmstring
+GenericAPIResponseDTOVwFtArpDTOCollapse allobject
+resultadoCollapse allarray<object>
+Lista de resultados da consulta
+
+ItemsCollapse allobject
+numeroAtaRegistroPrecostring
+codigoUnidadeGerenciadorastring
+nomeUnidadeGerenciadorastring
+codigoOrgaointegerint32
+nomeOrgaostring
+linkAtaPNCPstring
+linkCompraPNCPstring
+numeroComprastring
+anoComprastring
+codigoModalidadeComprastring
+nomeModalidadeComprastring
+dataAssinaturaCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+dataVigenciaInicialCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+dataVigenciaFinalCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+valorTotalnumber
+statusAtastring
+objetostring
+quantidadeItensinteger
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraExclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+ataExcluidoboolean
+numeroControlePncpAtastring
+numeroControlePncpComprastring
+idComprastring
+totalRegistrosCollapse allintegerint64
+Total de registros encontrados
+
+Example0
+totalPaginasCollapse allintegerint64
+Total de páginas
+
+Example0
+paginasRestantesCollapse allintegerint64
+Páginas restantes
+
+Example0
+VwFtArpDTOCollapse allobject
+numeroAtaRegistroPrecostring
+codigoUnidadeGerenciadorastring
+nomeUnidadeGerenciadorastring
+codigoOrgaointegerint32
+nomeOrgaostring
+linkAtaPNCPstring
+linkCompraPNCPstring
+numeroComprastring
+anoComprastring
+codigoModalidadeComprastring
+nomeModalidadeComprastring
+dataAssinaturaCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+dataVigenciaInicialCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+dataVigenciaFinalCollapse allstringdate
+YYYY-MM-DD
+
+Example"2024-01-15"
+valorTotalnumber
+statusAtastring
+objetostring
+quantidadeItensinteger
+dataHoraAtualizacaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraInclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+dataHoraExclusaoCollapse allstringdate-time
+YYYY-MM-DD
+
+Example"2024-01-15 10:30:00"
+ataExcluidoboolean
+numeroControlePncpAtastring
+numeroControlePncpComprastring
+idComprastring
+AnaliseAliceComItensResponseDTOCollapse allobject
+msgErrostring
+dataSolicitacaoAnalisestring
+dataEncerramentoAnalisestring
+ticketAnalisestring
+tipoAnaliseintegerint32
+codigoStatusAnaliseintegerint32
+descricaoStatusAnalisestring
+chaveComprastring
+itensCollapse allarray<object>
+ItemsCollapse allobject
+idAvisointegerint64
+codigoTipoAvisointegerint32
+nomeTipoAvisostring
+textostring
+descricaostring
+fundamentacaostring
+numeroSequencialAvisointegerint32
+AvisosVwDTOCollapse allobject
+idAvisointegerint64
+codigoTipoAvisointegerint32
+nomeTipoAvisostring
+textostring
+descricaostring
+fundamentacaostring
+numeroSequencialAvisointegerint32
+AnaliseAliceSemItensResponseDTOCollapse allobject
+msgErrostring
+dataSolicitacaoAnalisestring
+dataEncerramentoAnalisestring
+ticketAnalisestring
+tipoAnaliseintegerint32
+codigoStatusAnaliseintegerint32
+descricaoStatusAnalisestring
+chaveComprastring
