@@ -1,7 +1,7 @@
 from typing import Any
 
 from contracts.material_group import MaterialGroupRecord
-from etl.ingestion.script_runner import run_script_ingestion
+from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/1_consultarGrupoMaterial"
 
@@ -34,7 +34,7 @@ def map_material_group_row(row: dict[str, Any]) -> MaterialGroupRecord:
 
 
 def main() -> None:
-    run_script_ingestion(
+    run_page_batch_ingestion(
         logger_name="material_group",
         endpoint_path=ENDPOINT_PATH,
         page_size=PAGE_SIZE,

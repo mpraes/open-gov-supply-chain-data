@@ -1,0 +1,20 @@
+CREATE TABLE uasg_orgao (
+codigo_orgao BIGINT PRIMARY KEY,
+nome_orgao varchar(200) NOT NULL,
+nome_mnemonico_orgao varchar(50),
+cnpj_cpf_orgao varchar(20),
+codigo_orgao_vinculado BIGINT,
+cnpj_cpf_orgao_vinculado varchar(20),
+nome_orgao_vinculado varchar(200),
+codigo_orgao_superior BIGINT,
+cnpj_cpf_orgao_superior varchar(20),
+nome_orgao_superior varchar(200),
+codigo_tipo_administracao BIGINT,
+nome_tipo_administracao varchar(200),
+poder varchar(50),
+esfera varchar(50),
+uso_sisg BOOLEAN,
+status_orgao BOOLEAN,
+data_hora_movimento TIMESTAMP,
+data_hora_carga TIMESTAMPTZ DEFAULT now()
+);

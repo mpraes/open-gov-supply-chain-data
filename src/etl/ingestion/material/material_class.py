@@ -1,7 +1,7 @@
 from typing import Any
 
 from contracts.material_class import MaterialClassRecord
-from etl.ingestion.script_runner import run_script_ingestion
+from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/2_consultarClasseMaterial"
 
@@ -43,7 +43,7 @@ def map_material_class_row(row: dict[str, Any]) -> MaterialClassRecord:
 
 
 def main() -> None:
-    run_script_ingestion(
+    run_page_batch_ingestion(
         logger_name="material_class",
         endpoint_path=ENDPOINT_PATH,
         page_size=PAGE_SIZE,

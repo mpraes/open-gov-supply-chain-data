@@ -1,7 +1,8 @@
-# Architecture — Open Gov Supply Chain Data (CATMAT)
+# Architecture — Open Gov Supply Chain Data
 
-Snapshot of the material ETL architecture as of 2026-09-18
-(updated after the shared API→upsert ingestion refactor).
+Snapshot as of 2026-09-19: shared API→upsert pipeline plus CATMAT (material),
+CATSER (serviço), pesquisa de preço (preços praticados), PGC (planejamento),
+and UASG catalogs.
 
 ## System layers
 
@@ -10,7 +11,7 @@ flowchart TB
   subgraph External
     API["compras.gov.br<br/>dadosabertos API"]
     ENV[".env secrets"]
-    PG[(Postgres<br/>open_gov_supply_chain)]
+    PG[(Postgres)]
   end
 
   subgraph src
@@ -23,78 +24,130 @@ flowchart TB
     end
 
     subgraph contracts
-      C1["MaterialGroupRecord"]
-      C2["MaterialClassRecord"]
-      C3["MaterialPdmRecord"]
-      C4["MaterialItemRecord"]
-      C5["MaterialNaturezaDespesaRecord"]
-      C6["MaterialUnidadeFornecimentoRecord"]
-      C7["MaterialCaracteristicaRecord"]
+      CM["material_* Record"]
+      CS["servico_* Record"]
+      CP["preco_* Record"]
+      CG["pgc_* Record"]
+      CU["uasg_* Record"]
     end
 
     subgraph ingestion["etl/ingestion"]
       DB["db.connect_postgres"]
       PIPE["pipeline.run_api_upsert_ingestion"]
       RUN["script_runner.run_script_ingestion"]
-
-      subgraph material["material/*.py"]
-        E1["material_group"]
-        E2["material_class"]
-        E3["material_pdm"]
-        E4["material_item"]
-        E5["material_natureza_despesa"]
-        E6["material_unidade_fornecimento"]
-        E7["material_caracteristica"]
-      end
+      MAT["material/*.py"]
+      SER["servico/*.py"]
+      PRE["precos/*.py"]
+      PGC["planejamento/*.py"]
+      UASG["uasg/*.py"]
     end
 
     subgraph observability
-      LOG["logging_json<br/>stdout + logs/*.log"]
+      LOG["logging_json"]
     end
   end
 
   ENV --> SK
   SK --> RUN
-  material --> RUN
+  MAT --> RUN
+  SER --> RUN
+  PRE --> RUN
+  PGC --> RUN
+  UASG --> RUN
   RUN --> DB
   RUN --> PIPE
   PIPE --> CA
   CA --> API
-  material --> contracts
+  MAT --> CM
+  SER --> CS
+  PRE --> CP
+  PGC --> CG
+  UASG --> CU
   PIPE --> LOG
   DB --> PG
   PIPE --> PG
 ```
 
-## Load order and table FKs (CATMAT hierarchy)
+## CATMAT load order
 
 ```mermaid
 flowchart LR
-  G["material_group<br/>1_consultarGrupoMaterial"]
-  C["material_class<br/>2_consultarClasseMaterial"]
-  P["material_pdm<br/>3_consultarPdmMaterial"]
-  I["material_item<br/>4_consultarItemMaterial"]
-  N["material_natureza_despesa<br/>5_consultarMaterialNaturezaDespesa"]
-  U["material_unidade_fornecimento<br/>6_consultarMaterialUnidadeFornecimento"]
-  K["material_caracteristica<br/>7_consultarMaterialCaracteristicas"]
-
-  G --> C --> P
-  P --> I
-  P --> N
-  P --> U
-  I --> K
+  G["material_group"] --> C["material_class"] --> P["material_pdm"]
+  P --> I["material_item"]
+  P --> N["material_natureza_despesa"]
+  P --> U["material_unidade_fornecimento"]
+  I --> K["material_caracteristica"]
 ```
 
-**Recommended run order:** group → class → pdm → (item | natureza | unidade) → caracteristica (after item).
+## CATSER load order
+
+```mermaid
+flowchart LR
+  S["servico_secao"] --> D["servico_divisao"] --> G2["servico_grupo"]
+  G2 --> C2["servico_classe"] --> SC["servico_subclasse"] --> I2["servico_item"]
+  I2 --> UM["servico_unidade_medida"]
+  I2 --> ND["servico_natureza_despesa"]
+```
+
+**CATSER run order:** secao → divisao → grupo → classe → subclasse → item → (unidade_medida | natureza_despesa).
+
+## Pesquisa de preço load order
+
+Price endpoints require a CATMAT/CATSER item code. Scripts read codes from
+the catalog tables, then paginate each code.
+
+```mermaid
+flowchart LR
+  MI["material_item"] --> PM["preco_material"]
+  MI --> PMD["preco_material_detalhe"]
+  SI["servico_item"] --> PS["preco_servico"]
+  SI --> PSD["preco_servico_detalhe"]
+```
+
+JSON endpoints only (`1_consultarMaterial`, `2_consultarMaterialDetalhe`,
+`3_consultarServico`, `4_consultarServicoDetalhe`). CSV variants are skipped.
+
+## PGC load order
+
+Detalhe and agregação require `PGC_ORGAO` + `PGC_ANO` in `.env`. Catalogo
+walks CATMAT classes and CATSER groups for one PCA year.
+
+```mermaid
+flowchart LR
+  ENV["PGC_ORGAO + PGC_ANO"] --> PD["pgc_detalhe"]
+  ENV --> PA["pgc_agregacao"]
+  MC["material_class"] --> PDC["pgc_detalhe_catalogo"]
+  SG["servico_grupo"] --> PDC
+```
+
+JSON endpoints only (`1_consultarPgcDetalhe`, `2_consultarPgcDetalheCatalogo`,
+`3_consultarPgcAgregacao`). CSV variants are skipped.
+
+See [pgc-ingestion.md](./pgc-ingestion.md).
+
+## UASG load order
+
+Both JSON endpoints require a status boolean. Scripts walk `true` then `false`.
+CSV variants are skipped.
+
+```mermaid
+flowchart LR
+  O["uasg_orgao"] --> U["uasg"]
+```
+
+See [uasg-ingestion.md](./uasg-ingestion.md).
+
 
 ## Shared ingestion pipeline
 
-Reusable for any paginated `resultado` API → Postgres upsert ETL
-(not only material). See also [ingestion-api-upsert-refactor.md](./ingestion-api-upsert-refactor.md).
+See [ingestion-api-upsert-refactor.md](./ingestion-api-upsert-refactor.md).
+CATSER details: [servico-catser-ingestion.md](./servico-catser-ingestion.md).
+PGC details: [pgc-ingestion.md](./pgc-ingestion.md).
+UASG details: [uasg-ingestion.md](./uasg-ingestion.md).
 
 ```mermaid
 sequenceDiagram
-  participant SCR as material/*.py main()
+  participant SCR as material|servico|precos|planejamento|uasg main()
   participant RUN as script_runner
   participant CFG as config
   participant PIPE as pipeline
@@ -127,16 +180,27 @@ sequenceDiagram
 | --- | --- | --- |
 | Config | `src/config/load_secret_key.py` | Load secrets from `.env` |
 | Client | `src/clients/compras_api.py` | Paginated API fetch |
-| Contracts | `src/contracts/material_*.py` | Pydantic validation / normalization |
+| Contracts | `src/contracts/material_*.py`, `servico_*.py`, `preco_*.py`, `pgc_*.py`, `uasg*.py` | Pydantic validation |
+| Text helpers | `src/contracts/text_normalize.py` | Shared upper/strip helpers |
+| Coercion | `src/contracts/coerce.py` | id/number coercion for price and PGC rows |
 | DB wrapper | `src/etl/ingestion/db.py` | Injectable Postgres connect |
 | Pipeline | `src/etl/ingestion/pipeline.py` | Fetch → map → upsert |
-| Script runner | `src/etl/ingestion/script_runner.py` | Wire secrets + DB for CLI/Airflow scripts |
-| ETL scripts | `src/etl/ingestion/material/*.py` | Endpoint, SQL, `map_row`, `main()` |
+| Script runner | `src/etl/ingestion/script_runner.py` | Wire secrets + DB for scripts |
+| CATMAT ETL | `src/etl/ingestion/material/*.py` | Material catalog scripts |
+| CATSER ETL | `src/etl/ingestion/servico/*.py` | Serviço catalog scripts |
+| Preços ETL | `src/etl/ingestion/precos/*.py` | Practiced-price scripts |
+| PGC ETL | `src/etl/ingestion/planejamento/*.py` | Planning (PGC) scripts |
+| UASG ETL | `src/etl/ingestion/uasg/*.py` | UASG and órgão scripts |
 | SQL | `src/sql/create_table_*.sql` | Table DDL |
-| Observability | `src/observability/logging_json.py` | JSON logs to stdout + per-level files |
+| Observability | `src/observability/logging_json.py` | JSON logs |
 
-## Run a material script
+## Run scripts
 
 ```bash
 PYTHONPATH=src python src/etl/ingestion/material/material_item.py
+PYTHONPATH=src python src/etl/ingestion/servico/servico_secao.py
+PYTHONPATH=src python src/etl/ingestion/precos/preco_material.py
+PYTHONPATH=src python src/etl/ingestion/planejamento/pgc_detalhe.py
+PYTHONPATH=src python src/etl/ingestion/uasg/uasg_orgao.py
+PYTHONPATH=src python src/etl/ingestion/uasg/uasg.py
 ```

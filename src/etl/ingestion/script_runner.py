@@ -13,6 +13,7 @@ DEFAULT_ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
 
 LoadSecret = Callable[[Path, str], str]
 ConnectPostgresFn = Callable[..., Any]
+BuildFetchPages = Callable[[Any], FetchPages]
 
 
 def run_script_ingestion(
@@ -29,6 +30,7 @@ def run_script_ingestion(
     load_secret: LoadSecret = load_secret_key_func,
     connect_fn: ConnectPostgresFn | None = None,
     fetch_pages: FetchPages | None = None,
+    build_fetch_pages: BuildFetchPages | None = None,
 ) -> int:
     """Wire secrets + DB for one API upsert ETL script entrypoint.
 
@@ -46,6 +48,7 @@ def run_script_ingestion(
     headers = {"Authorization": load_secret(env_path, "DADOS_GOV_API_KEY")}
     conn = _open_connection(env_path, load_secret, connect_fn)
     url = f"{base_url}{endpoint_path}"
+    resolved_fetch = _resolve_fetch_pages(conn, fetch_pages, build_fetch_pages)
     try:
         return _invoke_pipeline(
             url=url,
@@ -56,10 +59,20 @@ def run_script_ingestion(
             conn=conn,
             log=logger,
             table_name=table_name,
-            fetch_pages=fetch_pages,
+            fetch_pages=resolved_fetch,
         )
     finally:
         conn.close()
+
+
+def _resolve_fetch_pages(
+    conn: Any,
+    fetch_pages: FetchPages | None,
+    build_fetch_pages: BuildFetchPages | None,
+) -> FetchPages | None:
+    if build_fetch_pages is not None:
+        return build_fetch_pages(conn)
+    return fetch_pages
 
 
 def _invoke_pipeline(

@@ -106,6 +106,39 @@ def test_run_script_ingestion_closes_connection(tmp_path: Path) -> None:
     assert conn.cursor_obj.execute_calls[0][1] == {"cod": 7}
 
 
+def test_run_script_ingestion_uses_build_fetch_pages(tmp_path: Path) -> None:
+    conn = FakeConnection()
+    connect = FakeConnectPostgres(conn)
+    log = get_json_logger("script_runner_build_fetch", log_dir=tmp_path)
+    builders: list[FakeConnection] = []
+
+    def load_secret(_env_path: Path, name: str) -> str:
+        return "x"
+
+    def build_fetch_pages(opened: FakeConnection) -> FakeFetchPages:
+        builders.append(opened)
+        return FakeFetchPages([{"codigo": 3}])
+
+    count = run_script_ingestion(
+        logger_name="script_runner_build_fetch",
+        endpoint_path="/modulo-pesquisa-preco/x",
+        page_size=10,
+        upsert_sql="SQL",
+        map_row=lambda row: SampleRecord(row["codigo"]),
+        table_name="preco_material",
+        env_path=tmp_path / ".env",
+        log=log,
+        load_secret=load_secret,
+        connect_fn=connect,
+        build_fetch_pages=build_fetch_pages,
+    )
+
+    assert count == 1
+    assert builders == [conn]
+    assert conn.cursor_obj.execute_calls[0][1] == {"cod": 3}
+    assert conn.closed is True
+
+
 def test_run_script_ingestion_closes_connection_on_fetch_error(tmp_path: Path) -> None:
     conn = FakeConnection()
     connect = FakeConnectPostgres(conn)

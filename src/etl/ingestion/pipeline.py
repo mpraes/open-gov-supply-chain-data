@@ -62,6 +62,22 @@ def run_api_upsert_ingestion(
         )
     """
     rows = _fetch_resultado_rows(url, headers, page_size, log, fetch_pages)
+    return upsert_mapped_rows(conn, upsert_sql, rows, map_row, log, table_name)
+
+
+def upsert_mapped_rows(
+    conn: SupportsDbConnection,
+    upsert_sql: str,
+    rows: list[dict[str, Any]],
+    map_row: MapRow,
+    log: Logger,
+    table_name: str,
+) -> int:
+    """Map and upsert already-fetched API rows.
+
+    Example:
+        n = upsert_mapped_rows(conn, SQL, rows, map_row, log, "material_item")
+    """
     return _upsert_mapped_rows(conn, upsert_sql, rows, map_row, log, table_name)
 
 

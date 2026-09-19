@@ -1,7 +1,7 @@
 from typing import Any
 
 from contracts.material_natureza_despesa import MaterialNaturezaDespesaRecord
-from etl.ingestion.script_runner import run_script_ingestion
+from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/5_consultarMaterialNaturezaDespesa"
 PAGE_SIZE = 500
@@ -36,7 +36,7 @@ def map_material_natureza_despesa_row(row: dict[str, Any]) -> MaterialNaturezaDe
 
 
 def main() -> None:
-    run_script_ingestion(
+    run_page_batch_ingestion(
         logger_name="material_natureza_despesa",
         endpoint_path=ENDPOINT_PATH,
         page_size=PAGE_SIZE,
