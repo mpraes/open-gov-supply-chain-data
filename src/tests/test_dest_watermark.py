@@ -90,7 +90,7 @@ def test_max_dest_iso_date_returns_none_when_empty() -> None:
     assert got is None
     assert cursor.sql is not None
     assert "MAX(data_publicacao_pncp)" in cursor.sql
-    assert "FROM contratacao" in cursor.sql
+    assert "FROM staging.contratacao" in cursor.sql
 
 
 def test_max_dest_iso_date_normalizes_text_datetime() -> None:

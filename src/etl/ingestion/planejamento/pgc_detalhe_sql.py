@@ -1,3 +1,5 @@
+from etl.ingestion.dest_schema import dest_table
+
 _ALLOWED_TABLES = frozenset({"pgc_detalhe", "pgc_detalhe_catalogo"})
 
 PGC_DETALHE_COLUMNS = (
@@ -84,7 +86,7 @@ def _build_upsert_sql(table_name: str) -> str:
     conflict = ", ".join(_CONFLICT_COLUMNS)
     updates = _excluded_updates()
     return (
-        f"INSERT INTO {table_name} ({cols})\n"
+        f"INSERT INTO {dest_table(table_name)} ({cols})\n"
         f"VALUES ({values})\n"
         f"ON CONFLICT ({conflict}) DO UPDATE SET\n"
         f"{updates},\n"

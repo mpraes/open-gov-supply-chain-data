@@ -2,6 +2,7 @@ from typing import Any
 
 from contracts.pgc_agregacao import PgcAgregacaoRecord
 from config.load_secret_key import load_secret_key_func
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 from etl.ingestion.planejamento.map_pgc_fields import pgc_agregacao_fields
 from etl.ingestion.planejamento.pgc_filters import pgc_orgao_ano
@@ -12,8 +13,8 @@ ENDPOINT_PATH = "/modulo-pgc/3_consultarPgcAgregacao"
 PAGE_SIZE: int | None = None
 TABLE_NAME = "pgc_agregacao"
 
-UPSERT_SQL = """
-INSERT INTO pgc_agregacao (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("pgc_agregacao")} (
     orgao, ano, poder, esfera, data_hora_publicacao_pncp,
     data_hora_atualizacao, quantidade_total_itens, valor_total_estimado
 )

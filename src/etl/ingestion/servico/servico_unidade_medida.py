@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.servico_unidade_medida import ServicoUnidadeMedidaRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-servico/7_consultarUndMedidaServico"
 PAGE_SIZE: int | None = None
 
-UPSERT_SQL = """
-INSERT INTO servico_unidade_medida (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("servico_unidade_medida")} (
     cod_servico, sigla_unidade_medida, nome_unidade_medida, status_unidade_medida
 )
 VALUES (

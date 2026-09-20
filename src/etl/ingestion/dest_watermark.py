@@ -5,8 +5,8 @@ from datetime import date, datetime
 from typing import Any, Literal
 
 from clients.compras_api import CodeParamsFn, QueryParams
+from etl.ingestion.dest_schema import dest_table, require_sql_ident
 
-_SQL_IDENT = re.compile(r"^[a-z][a-z0-9_]*$")
 _ISO_PREFIX = re.compile(r"^(\d{4}-\d{2}-\d{2})")
 _ALICE_DT = "%d/%m/%Y %H:%M:%S"
 WatermarkKind = Literal["iso", "alice"]
@@ -200,9 +200,8 @@ def _require_iso_date(iso: str, raw: str) -> str:
 def _max_sql(
     table: str, column: str, where: WhereClause | None
 ) -> tuple[str, dict[str, str | int] | None]:
-    safe_table = _require_sql_ident(table, "table")
-    safe_column = _require_sql_ident(column, "column")
-    sql = f"SELECT MAX({safe_column}) FROM {safe_table}"
+    safe_column = require_sql_ident(column, "column")
+    sql = f"SELECT MAX({safe_column}) FROM {dest_table(table)}"
     if where is None:
         return sql, None
     return _sql_with_where(sql, where)
@@ -212,7 +211,7 @@ def _sql_with_where(sql: str, where: WhereClause) -> tuple[str, dict[str, str | 
     clauses: list[str] = []
     params: dict[str, str | int] = {}
     for key, value in where.items():
-        ident = _require_sql_ident(key, "where")
+        ident = require_sql_ident(key, "where")
         clauses.append(f"{ident} = %({ident})s")
         params[ident] = value
     return f"{sql} WHERE {' AND '.join(clauses)}", params
@@ -235,7 +234,3 @@ def _require_param_text(params: dict[str, str | int | bool], key: str) -> str:
     return value
 
 
-def _require_sql_ident(value: str, label: str) -> str:
-    if _SQL_IDENT.fullmatch(value) is None:
-        raise ValueError(f"{label} expected snake_case identifier, got {value!r}")
-    return value

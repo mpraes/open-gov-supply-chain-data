@@ -1,6 +1,6 @@
 from typing import Any
 
-from etl.ingestion.precos.catalog_codes import _require_sql_ident
+from etl.ingestion.dest_schema import dest_table
 
 _HEADER_CHILDREN = frozenset({"arp_empenho"})
 _ITEM_CHILDREN = frozenset({"arp_unidade_item", "arp_adesao"})
@@ -17,9 +17,9 @@ def missing_ata_headers(conn: Any, child_table: str) -> list[AtaHeader]:
     child = _require_child(child_table, _HEADER_CHILDREN)
     sql = (
         "SELECT DISTINCT src.numero_ata_registro_preco, src.codigo_unidade_gerenciadora "
-        "FROM arp src WHERE src.numero_ata_registro_preco IS NOT NULL "
+        f"FROM {dest_table('arp')} src WHERE src.numero_ata_registro_preco IS NOT NULL "
         "AND src.codigo_unidade_gerenciadora IS NOT NULL AND NOT EXISTS ("
-        f"SELECT 1 FROM {child} dest WHERE dest.numero_ata = src.numero_ata_registro_preco "
+        f"SELECT 1 FROM {dest_table(child)} dest WHERE dest.numero_ata = src.numero_ata_registro_preco "
         "AND dest.unidade_gerenciadora = src.codigo_unidade_gerenciadora)"
     )
     return [_header_pair(row, index) for index, row in enumerate(_fetch_all(conn, sql))]
@@ -42,7 +42,7 @@ def table_has_rows(conn: Any, table: str) -> bool:
     Example:
         table_has_rows(conn, "arp")
     """
-    ident = _require_sql_ident(table, "table")
+    ident = dest_table(table)
     with conn.cursor() as cur:
         cur.execute(f"SELECT 1 FROM {ident} LIMIT 1")
         return cur.fetchone() is not None
@@ -68,11 +68,12 @@ def _item_missing_sql(child: str, *, match_item: bool) -> str:
         item_clause = " AND dest.numero_item = src.numero_item"
     return (
         "SELECT DISTINCT src.numero_ata_registro_preco, src.codigo_unidade_gerenciadora, "
-        "src.numero_item FROM arp_item src "
+        "src.numero_item FROM "
+        f"{dest_table('arp_item')} src "
         "WHERE src.numero_ata_registro_preco IS NOT NULL "
         "AND src.codigo_unidade_gerenciadora IS NOT NULL "
         "AND src.numero_item IS NOT NULL AND NOT EXISTS ("
-        f"SELECT 1 FROM {child} dest WHERE dest.numero_ata = src.numero_ata_registro_preco "
+        f"SELECT 1 FROM {dest_table(child)} dest WHERE dest.numero_ata = src.numero_ata_registro_preco "
         f"AND dest.unidade_gerenciadora = src.codigo_unidade_gerenciadora{item_clause})"
     )
 

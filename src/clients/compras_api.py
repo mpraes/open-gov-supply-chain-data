@@ -1,6 +1,9 @@
 from collections.abc import Callable, Mapping
+from logging import Logger
 from typing import Any
 from time import sleep as time_sleep
+
+from observability.logging_json import log_warning
 
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from requests.exceptions import Timeout as RequestsTimeout
@@ -65,6 +68,7 @@ def fetch_one_resultado_page(
     query_params: QueryParams | None = None,
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
+    log: Logger | None = None,
 ) -> tuple[list[dict[str, Any]], int]:
     """Fetch one compras.gov `resultado` page and its total page count.
 
@@ -81,6 +85,7 @@ def fetch_one_resultado_page(
         query_params=query_params,
         sleep_fn=sleep_fn,
         max_retries=max_retries,
+        log=log,
     )
 
 
@@ -95,6 +100,7 @@ def fetch_one_releases_page(
     query_params: QueryParams | None = None,
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
+    log: Logger | None = None,
 ) -> tuple[list[dict[str, Any]], int]:
     """Fetch one OCDS `releases` page using page/offSet.
 
@@ -106,7 +112,7 @@ def fetch_one_releases_page(
     if page_size is not None:
         params["offSet"] = page_size
     response = _get_ok_response(
-        url, headers, params, timeout, http_get, sleep_fn, max_retries
+        url, headers, params, timeout, http_get, sleep_fn, max_retries, log
     )
     return _parse_releases_page(response.json(), pagina)
 
@@ -122,6 +128,7 @@ def fetch_one_json_array_page(
     query_params: QueryParams | None = None,
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
+    log: Logger | None = None,
 ) -> tuple[list[dict[str, Any]], int]:
     """Fetch a non-paginated JSON array endpoint as a single page.
 
@@ -132,7 +139,7 @@ def fetch_one_json_array_page(
         return [], 1
     params = dict(query_params) if query_params else {}
     response = _get_ok_response(
-        url, headers, params, timeout, http_get, sleep_fn, max_retries
+        url, headers, params, timeout, http_get, sleep_fn, max_retries, log
     )
     return _parse_json_array(response.json()), 1
 
@@ -187,10 +194,11 @@ def _fetch_one_resultado_page(
     query_params: QueryParams | None,
     sleep_fn: SleepFn,
     max_retries: int,
+    log: Logger | None = None,
 ) -> tuple[list[dict[str, Any]], int]:
     params = _page_query_params(pagina, page_size, query_params)
     response = _get_ok_response(
-        url, headers, params, timeout, http_get, sleep_fn, max_retries
+        url, headers, params, timeout, http_get, sleep_fn, max_retries, log
     )
     return _parse_resultado_page(response.json())
 
@@ -209,24 +217,50 @@ def _get_ok_response(
     http_get: HttpGet,
     sleep_fn: SleepFn,
     max_retries: int,
+    log: Logger | None = None,
 ) -> Any:
     last_response: Any = None
     for attempt in range(max_retries + 1):
         try:
             last_response = http_get(url, headers=headers, params=params, timeout=timeout)
-        except (RequestsConnectionError, RequestsTimeout):
-            if attempt < max_retries:
-                sleep_fn(float(min(2**attempt, 16)))
-                continue
-            raise
+        except (RequestsConnectionError, RequestsTimeout) as exc:
+            _retry_transport_error(exc, attempt, max_retries, sleep_fn, log)
+            continue
         if getattr(last_response, "status_code", 200) != 429:
             last_response.raise_for_status()
             return last_response
         if attempt < max_retries:
-            sleep_fn(_retry_wait_seconds(last_response, attempt))
+            wait_s = _retry_wait_seconds(last_response, attempt)
+            _log_api_retry(log, attempt, wait_s, status=429)
+            sleep_fn(wait_s)
             continue
         last_response.raise_for_status()
     raise RuntimeError(f"429 retry loop exhausted after {max_retries} retries")
+
+
+def _log_api_retry(
+    log: Logger | None,
+    attempt: int,
+    wait_s: float,
+    **fields: object,
+) -> None:
+    if log is None:
+        return
+    log_warning(log, "api_retry", attempt=attempt + 1, wait_s=wait_s, **fields)
+
+
+def _retry_transport_error(
+    exc: BaseException,
+    attempt: int,
+    max_retries: int,
+    sleep_fn: SleepFn,
+    log: Logger | None,
+) -> None:
+    if attempt >= max_retries:
+        raise exc
+    wait_s = float(min(2**attempt, 16))
+    _log_api_retry(log, attempt, wait_s, error=type(exc).__name__)
+    sleep_fn(wait_s)
 
 
 def _retry_wait_seconds(response: Any, attempt: int) -> float:

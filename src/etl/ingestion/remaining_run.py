@@ -27,6 +27,7 @@ def run_remaining_ingestion(
     load_secret: Callable[..., str] | None = None,
     connect_fn: Callable[..., Any] | None = None,
     date_watermark: DateWatermark | None = None,
+    parallel_pages: int = 1,
 ) -> int:
     """Page-batch ingest one remaining catalog table.
 
@@ -58,5 +59,6 @@ def run_remaining_ingestion(
         job_name=job_name if job_name is not None else logger_name,
         fetch_page_fn=fetch_page_fn,
         date_watermark=date_watermark,
+        parallel_pages=parallel_pages,
         **kwargs,
     )

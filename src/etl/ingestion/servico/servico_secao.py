@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.servico_secao import ServicoSecaoRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-servico/1_consultarSecaoServico"
 PAGE_SIZE: int | None = None
 
-UPSERT_SQL = """
-INSERT INTO servico_secao (cod_secao, nome_secao, status_secao, data_hora_atualizacao)
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("servico_secao")} (cod_secao, nome_secao, status_secao, data_hora_atualizacao)
 VALUES (%(cod_secao)s, %(nome_secao)s, %(status_secao)s, %(data_hora_atualizacao)s)
 ON CONFLICT (cod_secao) DO UPDATE SET
 nome_secao = EXCLUDED.nome_secao,

@@ -1,6 +1,7 @@
 from typing import Any
 
 from contracts.material_class import MaterialClassRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/2_consultarClasseMaterial"
@@ -8,8 +9,8 @@ ENDPOINT_PATH = "/modulo-material/2_consultarClasseMaterial"
 # Class endpoint has no tamanhoPagina param in the API docs.
 PAGE_SIZE: int | None = None
 
-UPSERT_SQL = """
-INSERT INTO material_class (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("material_class")} (
     cod_classe, cod_grupo, nome_grupo, nome_classe, status_classe, data_hora_atualizacao
 )
 VALUES (

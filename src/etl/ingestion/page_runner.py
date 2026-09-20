@@ -46,6 +46,7 @@ def run_page_batch_ingestion(
     job_name: str | None = None,
     fetch_page_fn: FetchOnePage = fetch_one_resultado_page,
     date_watermark: DateWatermark | None = None,
+    parallel_pages: int = 1,
 ) -> int:
     """Ingest one API page at a time and persist a resume cursor.
 
@@ -76,6 +77,7 @@ def run_page_batch_ingestion(
             query_params=query_params,
             fetch_page_fn=fetch_page_fn,
             date_watermark=date_watermark,
+            parallel_pages=parallel_pages,
         )
     finally:
         conn.close()
@@ -95,6 +97,7 @@ def _run_connected_pages(
     query_params: QueryParams | None,
     fetch_page_fn: FetchOnePage,
     date_watermark: DateWatermark | None,
+    parallel_pages: int,
 ) -> int:
     ensure_job_cursor_table(conn)
     resolved = _resolve_watermark(conn, query_params, job_name, date_watermark, log)
@@ -113,6 +116,7 @@ def _run_connected_pages(
         job_name=job,
         query_params=params,
         fetch_page_fn=fetch_page_fn,
+        parallel_pages=parallel_pages,
     )
 
 
@@ -152,6 +156,7 @@ def _loop_api_pages(
     job_name: str,
     query_params: QueryParams | None,
     fetch_page_fn: FetchOnePage,
+    parallel_pages: int,
 ) -> int:
     return run_page_batch_loop(
         load_cursor=lambda: load_job_cursor(conn, job_name),
@@ -161,6 +166,7 @@ def _loop_api_pages(
             pagina=pagina,
             page_size=page_size,
             query_params=query_params,
+            log=log,
         ),
         ingest_rows=lambda rows: upsert_mapped_rows(
             conn, upsert_sql, rows, map_row, log, table_name
@@ -168,4 +174,5 @@ def _loop_api_pages(
         save_cursor=lambda pagina: save_job_cursor(conn, job_name, pagina),
         log=log,
         job_name=job_name,
+        parallel_pages=parallel_pages,
     )

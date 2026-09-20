@@ -58,4 +58,4 @@ def test_ensure_code_cursor_table_creates_and_commits() -> None:
     conn = FakeCursorConnection(cursor)
     ensure_code_cursor_table(conn)
     assert conn.commit_calls == 1
-    assert "etl_code_cursor" in cursor.execute_calls[0][0]
+    assert "staging.etl_code_cursor" in cursor.execute_calls[0][0]

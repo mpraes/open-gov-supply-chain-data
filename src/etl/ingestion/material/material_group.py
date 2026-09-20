@@ -1,6 +1,7 @@
 from typing import Any
 
 from contracts.material_group import MaterialGroupRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/1_consultarGrupoMaterial"
@@ -8,8 +9,8 @@ ENDPOINT_PATH = "/modulo-material/1_consultarGrupoMaterial"
 # Group endpoint has no tamanhoPagina param in the API docs.
 PAGE_SIZE: int | None = None
 
-UPSERT_SQL = """
-INSERT INTO material_group (cod_grupo, nome_grupo, status_grupo, data_hora_atualizacao)
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("material_group")} (cod_grupo, nome_grupo, status_grupo, data_hora_atualizacao)
 VALUES (%(cod_grupo)s, %(nome_grupo)s, %(status_grupo)s, %(data_hora_atualizacao)s)
 ON CONFLICT (cod_grupo) DO UPDATE SET
 nome_grupo = EXCLUDED.nome_grupo,

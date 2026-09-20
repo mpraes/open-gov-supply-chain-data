@@ -16,6 +16,7 @@ class FakePsycopgConnect:
         user: str,
         password: str,
         dbname: str,
+        options: str,
     ) -> object:
         self.calls.append(
             {
@@ -24,6 +25,7 @@ class FakePsycopgConnect:
                 "user": user,
                 "password": password,
                 "dbname": dbname,
+                "options": options,
             }
         )
         return self.connection
@@ -41,5 +43,12 @@ def test_connect_postgres_forwards_kwargs_to_connect_fn() -> None:
     )
     assert conn is fake.connection
     assert fake.calls == [
-        {"host": "h", "port": "5432", "user": "u", "password": "p", "dbname": "d"}
+        {
+            "host": "h",
+            "port": "5432",
+            "user": "u",
+            "password": "p",
+            "dbname": "d",
+            "options": "-c search_path=staging",
+        }
     ]

@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.material_natureza_despesa import MaterialNaturezaDespesaRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/5_consultarMaterialNaturezaDespesa"
 PAGE_SIZE = 500
 
-UPSERT_SQL = """
-INSERT INTO material_natureza_despesa (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("material_natureza_despesa")} (
     cod_pdm, cod_natureza_despesa, nome_natureza_despesa, status_natureza_despesa
 )
 VALUES (

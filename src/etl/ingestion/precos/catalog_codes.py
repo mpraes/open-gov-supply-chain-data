@@ -1,7 +1,6 @@
-import re
 from typing import Any
 
-_SQL_IDENT = re.compile(r"^[a-z][a-z0-9_]*$")
+from etl.ingestion.dest_schema import dest_table as qualify_dest_table, require_sql_ident
 
 
 def list_int_column(
@@ -38,10 +37,9 @@ def list_codes_after(
             conn, table="material_item", column="cod_item", last_code=10, limit=20
         )
     """
-    safe_table = _require_sql_ident(table, "table")
-    safe_column = _require_sql_ident(column, "column")
+    safe_column = require_sql_ident(column, "column")
     sql = (
-        f"SELECT {safe_column} FROM {safe_table} "
+        f"SELECT {safe_column} FROM {qualify_dest_table(table)} "
         f"WHERE {safe_column} > %(last_code)s "
         f"ORDER BY {safe_column} LIMIT %(limit)s"
     )
@@ -77,16 +75,16 @@ def list_codes_after_absent(
 def _absent_codes_sql(
     table: str,
     column: str,
-    dest_table: str,
+    dest_name: str,
     dest_column: str,
     dest_filters: dict[str, str | int],
     last_code: int,
     limit: int,
 ) -> tuple[str, dict[str, str | int]]:
-    src_table = _require_sql_ident(table, "table")
-    src_col = _require_sql_ident(column, "column")
-    dst_table = _require_sql_ident(dest_table, "dest_table")
-    dst_col = _require_sql_ident(dest_column, "dest_column")
+    src_table = qualify_dest_table(table)
+    src_col = require_sql_ident(column, "column")
+    dst_table = qualify_dest_table(dest_name)
+    dst_col = require_sql_ident(dest_column, "dest_column")
     filter_sql, params = _filter_clauses(dest_filters)
     sql = (
         f"SELECT {src_col} FROM {src_table} src "
@@ -103,16 +101,10 @@ def _filter_clauses(dest_filters: dict[str, str | int]) -> tuple[str, dict[str, 
     params: dict[str, str | int] = {}
     parts: list[str] = []
     for key, value in dest_filters.items():
-        ident = _require_sql_ident(key, "dest_filters")
+        ident = require_sql_ident(key, "dest_filters")
         parts.append(f" AND dest.{ident} = %({ident})s")
         params[ident] = value
     return "".join(parts), params
-
-
-def _require_sql_ident(value: str, label: str) -> str:
-    if _SQL_IDENT.fullmatch(value) is None:
-        raise ValueError(f"{label} expected snake_case identifier, got {value!r}")
-    return value
 
 
 def _require_int_code(row: object, index: int) -> int:

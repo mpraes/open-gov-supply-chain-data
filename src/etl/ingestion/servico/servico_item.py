@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.servico_item import ServicoItemRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-servico/6_consultarItemServico"
 PAGE_SIZE = 500
 
-UPSERT_SQL = """
-INSERT INTO servico_item (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("servico_item")} (
     cod_servico, cod_secao, nome_secao, cod_divisao, nome_divisao,
     cod_grupo, nome_grupo, cod_classe, nome_classe, cod_subclasse, nome_subclasse,
     nome_servico, cod_cpc, exclusivo_central_compras, status_servico,

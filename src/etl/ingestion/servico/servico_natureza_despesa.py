@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.servico_natureza_despesa import ServicoNaturezaDespesaRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-servico/8_consultarNaturezaDespesaServico"
 PAGE_SIZE: int | None = None
 
-UPSERT_SQL = """
-INSERT INTO servico_natureza_despesa (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("servico_natureza_despesa")} (
     cod_servico, cod_natureza_despesa, nome_natureza_despesa, status_natureza_despesa
 )
 VALUES (

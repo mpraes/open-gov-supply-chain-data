@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.material_unidade_fornecimento import MaterialUnidadeFornecimentoRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/6_consultarMaterialUnidadeFornecimento"
 PAGE_SIZE = 500
 
-UPSERT_SQL = """
-INSERT INTO material_unidade_fornecimento (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("material_unidade_fornecimento")} (
     cod_pdm, numero_sequencial_unidade_fornecimento, sigla_unidade_fornecimento,
     nome_unidade_fornecimento, descricao_unidade_fornecimento, sigla_unidade_medida,
     capacidade_unidade_fornecimento, status_unidade_fornecimento_pdm,

@@ -98,3 +98,71 @@ def test_run_page_batch_loop_does_not_advance_when_ingest_fails(tmp_path: Path) 
         )
     assert store.saved == []
     assert store.last == 0
+
+
+def test_run_page_batch_loop_prefetches_later_pages_before_ingest(tmp_path: Path) -> None:
+    from threading import Event, Lock
+
+    fetched_at_ingest: list[list[int]] = []
+    started: set[int] = set()
+    both_started = Event()
+    lock = Lock()
+    store = FakePageStore(
+        0,
+        {
+            1: ([{"cod": 1}], 3),
+            2: ([{"cod": 2}], 3),
+            3: ([{"cod": 3}], 3),
+        },
+    )
+
+    def fetch(pagina: int) -> tuple[list[dict[str, object]], int]:
+        with lock:
+            store.fetched.append(pagina)
+            started.add(pagina)
+            if 2 in started and 3 in started:
+                both_started.set()
+        if pagina in (2, 3):
+            assert both_started.wait(timeout=1)
+        return store._pages[pagina]
+
+    def ingest(rows: list[dict[str, object]]) -> int:
+        with lock:
+            fetched_at_ingest.append(list(store.fetched))
+        return store.ingest(rows)
+
+    total = run_page_batch_loop(
+        load_cursor=store.load,
+        fetch_page=fetch,
+        ingest_rows=ingest,
+        save_cursor=store.save,
+        log=get_json_logger("page_batch_prefetch", log_dir=tmp_path),
+        job_name="material_item",
+        parallel_pages=2,
+    )
+    assert total == 3
+    assert store.ingested == [[{"cod": 1}], [{"cod": 2}], [{"cod": 3}]]
+    assert store.saved == [1, 2, 3]
+    assert 2 in fetched_at_ingest[1] and 3 in fetched_at_ingest[1]
+
+
+def test_run_page_batch_loop_does_not_fetch_past_total_pages(tmp_path: Path) -> None:
+    store = FakePageStore(
+        0,
+        {
+            1: ([{"cod": 1}], 2),
+            2: ([{"cod": 2}], 2),
+        },
+    )
+    total = run_page_batch_loop(
+        load_cursor=store.load,
+        fetch_page=store.fetch,
+        ingest_rows=store.ingest,
+        save_cursor=store.save,
+        log=get_json_logger("page_batch_no_overfetch", log_dir=tmp_path),
+        job_name="material_item",
+        parallel_pages=4,
+    )
+    assert total == 2
+    assert store.fetched == [1, 2]
+    assert store.saved == [1, 2]

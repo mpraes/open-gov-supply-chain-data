@@ -47,7 +47,7 @@ def test_missing_ata_headers_anti_joins_empenho() -> None:
     got = missing_ata_headers(FakeKeyConnection(cursor), child_table="arp_empenho")
     assert got == [("10", "36000")]
     assert cursor.sql is not None
-    assert "FROM arp " in cursor.sql
+    assert "FROM staging.arp " in cursor.sql
     assert "arp_empenho" in cursor.sql
     assert "NOT EXISTS" in cursor.sql
 
@@ -59,7 +59,7 @@ def test_missing_ata_item_triples_anti_joins_child() -> None:
     )
     assert got == [("10", "36000", "1")]
     assert cursor.sql is not None
-    assert "FROM arp_item " in cursor.sql
+    assert "FROM staging.arp_item " in cursor.sql
     assert "arp_unidade_item" in cursor.sql
     assert "numero_item" in cursor.sql
 

@@ -83,6 +83,7 @@ def test_run_page_batch_ingestion_closes_connection_on_empty_catalog(tmp_path: P
         pagina: int,
         page_size: int | None = 500,
         query_params: dict[str, str | int | bool] | None = None,
+        log: object | None = None,
     ) -> tuple[list[dict[str, Any]], int]:
         return [], 0
 
@@ -119,6 +120,7 @@ def test_run_page_batch_ingestion_forwards_query_params(tmp_path: Path) -> None:
         pagina: int,
         page_size: int | None = 500,
         query_params: dict[str, str | int | bool] | None = None,
+        log: object | None = None,
     ) -> tuple[list[dict[str, Any]], int]:
         seen.append(query_params)
         return [], 0
@@ -145,6 +147,39 @@ def _stub_secret(_env_path: Path, name: str) -> str:
     return "x"
 
 
+def test_run_page_batch_ingestion_passes_log_to_fetch(tmp_path: Path) -> None:
+    conn = FakePageConnection()
+    log = get_json_logger("page_runner_log", log_dir=tmp_path)
+    seen: list[object] = []
+
+    def capture_page(
+        url: str,
+        headers: dict[str, str],
+        *,
+        pagina: int,
+        page_size: int | None = 500,
+        query_params: dict[str, str | int | bool] | None = None,
+        log: object | None = None,
+    ) -> tuple[list[dict[str, Any]], int]:
+        seen.append(log)
+        return [], 0
+
+    run_page_batch_ingestion(
+        logger_name="page_runner_log",
+        endpoint_path="/modulo-fornecedor/1_consultarFornecedor",
+        page_size=10,
+        upsert_sql="SQL",
+        map_row=lambda row: SampleRecord(row["codigo"]),
+        table_name="sample",
+        env_path=tmp_path / ".env",
+        log=log,
+        load_secret=_stub_secret,
+        connect_fn=FakeConnectPostgres(conn),
+        fetch_page_fn=capture_page,
+    )
+    assert seen == [log]
+
+
 def test_run_page_batch_ingestion_raises_start_from_dest(tmp_path: Path) -> None:
     conn = FakePageConnection(dest_max="2024-06-15")
     seen: list[dict[str, str | int | bool] | None] = []
@@ -157,6 +192,7 @@ def test_run_page_batch_ingestion_raises_start_from_dest(tmp_path: Path) -> None
         pagina: int,
         page_size: int | None = 500,
         query_params: dict[str, str | int | bool] | None = None,
+        log: object | None = None,
     ) -> tuple[list[dict[str, Any]], int]:
         seen.append(query_params)
         return [], 0
@@ -207,6 +243,7 @@ def test_run_page_batch_ingestion_skips_fetch_when_caught_up(tmp_path: Path) -> 
         pagina: int,
         page_size: int | None = 500,
         query_params: dict[str, str | int | bool] | None = None,
+        log: object | None = None,
     ) -> tuple[list[dict[str, Any]], int]:
         nonlocal fetched
         fetched += 1

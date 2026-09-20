@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.remaining_columns import TABLE_SPECS
 
 
@@ -14,7 +15,7 @@ def text_table_sql(table_name: str, columns: tuple[str, ...], conflict: tuple[st
     ]
     pk = ", ".join(conflict)
     return (
-        f"CREATE TABLE {table_name} (\n"
+        f"CREATE TABLE {dest_table(table_name)} (\n"
         + ",\n".join(lines)
         + ",\ndata_hora_carga TIMESTAMPTZ DEFAULT now(),\n"
         + f"PRIMARY KEY ({pk})\n);\n"

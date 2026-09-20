@@ -43,7 +43,7 @@ def test_list_codes_after_pages_catalog_ids() -> None:
     assert codes == [11, 12]
     assert cursor.params == {"last_code": 10, "limit": 2}
     assert cursor.sql is not None
-    assert "material_item" in cursor.sql
+    assert "FROM staging.material_item" in cursor.sql
     assert "cod_item > %(last_code)s" in cursor.sql
 
 
@@ -71,6 +71,6 @@ def test_list_codes_after_absent_excludes_dest_matches() -> None:
     assert cursor.params == {"last_code": 10, "limit": 2, "ano_artefato": 2026}
     assert cursor.sql is not None
     assert "NOT EXISTS" in cursor.sql
-    assert "pgc_detalhe_catalogo" in cursor.sql
+    assert "FROM staging.pgc_detalhe_catalogo" in cursor.sql
     assert "codigo_classe_material" in cursor.sql
     assert "ano_artefato = %(ano_artefato)s" in cursor.sql

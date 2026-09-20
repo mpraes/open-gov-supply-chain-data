@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.material_item import MaterialItemRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/4_consultarItemMaterial"
 PAGE_SIZE = 500
 
-UPSERT_SQL = """
-INSERT INTO material_item (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("material_item")} (
     cod_item, cod_grupo, nome_grupo, cod_classe, nome_classe, cod_pdm, nome_pdm,
     descricao_item, status_item, item_sustentavel, codigo_ncm, descricao_ncm,
     aplica_margem_preferencia, data_hora_atualizacao

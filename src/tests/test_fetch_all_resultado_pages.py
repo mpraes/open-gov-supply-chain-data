@@ -1,8 +1,11 @@
+import json
+from pathlib import Path
 from typing import Any
 
 import pytest
 
 from clients.compras_api import fetch_all_resultado_pages, fetch_one_resultado_page
+from observability.logging_json import get_json_logger
 
 
 class FakeResponse:
@@ -232,6 +235,85 @@ def test_fetch_all_resultado_pages_retries_429_then_succeeds() -> None:
     assert rows == [{"idCompra": 1}]
     assert len(http_get.calls) == 2
     assert sleep.calls == [2.0]
+
+
+def test_fetch_one_resultado_page_logs_429_retry(tmp_path: Path) -> None:
+    sleep = FakeSleep()
+    http_get = FakeHttpGetSequence(
+        [
+            FakeResponse({}, status_code=429, headers={"Retry-After": "2"}),
+            FakeResponse(_ok_page()),
+        ]
+    )
+    log = get_json_logger("compras_retry_429", log_dir=tmp_path)
+    rows, total = fetch_one_resultado_page(
+        "https://example.test/preco",
+        {"Authorization": "key"},
+        pagina=1,
+        page_size=20,
+        http_get=http_get,
+        sleep_fn=sleep,
+        max_retries=2,
+        log=log,
+    )
+    assert rows == [{"idCompra": 1}]
+    assert total == 1
+    warn = [
+        json.loads(line)
+        for line in (tmp_path / "compras_retry_429_warning.log").read_text(encoding="utf-8").splitlines()
+    ]
+    assert warn[0]["message"] == "api_retry"
+    assert warn[0]["status"] == 429
+    assert warn[0]["wait_s"] == 2.0
+    assert warn[0]["attempt"] == 1
+
+
+def test_fetch_one_resultado_page_logs_timeout_retry(tmp_path: Path) -> None:
+    from requests.exceptions import Timeout as RequestsTimeout
+
+    sleep = FakeSleep()
+    ok = FakeResponse(_ok_page())
+
+    class FakeHttpGetTimeoutThenOk:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def __call__(
+            self,
+            url: str,
+            *,
+            headers: dict[str, str],
+            params: dict[str, str | int | bool],
+            timeout: int,
+        ) -> FakeResponse:
+            self.calls += 1
+            if self.calls == 1:
+                raise RequestsTimeout("read timed out")
+            return ok
+
+    log = get_json_logger("compras_retry_timeout", log_dir=tmp_path)
+    rows, total = fetch_one_resultado_page(
+        "https://example.test/preco",
+        {"Authorization": "key"},
+        pagina=1,
+        page_size=20,
+        http_get=FakeHttpGetTimeoutThenOk(),
+        sleep_fn=sleep,
+        max_retries=2,
+        log=log,
+    )
+    assert rows == [{"idCompra": 1}]
+    assert total == 1
+    warn = [
+        json.loads(line)
+        for line in (tmp_path / "compras_retry_timeout_warning.log").read_text(
+            encoding="utf-8"
+        ).splitlines()
+    ]
+    assert warn[0]["message"] == "api_retry"
+    assert warn[0]["error"] == "Timeout"
+    assert warn[0]["wait_s"] == 1.0
+    assert warn[0]["attempt"] == 1
 
 
 def test_fetch_all_resultado_pages_raises_after_retrying_429() -> None:

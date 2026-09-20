@@ -1,19 +1,23 @@
 from typing import Any
 
-ENSURE_CURSOR_SQL = """
-CREATE TABLE IF NOT EXISTS etl_code_cursor (
+from etl.ingestion.dest_schema import dest_table
+
+_CURSOR_TABLE = dest_table("etl_code_cursor")
+
+ENSURE_CURSOR_SQL = f"""
+CREATE TABLE IF NOT EXISTS {_CURSOR_TABLE} (
 job_name TEXT PRIMARY KEY,
 last_code BIGINT NOT NULL,
 updated_at TIMESTAMPTZ DEFAULT now()
 );
 """
 
-LOAD_CURSOR_SQL = """
-SELECT last_code FROM etl_code_cursor WHERE job_name = %(job_name)s;
+LOAD_CURSOR_SQL = f"""
+SELECT last_code FROM {_CURSOR_TABLE} WHERE job_name = %(job_name)s;
 """
 
-SAVE_CURSOR_SQL = """
-INSERT INTO etl_code_cursor (job_name, last_code)
+SAVE_CURSOR_SQL = f"""
+INSERT INTO {_CURSOR_TABLE} (job_name, last_code)
 VALUES (%(job_name)s, %(last_code)s)
 ON CONFLICT (job_name) DO UPDATE SET
 last_code = EXCLUDED.last_code,

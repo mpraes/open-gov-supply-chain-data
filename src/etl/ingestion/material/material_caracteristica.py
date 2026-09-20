@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.material_caracteristica import MaterialCaracteristicaRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/7_consultarMaterialCaracteristicas"
 PAGE_SIZE = 500
 
-UPSERT_SQL = """
-INSERT INTO material_caracteristica (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("material_caracteristica")} (
     cod_item, numero_caracteristica, codigo_caracteristica, codigo_valor_caracteristica,
     nome_caracteristica, status_caracteristica, nome_valor_caracteristica,
     status_valor_caracteristica, item_sustentavel, status_item, sigla_unidade_medida,

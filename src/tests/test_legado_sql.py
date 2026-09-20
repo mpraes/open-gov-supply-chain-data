@@ -5,7 +5,7 @@ from etl.ingestion.legado.legado_sql import legado_upsert_sql
 
 def test_legado_upsert_sql_conflicts_on_id_compra() -> None:
     sql = legado_upsert_sql("legado_licitacao")
-    assert "INSERT INTO legado_licitacao" in sql
+    assert "INSERT INTO staging.legado_licitacao" in sql
     assert "ON CONFLICT (id_compra)" in sql
     assert "data_hora_carga = now()" in sql
 

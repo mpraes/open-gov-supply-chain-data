@@ -1,6 +1,7 @@
 from typing import Any
 
 from contracts.uasg_orgao import UasgOrgaoRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 from etl.ingestion.uasg.map_uasg_fields import uasg_orgao_fields
 from etl.ingestion.uasg.query_params import uasg_orgao_job_name, uasg_orgao_query_params
@@ -9,8 +10,8 @@ ENDPOINT_PATH = "/modulo-uasg/2_consultarOrgao"
 PAGE_SIZE: int | None = None
 TABLE_NAME = "uasg_orgao"
 
-UPSERT_SQL = """
-INSERT INTO uasg_orgao (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("uasg_orgao")} (
     codigo_orgao, nome_orgao, nome_mnemonico_orgao, cnpj_cpf_orgao,
     codigo_orgao_vinculado, cnpj_cpf_orgao_vinculado, nome_orgao_vinculado,
     codigo_orgao_superior, cnpj_cpf_orgao_superior, nome_orgao_superior,

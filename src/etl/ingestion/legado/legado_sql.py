@@ -1,3 +1,4 @@
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.legado.legado_columns import (
     COMPRA_SEM_COLUMNS,
     ITEM_LICITACAO_COLUMNS,
@@ -43,7 +44,7 @@ def _build_upsert_sql(
     keys = ", ".join(conflict)
     updates = _excluded_updates(columns, conflict)
     return (
-        f"INSERT INTO {table_name} ({cols})\n"
+        f"INSERT INTO {dest_table(table_name)} ({cols})\n"
         f"VALUES ({values})\n"
         f"ON CONFLICT ({keys}) DO UPDATE SET\n"
         f"{updates},\n"

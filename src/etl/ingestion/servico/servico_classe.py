@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.servico_classe import ServicoClasseRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-servico/4_consultarClasseServico"
 PAGE_SIZE: int | None = None
 
-UPSERT_SQL = """
-INSERT INTO servico_classe (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("servico_classe")} (
     cod_classe, cod_grupo, nome_grupo, nome_classe, status_classe, data_hora_atualizacao
 )
 VALUES (

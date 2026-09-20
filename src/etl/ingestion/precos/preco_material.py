@@ -1,6 +1,7 @@
 from typing import Any
 
 from contracts.preco_material import PrecoMaterialRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.precos.batch_runner import run_preco_batch_ingestion
 from etl.ingestion.precos.map_preco_fields import preco_material_fields
 from etl.ingestion.precos.query_params import material_preco_query_params
@@ -12,8 +13,8 @@ CATALOG_TABLE = "material_pdm"
 CATALOG_COLUMN = "cod_pdm"
 JOB_NAME = "preco_material_pdm"
 
-UPSERT_SQL = """
-INSERT INTO preco_material (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("preco_material")} (
     id_compra, id_item_compra, numero_item_compra, codigo_item_catalogo,
     forma, modalidade, criterio_julgamento, descricao_item,
     nome_unidade_medida, sigla_unidade_medida, quantidade, preco_unitario,

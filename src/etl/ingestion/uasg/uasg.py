@@ -1,6 +1,7 @@
 from typing import Any
 
 from contracts.uasg import UasgRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 from etl.ingestion.uasg.map_uasg_fields import uasg_fields
 from etl.ingestion.uasg.query_params import uasg_job_name, uasg_query_params
@@ -9,8 +10,8 @@ ENDPOINT_PATH = "/modulo-uasg/1_consultarUasg"
 PAGE_SIZE: int | None = None
 TABLE_NAME = "uasg"
 
-UPSERT_SQL = """
-INSERT INTO uasg (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("uasg")} (
     codigo_uasg, nome_uasg, uso_sisg, adesao_siasg, sigla_uf,
     codigo_municipio, codigo_municipio_ibge, nome_municipio_ibge,
     codigo_unidade_polo, nome_unidade_polo, codigo_unidade_espelho,

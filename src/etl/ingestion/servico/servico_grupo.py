@@ -1,13 +1,14 @@
 from typing import Any
 
 from contracts.servico_grupo import ServicoGrupoRecord
+from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-servico/3_consultarGrupoServico"
 PAGE_SIZE: int | None = None
 
-UPSERT_SQL = """
-INSERT INTO servico_grupo (
+UPSERT_SQL = f"""
+INSERT INTO {dest_table("servico_grupo")} (
     cod_grupo, cod_divisao, nome_secao, nome_divisao, nome_grupo,
     status_grupo, data_hora_atualizacao
 )
