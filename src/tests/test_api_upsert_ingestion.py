@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -6,6 +8,18 @@ from psycopg2 import Error as PsycopgError
 
 from etl.ingestion.pipeline import run_api_upsert_ingestion
 from observability.logging_json import get_json_logger
+
+
+def _info_events(tmp_path: Path, logger_name: str) -> list[dict[str, object]]:
+    path = tmp_path / f"{logger_name}_info.log"
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
+
+
+def _assert_timed(event: dict[str, object], rows: int) -> None:
+    assert isinstance(event["duration_ms"], int)
+    assert event["duration_ms"] >= 0
+    if rows > 0 and event["duration_ms"] > 0:
+        assert isinstance(event["rows_per_sec"], float)
 
 
 class SampleRecord(BaseModel):
@@ -107,6 +121,11 @@ def test_run_api_upsert_ingestion_upserts_all_rows(tmp_path: Any) -> None:
         (sql, {"cod": 1, "nome": "alpha"}),
         (sql, {"cod": 2, "nome": "beta"}),
     ]
+    events = {row["message"]: row for row in _info_events(tmp_path, "pipeline_upsert_ok")}
+    _assert_timed(events["api_fetch_ok"], 2)
+    _assert_timed(events["upsert_ok"], 2)
+    assert events["api_fetch_ok"]["rows"] == 2
+    assert events["upsert_ok"]["rows"] == 2
 
 
 def test_run_api_upsert_ingestion_raises_on_fetch_failure(tmp_path: Any) -> None:

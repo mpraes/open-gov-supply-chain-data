@@ -37,7 +37,8 @@ src/tests/test_pgc_*.py
 - `PAGE_SIZE = 100` when `tamanhoPagina` exists; agregação has none (`None`)
 - Upsert + `data_hora_carga = now()` on conflict
 - Resume cursor is per órgão+year (`pgc_detalhe:36000:2026`) so a filter change does not reuse another job's page watermark
-- Catalogo walks `material_class.cod_classe` (`tipo=Material`) then `servico_grupo.cod_grupo` (`tipo=Servico`)
+- Catalogo walks `material_class.cod_classe` (`tipo=Material`) then `servico_grupo.cod_grupo` (`tipo=Servico`), skipping codes already in `pgc_detalhe_catalogo` for that `ano_artefato`
+- `pgc_detalhe` and `pgc_agregacao` stay page-resume (orgão+year dump; no dest date filter)
 
 ## How to run
 

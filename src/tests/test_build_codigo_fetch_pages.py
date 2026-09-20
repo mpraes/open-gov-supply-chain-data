@@ -66,7 +66,7 @@ def test_build_codigo_fetch_pages_loads_codes_and_forwards_page_size() -> None:
             "headers": {"Authorization": "k"},
             "codes": [7],
             "page_size": 40,
-            "pause_seconds": 1.0,
+            "pause_seconds": 0,
             "params": {"tipo": "codigoItemCatalogo", "codigo": "7"},
         }
     ]

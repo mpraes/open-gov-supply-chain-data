@@ -43,9 +43,20 @@ def _ingest_catalogo(tipo: str, catalog_table: str, catalog_column: str, ano: in
         catalog_table=catalog_table,
         catalog_column=catalog_column,
         params_for_code=lambda code: pgc_catalogo_query_params(code, tipo=tipo, ano=ano),
+        absent_dest_table=TABLE_NAME,
+        absent_dest_column=_catalogo_dest_column(tipo),
+        absent_filters={"ano_artefato": ano},
         batch_size=BATCH_SIZE,
         job_name=job,
     )
+
+
+def _catalogo_dest_column(tipo: str) -> str:
+    if tipo == "Material":
+        return "codigo_classe_material"
+    if tipo == "Servico":
+        return "codigo_grupo_servico"
+    raise ValueError(f"tipo expected Material or Servico, got {tipo!r}")
 
 
 if __name__ == "__main__":

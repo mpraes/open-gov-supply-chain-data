@@ -14,7 +14,7 @@ def build_codigo_fetch_pages(
     params_for_code: CodeParamsFn,
     *,
     fetch_for_codes: FetchForCodes = fetch_resultado_pages_for_codes,
-    pause_seconds: float = 1.0,
+    pause_seconds: float = 0,
 ) -> FetchPages:
     """Build a pipeline fetch_pages that queries one catalog code column.
 

@@ -1,0 +1,23 @@
+CREATE TABLE legado_rdc (
+data_abertura_proposta TIMESTAMP,
+data_entrega_edital TIMESTAMP,
+data_entrega_proposta TIMESTAMP,
+data_publicacao TIMESTAMP,
+endereco_entrega_edital TEXT,
+forma_de_realizacao_licitacao varchar(200),
+funcao_responsavel varchar(200),
+identificador varchar(64) PRIMARY KEY,
+informacoes_gerais TEXT,
+modalidade BIGINT,
+nome_responsavel varchar(200),
+numero_aviso BIGINT,
+numero_itens BIGINT,
+numero_processo varchar(64),
+objeto TEXT,
+situacao_aviso varchar(200),
+tipo_recurso varchar(100),
+uasg BIGINT,
+orgao_uasg BIGINT,
+uf_uasg varchar(2),
+data_hora_carga TIMESTAMPTZ DEFAULT now()
+);

@@ -2,7 +2,8 @@
 
 Snapshot as of 2026-09-19: shared API→upsert pipeline plus CATMAT (material),
 CATSER (serviço), pesquisa de preço (preços praticados), PGC (planejamento),
-and UASG catalogs.
+UASG, LEGADO (Lei 8.666), and the remaining list dumps
+(contratações, ARP, contratos, fornecedor, OCDS, indicadores, Alice avisos).
 
 ## System layers
 
@@ -29,6 +30,8 @@ flowchart TB
       CP["preco_* Record"]
       CG["pgc_* Record"]
       CU["uasg_* Record"]
+      CL["legado_* Record"]
+      CR["remaining Records"]
     end
 
     subgraph ingestion["etl/ingestion"]
@@ -40,6 +43,8 @@ flowchart TB
       PRE["precos/*.py"]
       PGC["planejamento/*.py"]
       UASG["uasg/*.py"]
+      LEG["legado/*.py"]
+      REST["contratacoes|arp|contratos|..."]
     end
 
     subgraph observability
@@ -54,6 +59,8 @@ flowchart TB
   PRE --> RUN
   PGC --> RUN
   UASG --> RUN
+  LEG --> RUN
+  REST --> RUN
   RUN --> DB
   RUN --> PIPE
   PIPE --> CA
@@ -63,6 +70,8 @@ flowchart TB
   PRE --> CP
   PGC --> CG
   UASG --> CU
+  LEG --> CL
+  REST --> CR
   PIPE --> LOG
   DB --> PG
   PIPE --> PG
@@ -107,6 +116,26 @@ flowchart LR
 JSON endpoints only (`1_consultarMaterial`, `2_consultarMaterialDetalhe`,
 `3_consultarServico`, `4_consultarServicoDetalhe`). CSV variants are skipped.
 
+Each code call sends `dataCompraInicio` from dest `MAX(data_compra)` (detalhe
+uses `MAX(data_atualizacao_fato)`). After a full catalog pass the code cursor
+resets to 0 so the next run revisits codes; dest dates prevent re-downloading
+history.
+
+## Incremental load
+
+`.env` date windows are the **backfill ceiling**. Destination `MAX(date)`
+**raises the floor** (overlapping the last loaded day). `etl_code_cursor` is
+crash resume inside that raised slice only.
+
+Keyed children skip dest keys already loaded: `pgc_detalhe_catalogo` skips
+class/group codes present for that `ano_artefato`; ARP empenho/unidade/adesão
+walk missing ATA keys from dest `arp` / `arp_item` (`.env` ATA is fallback when
+the parent table is empty).
+
+CATMAT, CATSER, UASG, fornecedor, indicadores, `pgc_detalhe`, `pgc_agregacao`,
+and legado modalidade/year dumps stay page-resume: those APIs cannot filter
+“not already in dest”.
+
 ## PGC load order
 
 Detalhe and agregação require `PGC_ORGAO` + `PGC_ANO` in `.env`. Catalogo
@@ -137,6 +166,31 @@ flowchart LR
 
 See [uasg-ingestion.md](./uasg-ingestion.md).
 
+## LEGADO load order
+
+Lei 8.666 list endpoints require a date window, year, or modalidade from `.env`.
+Lookup-by-id variants are skipped. Headers and items can be loaded independently.
+
+```mermaid
+flowchart LR
+  ENV["LEGADO_DATA_* / ANO / MODALIDADE"] --> L["legado_licitacao"]
+  ENV --> IL["legado_item_licitacao"]
+  ENV --> P["legado_pregao"]
+  ENV --> IP["legado_item_pregao"]
+  ENV --> D["legado_compra_sem_licitacao"]
+  ENV --> ID["legado_item_sem_licitacao"]
+  ENV --> R["legado_rdc"]
+```
+
+See [legado-ingestion.md](./legado-ingestion.md).
+
+## Remaining list dumps
+
+Lei 14.133 contratações, ARP, contratos, fornecedor, OCDS, indicadores, and
+Alice avisos. Lookup-by-id, Alice chave/ticket, usuarios, and autenticacao
+are skipped.
+
+See [remaining-ingestion.md](./remaining-ingestion.md).
 
 ## Shared ingestion pipeline
 
@@ -144,10 +198,12 @@ See [ingestion-api-upsert-refactor.md](./ingestion-api-upsert-refactor.md).
 CATSER details: [servico-catser-ingestion.md](./servico-catser-ingestion.md).
 PGC details: [pgc-ingestion.md](./pgc-ingestion.md).
 UASG details: [uasg-ingestion.md](./uasg-ingestion.md).
+LEGADO details: [legado-ingestion.md](./legado-ingestion.md).
+Remaining modules: [remaining-ingestion.md](./remaining-ingestion.md).
 
 ```mermaid
 sequenceDiagram
-  participant SCR as material|servico|precos|planejamento|uasg main()
+  participant SCR as material|servico|precos|planejamento|uasg|legado main()
   participant RUN as script_runner
   participant CFG as config
   participant PIPE as pipeline
@@ -180,9 +236,10 @@ sequenceDiagram
 | --- | --- | --- |
 | Config | `src/config/load_secret_key.py` | Load secrets from `.env` |
 | Client | `src/clients/compras_api.py` | Paginated API fetch |
-| Contracts | `src/contracts/material_*.py`, `servico_*.py`, `preco_*.py`, `pgc_*.py`, `uasg*.py` | Pydantic validation |
+| Contracts | `src/contracts/*` | Pydantic validation |
+| Dest watermark | `src/etl/ingestion/dest_watermark.py` | Raise API start dates from dest MAX(date) |
 | Text helpers | `src/contracts/text_normalize.py` | Shared upper/strip helpers |
-| Coercion | `src/contracts/coerce.py` | id/number coercion for price and PGC rows |
+| Coercion | `src/contracts/coerce.py` | id/number coercion for price, PGC, and LEGADO rows |
 | DB wrapper | `src/etl/ingestion/db.py` | Injectable Postgres connect |
 | Pipeline | `src/etl/ingestion/pipeline.py` | Fetch → map → upsert |
 | Script runner | `src/etl/ingestion/script_runner.py` | Wire secrets + DB for scripts |
@@ -191,6 +248,8 @@ sequenceDiagram
 | Preços ETL | `src/etl/ingestion/precos/*.py` | Practiced-price scripts |
 | PGC ETL | `src/etl/ingestion/planejamento/*.py` | Planning (PGC) scripts |
 | UASG ETL | `src/etl/ingestion/uasg/*.py` | UASG and órgão scripts |
+| LEGADO ETL | `src/etl/ingestion/legado/*.py` | Lei 8.666 licitação scripts |
+| Remaining ETL | `src/etl/ingestion/{contratacoes,arp,contratos,fornecedor,ocds,indicadores,alice}/` | Lei 14.133, ARP, contratos, and related dumps |
 | SQL | `src/sql/create_table_*.sql` | Table DDL |
 | Observability | `src/observability/logging_json.py` | JSON logs |
 
@@ -203,4 +262,9 @@ PYTHONPATH=src python src/etl/ingestion/precos/preco_material.py
 PYTHONPATH=src python src/etl/ingestion/planejamento/pgc_detalhe.py
 PYTHONPATH=src python src/etl/ingestion/uasg/uasg_orgao.py
 PYTHONPATH=src python src/etl/ingestion/uasg/uasg.py
+PYTHONPATH=src python src/etl/ingestion/legado/legado_licitacao.py
+PYTHONPATH=src python src/etl/ingestion/contratacoes/contratacao.py
+PYTHONPATH=src python src/etl/ingestion/arp/arp.py
+PYTHONPATH=src python src/etl/ingestion/contratos/contrato.py
+PYTHONPATH=src python src/etl/ingestion/fornecedor/fornecedor.py
 ```

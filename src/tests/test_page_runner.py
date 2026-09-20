@@ -1,18 +1,27 @@
+import json
 from pathlib import Path
 from typing import Any
 
+from etl.ingestion.dest_watermark import DateWatermark
 from etl.ingestion.page_runner import run_page_batch_ingestion
 from observability.logging_json import get_json_logger
 
 
 class FakePageCursor:
-    def __init__(self) -> None:
+    def __init__(self, dest_max: object = None) -> None:
         self.execute_calls: list[tuple[str, object]] = []
+        self.dest_max = dest_max
+        self._last_sql = ""
 
     def execute(self, sql: str, params: object = None) -> None:
+        self._last_sql = sql
         self.execute_calls.append((sql, params))
 
-    def fetchone(self) -> None:
+    def fetchone(self) -> tuple[object] | None:
+        if "MAX(" in self._last_sql:
+            if self.dest_max is None:
+                return (None,)
+            return (self.dest_max,)
         return None
 
     def __enter__(self) -> "FakePageCursor":
@@ -23,8 +32,8 @@ class FakePageCursor:
 
 
 class FakePageConnection:
-    def __init__(self) -> None:
-        self.cursor_obj = FakePageCursor()
+    def __init__(self, dest_max: object = None) -> None:
+        self.cursor_obj = FakePageCursor(dest_max)
         self.closed = False
         self.commit_calls = 0
 
@@ -130,3 +139,107 @@ def test_run_page_batch_ingestion_forwards_query_params(tmp_path: Path) -> None:
         fetch_page_fn=capture_page,
     )
     assert seen == [{"orgao": "36000", "anoPcaProjetoCompra": 2026}]
+
+
+def _stub_secret(_env_path: Path, name: str) -> str:
+    return "x"
+
+
+def test_run_page_batch_ingestion_raises_start_from_dest(tmp_path: Path) -> None:
+    conn = FakePageConnection(dest_max="2024-06-15")
+    seen: list[dict[str, str | int | bool] | None] = []
+    log = get_json_logger("page_runner_watermark", log_dir=tmp_path)
+
+    def capture_page(
+        url: str,
+        headers: dict[str, str],
+        *,
+        pagina: int,
+        page_size: int | None = 500,
+        query_params: dict[str, str | int | bool] | None = None,
+    ) -> tuple[list[dict[str, Any]], int]:
+        seen.append(query_params)
+        return [], 0
+
+    run_page_batch_ingestion(
+        logger_name="page_runner_watermark",
+        endpoint_path="/modulo-contratacoes/1",
+        page_size=10,
+        upsert_sql="SQL",
+        map_row=lambda row: SampleRecord(row["codigo"]),
+        table_name="contratacao",
+        env_path=tmp_path / ".env",
+        log=log,
+        load_secret=_stub_secret,
+        connect_fn=FakeConnectPostgres(conn),
+        query_params={
+            "dataPublicacaoPncpInicial": "2024-01-01",
+            "dataPublicacaoPncpFinal": "2024-12-31",
+        },
+        job_name="contratacao:2024-01-01:2024-12-31",
+        date_watermark=DateWatermark(
+            table="contratacao",
+            column="data_publicacao_pncp",
+            start_param="dataPublicacaoPncpInicial",
+            end_param="dataPublicacaoPncpFinal",
+        ),
+        fetch_page_fn=capture_page,
+    )
+    assert seen == [
+        {
+            "dataPublicacaoPncpInicial": "2024-06-15",
+            "dataPublicacaoPncpFinal": "2024-12-31",
+        }
+    ]
+    job_params = [params for _sql, params in conn.cursor_obj.execute_calls if isinstance(params, dict) and "job_name" in params]
+    assert any(row["job_name"] == "contratacao:2024-06-15:2024-12-31" for row in job_params)
+
+
+def test_run_page_batch_ingestion_skips_fetch_when_caught_up(tmp_path: Path) -> None:
+    conn = FakePageConnection(dest_max="2025-01-01")
+    fetched = 0
+    log = get_json_logger("page_runner_caught_up", log_dir=tmp_path)
+
+    def capture_page(
+        url: str,
+        headers: dict[str, str],
+        *,
+        pagina: int,
+        page_size: int | None = 500,
+        query_params: dict[str, str | int | bool] | None = None,
+    ) -> tuple[list[dict[str, Any]], int]:
+        nonlocal fetched
+        fetched += 1
+        return [], 0
+
+    count = run_page_batch_ingestion(
+        logger_name="page_runner_caught_up",
+        endpoint_path="/modulo-contratacoes/1",
+        page_size=10,
+        upsert_sql="SQL",
+        map_row=lambda row: SampleRecord(row["codigo"]),
+        table_name="contratacao",
+        env_path=tmp_path / ".env",
+        log=log,
+        load_secret=_stub_secret,
+        connect_fn=FakeConnectPostgres(conn),
+        query_params={
+            "dataPublicacaoPncpInicial": "2024-01-01",
+            "dataPublicacaoPncpFinal": "2024-12-31",
+        },
+        job_name="contratacao:2024-01-01:2024-12-31",
+        date_watermark=DateWatermark(
+            table="contratacao",
+            column="data_publicacao_pncp",
+            start_param="dataPublicacaoPncpInicial",
+            end_param="dataPublicacaoPncpFinal",
+        ),
+        fetch_page_fn=capture_page,
+    )
+    assert count == 0
+    assert fetched == 0
+    events = [
+        json.loads(line)
+        for line in (tmp_path / "page_runner_caught_up_info.log").read_text(encoding="utf-8").splitlines()
+    ]
+    assert any(row["message"] == "watermark_caught_up" for row in events)

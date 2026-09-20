@@ -1,6 +1,11 @@
 import pytest
 
-from contracts.coerce import coerce_id_text, coerce_optional_float
+from contracts.coerce import (
+    coerce_id_text,
+    coerce_optional_decimal,
+    coerce_optional_float,
+    coerce_optional_id_text,
+)
 
 
 def test_coerce_id_text_accepts_int_and_str() -> None:
@@ -26,3 +31,16 @@ def test_coerce_optional_float_rejects_bool_and_str() -> None:
         coerce_optional_float(True)
     with pytest.raises(ValueError, match="expected int or float, got str: '1'"):
         coerce_optional_float("1")
+
+
+def test_coerce_optional_decimal_accepts_numeric_string() -> None:
+    assert coerce_optional_decimal(" 10.5 ") == 10.5
+    assert coerce_optional_decimal("1,25") == 1.25
+    assert coerce_optional_decimal("") is None
+    assert coerce_optional_decimal(3) == 3.0
+
+
+def test_coerce_optional_id_text_allows_blank_as_none() -> None:
+    assert coerce_optional_id_text(None, "nome") is None
+    assert coerce_optional_id_text("  ", "nome") is None
+    assert coerce_optional_id_text(12, "nome") == "12"

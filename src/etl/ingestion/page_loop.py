@@ -1,8 +1,10 @@
 from collections.abc import Callable
 from logging import Logger
+from time import perf_counter
 from typing import Any
 
 from observability.logging_json import log_info
+from observability.timing import fields_since
 
 LoadCursor = Callable[[], int]
 FetchPage = Callable[[int], tuple[list[dict[str, Any]], int]]
@@ -29,18 +31,30 @@ def run_page_batch_loop(
     """
     total = 0
     pagina = load_cursor() + 1
+    started = perf_counter()
     while True:
+        page_started = perf_counter()
         rows, total_pages = fetch_page(pagina)
         if total_pages == 0 or pagina > total_pages:
-            log_info(log, "page_batches_done", job=job_name, rows=total)
+            _log_page_batches_done(log, job_name, total, started)
             return total
         total += _ingest_page_and_checkpoint(
-            pagina, rows, total_pages, ingest_rows, save_cursor, log, job_name
+            pagina, rows, total_pages, ingest_rows, save_cursor, log, job_name, page_started
         )
         if pagina >= total_pages:
-            log_info(log, "page_batches_done", job=job_name, rows=total)
+            _log_page_batches_done(log, job_name, total, started)
             return total
         pagina += 1
+
+
+def _log_page_batches_done(log: Logger, job_name: str, total: int, started: float) -> None:
+    log_info(
+        log,
+        "page_batches_done",
+        job=job_name,
+        rows=total,
+        **fields_since(started, total),
+    )
 
 
 def _ingest_page_and_checkpoint(
@@ -51,6 +65,7 @@ def _ingest_page_and_checkpoint(
     save_cursor: SaveCursor,
     log: Logger,
     job_name: str,
+    started: float,
 ) -> int:
     batch_rows = ingest_rows(rows)
     save_cursor(pagina)
@@ -61,5 +76,6 @@ def _ingest_page_and_checkpoint(
         page=pagina,
         total_pages=total_pages,
         rows=batch_rows,
+        **fields_since(started, batch_rows),
     )
     return batch_rows

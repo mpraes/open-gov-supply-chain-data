@@ -6,10 +6,11 @@ from etl.ingestion.precos.map_preco_fields import preco_material_fields
 from etl.ingestion.precos.query_params import material_preco_query_params
 
 ENDPOINT_PATH = "/modulo-pesquisa-preco/1_consultarMaterial"
-PAGE_SIZE = 100
+PAGE_SIZE = 500
 BATCH_SIZE = 20
-CATALOG_TABLE = "material_item"
-CATALOG_COLUMN = "cod_item"
+CATALOG_TABLE = "material_pdm"
+CATALOG_COLUMN = "cod_pdm"
+JOB_NAME = "preco_material_pdm"
 
 UPSERT_SQL = """
 INSERT INTO preco_material (
@@ -102,7 +103,10 @@ def main() -> None:
         catalog_table=CATALOG_TABLE,
         catalog_column=CATALOG_COLUMN,
         params_for_code=material_preco_query_params,
+        dest_code_column="codigo_pdm",
+        stringify_code=True,
         batch_size=BATCH_SIZE,
+        job_name=JOB_NAME,
     )
 
 

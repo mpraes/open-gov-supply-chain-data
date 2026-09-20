@@ -6,7 +6,7 @@ from etl.ingestion.precos.map_preco_fields import preco_servico_fields
 from etl.ingestion.precos.query_params import catalogo_item_query_params
 
 ENDPOINT_PATH = "/modulo-pesquisa-preco/3_consultarServico"
-PAGE_SIZE = 100
+PAGE_SIZE = 500
 BATCH_SIZE = 20
 CATALOG_TABLE = "servico_item"
 CATALOG_COLUMN = "cod_servico"
@@ -87,6 +87,7 @@ def main() -> None:
         catalog_table=CATALOG_TABLE,
         catalog_column=CATALOG_COLUMN,
         params_for_code=catalogo_item_query_params,
+        dest_code_column="codigo_item_catalogo",
         batch_size=BATCH_SIZE,
     )
 

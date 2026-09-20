@@ -17,6 +17,19 @@ def coerce_id_text(value: object, field_label: str) -> str:
     return text
 
 
+def coerce_optional_id_text(value: object, field_label: str) -> str | None:
+    """Optional identity text; blank becomes None.
+
+    Example:
+        coerce_optional_id_text("  ", "nome") is None
+    """
+    if value is None:
+        return None
+    if isinstance(value, str) and not value.strip():
+        return None
+    return coerce_id_text(value, field_label)
+
+
 def coerce_optional_float(value: object) -> float | None:
     """Coerce optional numeric API fields; bools are rejected.
 
@@ -30,3 +43,26 @@ def coerce_optional_float(value: object) -> float | None:
             f"expected int or float, got {type(value).__name__}: {value!r}"
         )
     return float(value)
+
+
+def coerce_optional_decimal(value: object) -> float | None:
+    """Coerce optional amounts that mix numbers and numeric strings.
+
+    Example:
+        coerce_optional_decimal("1,25") == 1.25
+    """
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return _decimal_from_text(value)
+    return coerce_optional_float(value)
+
+
+def _decimal_from_text(value: str) -> float | None:
+    cleaned = value.strip().replace(",", ".")
+    if not cleaned:
+        return None
+    try:
+        return float(cleaned)
+    except ValueError as exc:
+        raise ValueError(f"expected numeric text, got {value!r}") from exc

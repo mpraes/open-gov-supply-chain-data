@@ -1,0 +1,22 @@
+CREATE TABLE arp_unidade_item (
+numero_ata TEXT NOT NULL,
+unidade_gerenciadora TEXT NOT NULL,
+numero_item TEXT NOT NULL,
+codigo_pdm TEXT,
+descricao_item TEXT,
+fornecedor TEXT,
+quantidade_registrada TEXT,
+saldo_adesoes TEXT,
+saldo_remanejamento_empenho TEXT,
+qtd_limite_adesao TEXT,
+qtd_limite_informado_compra TEXT,
+aceita_adesao TEXT,
+data_hora_inclusao TEXT,
+data_hora_atualizacao TEXT,
+data_hora_exclusao TEXT,
+codigo_unidade TEXT NOT NULL,
+nome_unidade TEXT,
+tipo_unidade TEXT,
+data_hora_carga TIMESTAMPTZ DEFAULT now(),
+PRIMARY KEY (numero_ata, unidade_gerenciadora, numero_item, codigo_unidade)
+);

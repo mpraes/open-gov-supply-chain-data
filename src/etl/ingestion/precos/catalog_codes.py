@@ -7,7 +7,7 @@ _SQL_IDENT = re.compile(r"^[a-z][a-z0-9_]*$")
 def list_int_column(
     conn: Any,
     sql: str,
-    params: dict[str, int] | None = None,
+    params: dict[str, str | int] | None = None,
 ) -> list[int]:
     """Return one integer column from a SQL query.
 
@@ -46,6 +46,67 @@ def list_codes_after(
         f"ORDER BY {safe_column} LIMIT %(limit)s"
     )
     return list_int_column(conn, sql, {"last_code": last_code, "limit": limit})
+
+
+def list_codes_after_absent(
+    conn: Any,
+    *,
+    table: str,
+    column: str,
+    last_code: int,
+    limit: int,
+    dest_table: str,
+    dest_column: str,
+    dest_filters: dict[str, str | int],
+) -> list[int]:
+    """Return catalog codes after a cursor that are missing from dest.
+
+    Example:
+        list_codes_after_absent(
+            conn, table="material_class", column="cod_classe",
+            last_code=0, limit=20, dest_table="pgc_detalhe_catalogo",
+            dest_column="codigo_classe_material", dest_filters={"ano_artefato": 2026},
+        )
+    """
+    sql, params = _absent_codes_sql(
+        table, column, dest_table, dest_column, dest_filters, last_code, limit
+    )
+    return list_int_column(conn, sql, params)
+
+
+def _absent_codes_sql(
+    table: str,
+    column: str,
+    dest_table: str,
+    dest_column: str,
+    dest_filters: dict[str, str | int],
+    last_code: int,
+    limit: int,
+) -> tuple[str, dict[str, str | int]]:
+    src_table = _require_sql_ident(table, "table")
+    src_col = _require_sql_ident(column, "column")
+    dst_table = _require_sql_ident(dest_table, "dest_table")
+    dst_col = _require_sql_ident(dest_column, "dest_column")
+    filter_sql, params = _filter_clauses(dest_filters)
+    sql = (
+        f"SELECT {src_col} FROM {src_table} src "
+        f"WHERE {src_col} > %(last_code)s AND NOT EXISTS ("
+        f"SELECT 1 FROM {dst_table} dest WHERE dest.{dst_col} = src.{src_col}{filter_sql}"
+        f") ORDER BY {src_col} LIMIT %(limit)s"
+    )
+    params["last_code"] = last_code
+    params["limit"] = limit
+    return sql, params
+
+
+def _filter_clauses(dest_filters: dict[str, str | int]) -> tuple[str, dict[str, str | int]]:
+    params: dict[str, str | int] = {}
+    parts: list[str] = []
+    for key, value in dest_filters.items():
+        ident = _require_sql_ident(key, "dest_filters")
+        parts.append(f" AND dest.{ident} = %({ident})s")
+        params[ident] = value
+    return "".join(parts), params
 
 
 def _require_sql_ident(value: str, label: str) -> str:

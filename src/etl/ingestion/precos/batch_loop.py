@@ -1,7 +1,9 @@
 from collections.abc import Callable
 from logging import Logger
+from time import perf_counter
 
 from observability.logging_json import log_info
+from observability.timing import fields_since
 
 LoadCursor = Callable[[], int]
 NextCodes = Callable[[int, int], list[int]]
@@ -28,10 +30,17 @@ def run_code_batch_loop(
         )
     """
     total = 0
+    started = perf_counter()
     while True:
         codes = next_codes(load_cursor(), batch_size)
         if not codes:
-            log_info(log, "preco_batches_done", job=job_name, rows=total)
+            log_info(
+                log,
+                "preco_batches_done",
+                job=job_name,
+                rows=total,
+                **fields_since(started, total),
+            )
             return total
         total += _ingest_and_checkpoint(codes, ingest_codes, save_cursor, log, job_name)
 
@@ -43,6 +52,7 @@ def _ingest_and_checkpoint(
     log: Logger,
     job_name: str,
 ) -> int:
+    started = perf_counter()
     batch_rows = ingest_codes(codes)
     save_cursor(codes[-1])
     log_info(
@@ -52,5 +62,6 @@ def _ingest_and_checkpoint(
         last_code=codes[-1],
         codes=len(codes),
         rows=batch_rows,
+        **fields_since(started, batch_rows),
     )
     return batch_rows

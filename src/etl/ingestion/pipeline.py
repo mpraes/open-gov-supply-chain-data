@@ -1,5 +1,6 @@
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from logging import Logger
+from time import perf_counter
 from typing import Any, Protocol
 
 from psycopg2 import Error as PsycopgError
@@ -7,6 +8,7 @@ from pydantic import ValidationError
 
 from clients.compras_api import fetch_all_resultado_pages
 from observability.logging_json import log_error, log_info
+from observability.timing import fields_since
 
 
 class SupportsModelDump(Protocol):
@@ -88,20 +90,32 @@ def _fetch_resultado_rows(
     log: Logger,
     fetch_pages: FetchPages,
 ) -> list[dict[str, Any]]:
+    started = perf_counter()
     try:
         rows = fetch_pages(url, headers, page_size=page_size)
     except Exception as exc:
-        log_error(log, "api_fetch_failed", endpoint=url, error=str(exc))
+        log_error(
+            log,
+            "api_fetch_failed",
+            endpoint=url,
+            error=str(exc),
+            **fields_since(started, 0),
+        )
         raise
-    _log_api_fetch_ok(log, rows, page_size)
+    _log_api_fetch_ok(log, rows, page_size, fields_since(started, len(rows)))
     return rows
 
 
-def _log_api_fetch_ok(log: Logger, rows: list[dict[str, Any]], page_size: int | None) -> None:
+def _log_api_fetch_ok(
+    log: Logger,
+    rows: list[dict[str, Any]],
+    page_size: int | None,
+    timing: Mapping[str, int | float],
+) -> None:
     if page_size is None:
-        log_info(log, "api_fetch_ok", rows=len(rows))
+        log_info(log, "api_fetch_ok", rows=len(rows), **timing)
         return
-    log_info(log, "api_fetch_ok", rows=len(rows), page_size=page_size)
+    log_info(log, "api_fetch_ok", rows=len(rows), page_size=page_size, **timing)
 
 
 def _upsert_mapped_rows(
@@ -112,6 +126,7 @@ def _upsert_mapped_rows(
     log: Logger,
     table_name: str,
 ) -> int:
+    started = perf_counter()
     count = _UpsertCount()
     try:
         _run_upsert_transaction(conn, upsert_sql, rows, map_row, log, table_name, count)
@@ -122,9 +137,16 @@ def _upsert_mapped_rows(
             table=table_name,
             rows_done=count.value,
             error=str(exc),
+            **fields_since(started, count.value),
         )
         raise
-    log_info(log, "upsert_ok", table=table_name, rows=count.value)
+    log_info(
+        log,
+        "upsert_ok",
+        table=table_name,
+        rows=count.value,
+        **fields_since(started, count.value),
+    )
     return count.value
 
 

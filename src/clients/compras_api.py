@@ -84,6 +84,59 @@ def fetch_one_resultado_page(
     )
 
 
+def fetch_one_releases_page(
+    url: str,
+    headers: dict[str, str],
+    *,
+    pagina: int,
+    page_size: int | None = 500,
+    timeout: int = 30,
+    http_get: HttpGet = requests.get,
+    query_params: QueryParams | None = None,
+    sleep_fn: SleepFn = time_sleep,
+    max_retries: int = DEFAULT_MAX_RETRIES,
+) -> tuple[list[dict[str, Any]], int]:
+    """Fetch one OCDS `releases` page using page/offSet.
+
+    Example:
+        rows, total = fetch_one_releases_page(url, headers, pagina=1, page_size=10)
+    """
+    params = dict(query_params) if query_params else {}
+    params["page"] = pagina
+    if page_size is not None:
+        params["offSet"] = page_size
+    response = _get_ok_response(
+        url, headers, params, timeout, http_get, sleep_fn, max_retries
+    )
+    return _parse_releases_page(response.json(), pagina)
+
+
+def fetch_one_json_array_page(
+    url: str,
+    headers: dict[str, str],
+    *,
+    pagina: int,
+    page_size: int | None = 500,
+    timeout: int = 30,
+    http_get: HttpGet = requests.get,
+    query_params: QueryParams | None = None,
+    sleep_fn: SleepFn = time_sleep,
+    max_retries: int = DEFAULT_MAX_RETRIES,
+) -> tuple[list[dict[str, Any]], int]:
+    """Fetch a non-paginated JSON array endpoint as a single page.
+
+    Example:
+        rows, total = fetch_one_json_array_page(url, headers, pagina=1)
+    """
+    if pagina > 1:
+        return [], 1
+    params = dict(query_params) if query_params else {}
+    response = _get_ok_response(
+        url, headers, params, timeout, http_get, sleep_fn, max_retries
+    )
+    return _parse_json_array(response.json()), 1
+
+
 def fetch_resultado_pages_for_codes(
     url: str,
     headers: dict[str, str],
@@ -233,6 +286,37 @@ def _parse_resultado_page(payload: object) -> tuple[list[dict[str, Any]], int]:
         )
     typed_rows = [_require_row_dict(row, index) for index, row in enumerate(resultado)]
     return typed_rows, total_paginas
+
+
+def _parse_releases_page(payload: object, pagina: int) -> tuple[list[dict[str, Any]], int]:
+    if not isinstance(payload, dict):
+        raise ValueError(
+            f"expected JSON object OCDS payload, got {type(payload).__name__}: {payload!r}"
+        )
+    releases = payload.get("releases")
+    if not isinstance(releases, list):
+        raise ValueError(
+            f"expected data['releases'] to be a list, got {type(releases).__name__}: {releases!r}"
+        )
+    rows = [_require_row_dict(row, index) for index, row in enumerate(releases)]
+    return rows, _ocds_total_pages(payload, pagina, rows)
+
+
+def _ocds_total_pages(payload: dict[str, Any], pagina: int, rows: list[dict[str, Any]]) -> int:
+    if not rows and pagina == 1:
+        return 0
+    links = payload.get("links")
+    if isinstance(links, dict) and links.get("next"):
+        return pagina + 1
+    return pagina
+
+
+def _parse_json_array(payload: object) -> list[dict[str, Any]]:
+    if not isinstance(payload, list):
+        raise ValueError(
+            f"expected JSON array payload, got {type(payload).__name__}: {payload!r}"
+        )
+    return [_require_row_dict(row, index) for index, row in enumerate(payload)]
 
 
 def _require_row_dict(row: object, index: int) -> dict[str, Any]:

@@ -4,9 +4,9 @@ from etl.ingestion.precos.query_params import (
 )
 
 
-def test_material_preco_query_params_uses_item_catalog_tipo() -> None:
+def test_material_preco_query_params_uses_pdm_tipo() -> None:
     assert material_preco_query_params(123) == {
-        "tipo": "codigoItemCatalogo",
+        "tipo": "codigoPdm",
         "codigo": "123",
     }
 

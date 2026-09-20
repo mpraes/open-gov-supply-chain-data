@@ -1,8 +1,15 @@
-from logging import getLogger
+import json
+from pathlib import Path
 
 import pytest
 
 from etl.ingestion.page_loop import run_page_batch_loop
+from observability.logging_json import get_json_logger
+
+
+def _info_events(tmp_path: Path, logger_name: str) -> list[dict[str, object]]:
+    path = tmp_path / f"{logger_name}_info.log"
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
 
 
 class FakePageStore:
@@ -33,7 +40,7 @@ class FakePageStore:
         self.saved.append(pagina)
 
 
-def test_run_page_batch_loop_upserts_each_page_and_saves_cursor() -> None:
+def test_run_page_batch_loop_upserts_each_page_and_saves_cursor(tmp_path: Path) -> None:
     store = FakePageStore(
         0,
         {
@@ -46,23 +53,26 @@ def test_run_page_batch_loop_upserts_each_page_and_saves_cursor() -> None:
         fetch_page=store.fetch,
         ingest_rows=store.ingest,
         save_cursor=store.save,
-        log=getLogger("page_batch_loop"),
+        log=get_json_logger("page_batch_loop", log_dir=tmp_path),
         job_name="material_item",
     )
     assert total == 2
     assert store.fetched == [1, 2]
     assert store.saved == [1, 2]
     assert store.ingested == [[{"cod": 1}], [{"cod": 2}]]
+    events = _info_events(tmp_path, "page_batch_loop")
+    assert all("duration_ms" in row for row in events)
+    assert [row["message"] for row in events][-1] == "page_batches_done"
 
 
-def test_run_page_batch_loop_resumes_after_last_saved_page() -> None:
+def test_run_page_batch_loop_resumes_after_last_saved_page(tmp_path: Path) -> None:
     store = FakePageStore(1, {2: ([{"cod": 2}], 2)})
     total = run_page_batch_loop(
         load_cursor=store.load,
         fetch_page=store.fetch,
         ingest_rows=store.ingest,
         save_cursor=store.save,
-        log=getLogger("page_batch_resume"),
+        log=get_json_logger("page_batch_resume", log_dir=tmp_path),
         job_name="material_item",
     )
     assert total == 1
@@ -70,7 +80,7 @@ def test_run_page_batch_loop_resumes_after_last_saved_page() -> None:
     assert store.saved == [2]
 
 
-def test_run_page_batch_loop_does_not_advance_when_ingest_fails() -> None:
+def test_run_page_batch_loop_does_not_advance_when_ingest_fails(tmp_path: Path) -> None:
     store = FakePageStore(0, {1: ([{"cod": 1}], 1)})
 
     def boom(rows: list[dict[str, object]]) -> int:
@@ -83,7 +93,7 @@ def test_run_page_batch_loop_does_not_advance_when_ingest_fails() -> None:
             fetch_page=store.fetch,
             ingest_rows=boom,
             save_cursor=store.save,
-            log=getLogger("page_batch_fail"),
+            log=get_json_logger("page_batch_fail", log_dir=tmp_path),
             job_name="material_item",
         )
     assert store.saved == []
