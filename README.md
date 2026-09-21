@@ -1,5 +1,7 @@
 # Open Gov Supply Chain Data
 
+<img width="2752" height="1536" alt="Gemini_Generated_Image_d4baw4d4baw4d4ba" src="https://github.com/user-attachments/assets/f07c1f34-0567-4ff6-9e5c-917721b1a65c" />
+
 ETL dos dados abertos de compras públicas do [compras.gov.br](https://dadosabertos.compras.gov.br) para Postgres.
 
 Cada script de ingestão baixa um endpoint, valida o JSON e faz upsert no schema **`staging`**.
