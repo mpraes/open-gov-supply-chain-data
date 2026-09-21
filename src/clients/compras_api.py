@@ -1,21 +1,37 @@
-from collections.abc import Callable, Mapping
+from concurrent.futures import Future, ThreadPoolExecutor
 from logging import Logger
-from typing import Any
 from time import sleep as time_sleep
-
-from observability.logging_json import log_warning
-
-from requests.exceptions import ConnectionError as RequestsConnectionError
-from requests.exceptions import Timeout as RequestsTimeout
 
 import requests
 
-HttpGet = Callable[..., Any]
-SleepFn = Callable[[float], None]
-QueryParams = Mapping[str, str | int | bool]
-CodeParamsFn = Callable[[int], QueryParams]
+from clients.compras_http import DEFAULT_MAX_RETRIES, get_ok_response
+from clients.compras_parse import (
+    page_query_params,
+    parse_json_array,
+    parse_releases_page,
+    parse_resultado_page,
+)
+from clients.compras_types import (
+    CodePagesFetch,
+    CodeParamsFn,
+    HttpGet,
+    JsonRow,
+    QueryParams,
+    SleepFn,
+)
 
-DEFAULT_MAX_RETRIES = 5
+__all__ = [
+    "CodeParamsFn",
+    "DEFAULT_MAX_RETRIES",
+    "HttpGet",
+    "QueryParams",
+    "SleepFn",
+    "fetch_all_resultado_pages",
+    "fetch_one_json_array_page",
+    "fetch_one_releases_page",
+    "fetch_one_resultado_page",
+    "fetch_resultado_pages_for_codes",
+]
 
 
 def fetch_all_resultado_pages(
@@ -28,7 +44,7 @@ def fetch_all_resultado_pages(
     query_params: QueryParams | None = None,
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
-) -> list[dict[str, Any]]:
+) -> list[JsonRow]:
     """Fetch every page of a compras.gov paginated `resultado` endpoint.
 
     Example:
@@ -37,7 +53,7 @@ def fetch_all_resultado_pages(
             query_params={"tipo": "codigoItemCatalogo", "codigo": "123"},
         )
     """
-    rows: list[dict[str, Any]] = []
+    rows: list[JsonRow] = []
     pagina = 1
     total_paginas = 1
     while pagina <= total_paginas:
@@ -69,7 +85,7 @@ def fetch_one_resultado_page(
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
     log: Logger | None = None,
-) -> tuple[list[dict[str, Any]], int]:
+) -> tuple[list[JsonRow], int]:
     """Fetch one compras.gov `resultado` page and its total page count.
 
     Example:
@@ -101,7 +117,7 @@ def fetch_one_releases_page(
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
     log: Logger | None = None,
-) -> tuple[list[dict[str, Any]], int]:
+) -> tuple[list[JsonRow], int]:
     """Fetch one OCDS `releases` page using page/offSet.
 
     Example:
@@ -111,10 +127,10 @@ def fetch_one_releases_page(
     params["page"] = pagina
     if page_size is not None:
         params["offSet"] = page_size
-    response = _get_ok_response(
+    response = get_ok_response(
         url, headers, params, timeout, http_get, sleep_fn, max_retries, log
     )
-    return _parse_releases_page(response.json(), pagina)
+    return parse_releases_page(response.json(), pagina)
 
 
 def fetch_one_json_array_page(
@@ -129,7 +145,7 @@ def fetch_one_json_array_page(
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
     log: Logger | None = None,
-) -> tuple[list[dict[str, Any]], int]:
+) -> tuple[list[JsonRow], int]:
     """Fetch a non-paginated JSON array endpoint as a single page.
 
     Example:
@@ -138,10 +154,10 @@ def fetch_one_json_array_page(
     if pagina > 1:
         return [], 1
     params = dict(query_params) if query_params else {}
-    response = _get_ok_response(
+    response = get_ok_response(
         url, headers, params, timeout, http_get, sleep_fn, max_retries, log
     )
-    return _parse_json_array(response.json()), 1
+    return parse_json_array(response.json()), 1
 
 
 def fetch_resultado_pages_for_codes(
@@ -156,30 +172,101 @@ def fetch_resultado_pages_for_codes(
     pause_seconds: float = 0,
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
-) -> list[dict[str, Any]]:
+    parallel_codes: int = 1,
+) -> list[JsonRow]:
     """Fetch paginated `resultado` rows for each catalog code.
 
     Example:
         rows = fetch_resultado_pages_for_codes(
             url, headers, codes=[10, 20],
             params_for_code=lambda code: {"codigo": str(code)},
+            parallel_codes=4,
         )
     """
-    rows: list[dict[str, Any]] = []
-    for index, code in enumerate(codes):
-        _pause_before_code(index, pause_seconds, sleep_fn)
-        rows.extend(
-            fetch_all_resultado_pages(
-                url,
-                headers,
-                page_size=page_size,
-                timeout=timeout,
-                http_get=http_get,
-                query_params=params_for_code(code),
-                sleep_fn=sleep_fn,
-                max_retries=max_retries,
-            )
+    _require_parallel_codes(parallel_codes)
+    resolved = _params_for_each_code(codes, params_for_code)
+    fetch_one = _bind_code_pages_fetch(
+        url, headers, page_size, timeout, http_get, sleep_fn, max_retries
+    )
+    if parallel_codes == 1:
+        return _fetch_code_pages_serial(resolved, fetch_one, pause_seconds, sleep_fn)
+    return _fetch_code_pages_parallel(resolved, fetch_one, parallel_codes)
+
+
+def _require_parallel_codes(parallel_codes: int) -> None:
+    if parallel_codes < 1:
+        raise ValueError(f"parallel_codes expected int >= 1, got {parallel_codes!r}")
+
+
+def _params_for_each_code(
+    codes: list[int], params_for_code: CodeParamsFn
+) -> list[QueryParams]:
+    return [dict(params_for_code(code)) for code in codes]
+
+
+def _bind_code_pages_fetch(
+    url: str,
+    headers: dict[str, str],
+    page_size: int | None,
+    timeout: int,
+    http_get: HttpGet,
+    sleep_fn: SleepFn,
+    max_retries: int,
+) -> CodePagesFetch:
+    def fetch_one(query_params: QueryParams) -> list[JsonRow]:
+        return fetch_all_resultado_pages(
+            url,
+            headers,
+            page_size=page_size,
+            timeout=timeout,
+            http_get=http_get,
+            query_params=query_params,
+            sleep_fn=sleep_fn,
+            max_retries=max_retries,
         )
+
+    return fetch_one
+
+
+def _fetch_code_pages_serial(
+    resolved: list[QueryParams],
+    fetch_one: CodePagesFetch,
+    pause_seconds: float,
+    sleep_fn: SleepFn,
+) -> list[JsonRow]:
+    rows: list[JsonRow] = []
+    for index, query_params in enumerate(resolved):
+        _pause_before_code(index, pause_seconds, sleep_fn)
+        rows.extend(fetch_one(query_params))
+    return rows
+
+
+def _fetch_code_pages_parallel(
+    resolved: list[QueryParams],
+    fetch_one: CodePagesFetch,
+    parallel_codes: int,
+) -> list[JsonRow]:
+    with ThreadPoolExecutor(max_workers=parallel_codes) as pool:
+        futures = [pool.submit(fetch_one, params) for params in resolved]
+        return _rows_from_code_futures(futures)
+
+
+def _rows_from_code_futures(
+    futures: list[Future[list[JsonRow]]],
+) -> list[JsonRow]:
+    try:
+        batches = [future.result() for future in futures]
+    except BaseException:
+        for future in futures:
+            future.cancel()
+        raise
+    return _concat_row_batches(batches)
+
+
+def _concat_row_batches(batches: list[list[JsonRow]]) -> list[JsonRow]:
+    rows: list[JsonRow] = []
+    for batch in batches:
+        rows.extend(batch)
     return rows
 
 
@@ -195,167 +282,15 @@ def _fetch_one_resultado_page(
     sleep_fn: SleepFn,
     max_retries: int,
     log: Logger | None = None,
-) -> tuple[list[dict[str, Any]], int]:
-    params = _page_query_params(pagina, page_size, query_params)
-    response = _get_ok_response(
+) -> tuple[list[JsonRow], int]:
+    params = page_query_params(pagina, page_size, query_params)
+    response = get_ok_response(
         url, headers, params, timeout, http_get, sleep_fn, max_retries, log
     )
-    return _parse_resultado_page(response.json())
+    return parse_resultado_page(response.json())
 
 
 def _pause_before_code(index: int, pause_seconds: float, sleep_fn: SleepFn) -> None:
     if index == 0 or pause_seconds <= 0:
         return
     sleep_fn(pause_seconds)
-
-
-def _get_ok_response(
-    url: str,
-    headers: dict[str, str],
-    params: dict[str, str | int | bool],
-    timeout: int,
-    http_get: HttpGet,
-    sleep_fn: SleepFn,
-    max_retries: int,
-    log: Logger | None = None,
-) -> Any:
-    last_response: Any = None
-    for attempt in range(max_retries + 1):
-        try:
-            last_response = http_get(url, headers=headers, params=params, timeout=timeout)
-        except (RequestsConnectionError, RequestsTimeout) as exc:
-            _retry_transport_error(exc, attempt, max_retries, sleep_fn, log)
-            continue
-        if getattr(last_response, "status_code", 200) != 429:
-            last_response.raise_for_status()
-            return last_response
-        if attempt < max_retries:
-            wait_s = _retry_wait_seconds(last_response, attempt)
-            _log_api_retry(log, attempt, wait_s, status=429)
-            sleep_fn(wait_s)
-            continue
-        last_response.raise_for_status()
-    raise RuntimeError(f"429 retry loop exhausted after {max_retries} retries")
-
-
-def _log_api_retry(
-    log: Logger | None,
-    attempt: int,
-    wait_s: float,
-    **fields: object,
-) -> None:
-    if log is None:
-        return
-    log_warning(log, "api_retry", attempt=attempt + 1, wait_s=wait_s, **fields)
-
-
-def _retry_transport_error(
-    exc: BaseException,
-    attempt: int,
-    max_retries: int,
-    sleep_fn: SleepFn,
-    log: Logger | None,
-) -> None:
-    if attempt >= max_retries:
-        raise exc
-    wait_s = float(min(2**attempt, 16))
-    _log_api_retry(log, attempt, wait_s, error=type(exc).__name__)
-    sleep_fn(wait_s)
-
-
-def _retry_wait_seconds(response: Any, attempt: int) -> float:
-    retry_after = _retry_after_header_seconds(response)
-    if retry_after is not None:
-        return retry_after
-    return float(min(2**attempt, 16))
-
-
-def _retry_after_header_seconds(response: Any) -> float | None:
-    headers = getattr(response, "headers", None)
-    if not isinstance(headers, Mapping):
-        return None
-    raw = headers.get("Retry-After", headers.get("retry-after"))
-    if raw is None:
-        return None
-    return _parse_retry_after_seconds(raw)
-
-
-def _parse_retry_after_seconds(raw: object) -> float:
-    if isinstance(raw, bool) or not isinstance(raw, (int, float, str)):
-        raise ValueError(
-            f"Retry-After expected a number of seconds, got {type(raw).__name__}: {raw!r}"
-        )
-    seconds = float(raw)
-    if seconds < 0:
-        raise ValueError(f"Retry-After must be >= 0, got {raw!r}")
-    return seconds
-
-
-def _page_query_params(
-    pagina: int,
-    page_size: int | None,
-    query_params: QueryParams | None,
-) -> dict[str, str | int | bool]:
-    params: dict[str, str | int | bool] = dict(query_params) if query_params else {}
-    params["pagina"] = pagina
-    if page_size is not None:
-        params["tamanhoPagina"] = page_size
-    return params
-
-
-def _parse_resultado_page(payload: object) -> tuple[list[dict[str, Any]], int]:
-    if not isinstance(payload, dict):
-        raise ValueError(
-            f"expected JSON object page payload, got {type(payload).__name__}: {payload!r}"
-        )
-    resultado = payload.get("resultado")
-    if not isinstance(resultado, list):
-        raise ValueError(
-            f"expected data['resultado'] to be a list, got {type(resultado).__name__}: {resultado!r}"
-        )
-    total_paginas = payload.get("totalPaginas", 1)
-    if not isinstance(total_paginas, int) or total_paginas < 0:
-        raise ValueError(
-            f"expected data['totalPaginas'] to be int >= 0, got {total_paginas!r}"
-        )
-    typed_rows = [_require_row_dict(row, index) for index, row in enumerate(resultado)]
-    return typed_rows, total_paginas
-
-
-def _parse_releases_page(payload: object, pagina: int) -> tuple[list[dict[str, Any]], int]:
-    if not isinstance(payload, dict):
-        raise ValueError(
-            f"expected JSON object OCDS payload, got {type(payload).__name__}: {payload!r}"
-        )
-    releases = payload.get("releases")
-    if not isinstance(releases, list):
-        raise ValueError(
-            f"expected data['releases'] to be a list, got {type(releases).__name__}: {releases!r}"
-        )
-    rows = [_require_row_dict(row, index) for index, row in enumerate(releases)]
-    return rows, _ocds_total_pages(payload, pagina, rows)
-
-
-def _ocds_total_pages(payload: dict[str, Any], pagina: int, rows: list[dict[str, Any]]) -> int:
-    if not rows and pagina == 1:
-        return 0
-    links = payload.get("links")
-    if isinstance(links, dict) and links.get("next"):
-        return pagina + 1
-    return pagina
-
-
-def _parse_json_array(payload: object) -> list[dict[str, Any]]:
-    if not isinstance(payload, list):
-        raise ValueError(
-            f"expected JSON array payload, got {type(payload).__name__}: {payload!r}"
-        )
-    return [_require_row_dict(row, index) for index, row in enumerate(payload)]
-
-
-def _require_row_dict(row: object, index: int) -> dict[str, Any]:
-    if not isinstance(row, dict):
-        raise ValueError(
-            f"expected resultado[{index}] to be an object, got {type(row).__name__}: {row!r}"
-        )
-    return row

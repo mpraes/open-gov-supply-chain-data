@@ -11,9 +11,19 @@ def test_preco_batch_ingestion_does_not_pause_between_codes() -> None:
     assert pause.default == 0
 
 
+def test_preco_batch_ingestion_defaults_parallel_codes_to_four() -> None:
+    param = inspect.signature(run_preco_batch_ingestion).parameters["parallel_codes"]
+    assert param.default == 4
+
+
 def test_build_codigo_fetch_pages_does_not_pause_by_default() -> None:
     pause = inspect.signature(build_codigo_fetch_pages).parameters["pause_seconds"]
     assert pause.default == 0
+
+
+def test_build_codigo_fetch_pages_defaults_parallel_codes_to_one() -> None:
+    param = inspect.signature(build_codigo_fetch_pages).parameters["parallel_codes"]
+    assert param.default == 1
 
 
 def test_preco_material_walks_pdm_codes_with_new_job() -> None:

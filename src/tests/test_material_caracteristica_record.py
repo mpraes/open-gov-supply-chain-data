@@ -50,3 +50,18 @@ def test_material_caracteristica_accepts_null_optional_fields() -> None:
     record = MaterialCaracteristicaRecord(**kwargs)  # type: ignore[arg-type]
     assert record.nome_caracteristica is None
     assert record.sigla_unidade_medida is None
+
+
+def test_material_caracteristica_uses_nome_when_codigo_valor_is_null() -> None:
+    kwargs = _valid_kwargs()
+    kwargs["codigo_valor_caracteristica"] = None
+    record = MaterialCaracteristicaRecord(**kwargs)  # type: ignore[arg-type]
+    assert record.codigo_valor_caracteristica == "AZUL"
+
+
+def test_material_caracteristica_keeps_empty_codigo_valor_when_nome_null() -> None:
+    kwargs = _valid_kwargs()
+    kwargs["codigo_valor_caracteristica"] = None
+    kwargs["nome_valor_caracteristica"] = None
+    record = MaterialCaracteristicaRecord(**kwargs)  # type: ignore[arg-type]
+    assert record.codigo_valor_caracteristica == ""

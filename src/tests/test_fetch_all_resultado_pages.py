@@ -14,10 +14,12 @@ class FakeResponse:
         payload: dict[str, Any],
         status_code: int = 200,
         headers: dict[str, str] | None = None,
+        text: str = "",
     ) -> None:
         self._payload = payload
         self.status_code = status_code
         self.headers = headers if headers is not None else {}
+        self.text = text
 
     def raise_for_status(self) -> None:
         if self.status_code >= 400:
@@ -235,6 +237,78 @@ def test_fetch_all_resultado_pages_retries_429_then_succeeds() -> None:
     assert rows == [{"idCompra": 1}]
     assert len(http_get.calls) == 2
     assert sleep.calls == [2.0]
+
+
+def test_fetch_all_resultado_pages_retries_400_then_succeeds() -> None:
+    sleep = FakeSleep()
+    http_get = FakeHttpGetSequence(
+        [
+            FakeResponse({}, status_code=400),
+            FakeResponse(_ok_page()),
+        ]
+    )
+    rows = fetch_all_resultado_pages(
+        "https://example.test/preco",
+        {"Authorization": "key"},
+        page_size=20,
+        http_get=http_get,
+        sleep_fn=sleep,
+        max_retries=2,
+    )
+    assert rows == [{"idCompra": 1}]
+    assert len(http_get.calls) == 2
+    assert sleep.calls == [1.0]
+
+
+def test_fetch_all_resultado_pages_retries_502_then_succeeds() -> None:
+    sleep = FakeSleep()
+    http_get = FakeHttpGetSequence(
+        [
+            FakeResponse({}, status_code=502),
+            FakeResponse(_ok_page()),
+        ]
+    )
+    rows = fetch_all_resultado_pages(
+        "https://example.test/preco",
+        {"Authorization": "key"},
+        page_size=20,
+        http_get=http_get,
+        sleep_fn=sleep,
+        max_retries=2,
+    )
+    assert rows == [{"idCompra": 1}]
+    assert len(http_get.calls) == 2
+    assert sleep.calls == [1.0]
+
+
+def test_fetch_all_resultado_pages_does_not_retry_401() -> None:
+    sleep = FakeSleep()
+    http_get = FakeHttpGetSequence([FakeResponse({}, status_code=401)])
+    with pytest.raises(RuntimeError, match="http error status=401"):
+        fetch_all_resultado_pages(
+            "https://example.test/preco",
+            {"Authorization": "key"},
+            page_size=20,
+            http_get=http_get,
+            sleep_fn=sleep,
+            max_retries=2,
+        )
+    assert len(http_get.calls) == 1
+    assert sleep.calls == []
+
+
+def test_fetch_all_resultado_pages_includes_response_body_on_http_error() -> None:
+    http_get = FakeHttpGetSequence(
+        [FakeResponse({}, status_code=401, text="Assinatura invalida")]
+    )
+    with pytest.raises(RuntimeError, match="Assinatura invalida"):
+        fetch_all_resultado_pages(
+            "https://example.test/preco",
+            {"Authorization": "key"},
+            page_size=20,
+            http_get=http_get,
+            max_retries=0,
+        )
 
 
 def test_fetch_one_resultado_page_logs_429_retry(tmp_path: Path) -> None:

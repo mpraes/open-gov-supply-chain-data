@@ -13,7 +13,11 @@ ISO_TIMESTAMP = re.compile(
 def _read_json_lines(path: Path) -> list[dict[str, object]]:
     if not path.exists():
         return []
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+    return [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line
+    ]
 
 
 def test_get_json_logger_writes_each_level_to_its_own_file(tmp_path: Path) -> None:
@@ -52,24 +56,31 @@ def test_get_json_logger_is_idempotent(tmp_path: Path) -> None:
 
 def test_get_json_logger_keeps_stdout_handler(tmp_path: Path) -> None:
     log = get_json_logger("etl_stdout", log_dir=tmp_path)
-    stream_handlers = [
-        handler for handler in log.handlers if isinstance(handler, logging.StreamHandler)
-        and not isinstance(handler, logging.FileHandler)
+    stream_logs = [
+        stream
+        for stream in log.handlers
+        if isinstance(stream, logging.StreamHandler)
+        and not isinstance(stream, logging.FileHandler)
     ]
-    assert len(stream_handlers) == 1
+    assert len(stream_logs) == 1
 
 
-def test_get_json_logger_is_idempotent(tmp_path: Path) -> None:
-    first = get_json_logger("etl_idempotent", log_dir=tmp_path)
-    second = get_json_logger("etl_idempotent", log_dir=tmp_path)
-    assert first is second
-    assert len(first.handlers) == 4
-
-
-def test_get_json_logger_keeps_stdout_handler(tmp_path: Path) -> None:
-    log = get_json_logger("etl_stdout", log_dir=tmp_path)
-    stream_handlers = [
-        handler for handler in log.handlers if isinstance(handler, logging.StreamHandler)
-        and not isinstance(handler, logging.FileHandler)
+def test_get_json_logger_keeps_stdout_when_log_file_not_writable(
+    tmp_path: Path,
+) -> None:
+    blocked = tmp_path / "etl_unwritable_info.log"
+    blocked.write_text("", encoding="utf-8")
+    blocked.chmod(0o444)
+    try:
+        log = get_json_logger("etl_unwritable", log_dir=tmp_path)
+        log_info(log, "survived_unwritable_file")
+    finally:
+        blocked.chmod(0o644)
+    stream_logs = [
+        stream
+        for stream in log.handlers
+        if isinstance(stream, logging.StreamHandler)
+        and not isinstance(stream, logging.FileHandler)
     ]
-    assert len(stream_handlers) == 1
+    assert len(stream_logs) == 1
+    assert not blocked.read_text(encoding="utf-8")

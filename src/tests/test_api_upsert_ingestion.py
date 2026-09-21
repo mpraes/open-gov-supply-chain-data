@@ -56,6 +56,9 @@ class FakeConnection:
     def cursor(self) -> FakeCursor:
         return self.cursor_obj
 
+    def close(self) -> None:
+        return None
+
     def __enter__(self) -> "FakeConnection":
         return self
 
@@ -115,13 +118,19 @@ def test_run_api_upsert_ingestion_upserts_all_rows(tmp_path: Any) -> None:
 
     assert count == 2
     assert fetch.calls == [
-        {"url": "https://example/x", "headers": {"Authorization": "k"}, "page_size": 500}
+        {
+            "url": "https://example/x",
+            "headers": {"Authorization": "k"},
+            "page_size": 500,
+        }
     ]
     assert conn.cursor_obj.execute_calls == [
         (sql, {"cod": 1, "nome": "alpha"}),
         (sql, {"cod": 2, "nome": "beta"}),
     ]
-    events = {row["message"]: row for row in _info_events(tmp_path, "pipeline_upsert_ok")}
+    events = {
+        row["message"]: row for row in _info_events(tmp_path, "pipeline_upsert_ok")
+    }
     _assert_timed(events["api_fetch_ok"], 2)
     _assert_timed(events["upsert_ok"], 2)
     assert events["api_fetch_ok"]["rows"] == 2

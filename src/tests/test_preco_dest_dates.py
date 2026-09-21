@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import Any
 
+from clients.compras_api import CodeParamsFn
+from clients.compras_types import JsonRow
 from etl.ingestion.dest_watermark import with_dest_compra_inicio
 from etl.ingestion.precos.batch_runner import run_preco_batch_ingestion
 from observability.logging_json import get_json_logger
@@ -131,8 +132,31 @@ class FakePrecoConnect:
 
 
 class SamplePrecoRecord:
-    def model_dump(self) -> dict[str, Any]:
+    def model_dump(self) -> dict[str, int]:
         return {"id": 1}
+
+
+class RecordingPrecoFetchForCodes:
+    """Named fake that captures params_for_code for the first catalog code."""
+
+    def __init__(self) -> None:
+        self.calls: list[dict[str, str | int | bool]] = []
+
+    def __call__(
+        self,
+        url: str,
+        headers: dict[str, str],
+        *,
+        codes: list[int],
+        params_for_code: CodeParamsFn,
+        page_size: int | None = 500,
+        pause_seconds: float = 0,
+        parallel_codes: int = 1,
+    ) -> list[JsonRow]:
+        captured: dict[str, str | int | bool] = dict(params_for_code(codes[0]))
+        captured["parallel_codes"] = parallel_codes
+        self.calls.append(captured)
+        return []
 
 
 def test_run_preco_batch_ingestion_filters_by_dest_compra_and_resets_cursor(
@@ -140,20 +164,7 @@ def test_run_preco_batch_ingestion_filters_by_dest_compra_and_resets_cursor(
 ) -> None:
     cursor = FakePrecoCursor([10], "2024-03-01")
     conn = FakePrecoConnection(cursor)
-    captured: list[dict[str, str | int | bool]] = []
-
-    def fetch_for_codes(
-        url: str,
-        headers: dict[str, str],
-        *,
-        codes: list[int],
-        params_for_code: Any,
-        page_size: int | None = 500,
-        pause_seconds: float = 0,
-    ) -> list[dict[str, Any]]:
-        captured.append(dict(params_for_code(codes[0])))
-        return []
-
+    fetch_for_codes = RecordingPrecoFetchForCodes()
     run_preco_batch_ingestion(
         logger_name="preco_dest",
         endpoint_path="/modulo-pesquisa-preco/1_consultarMaterial",
@@ -173,7 +184,12 @@ def test_run_preco_batch_ingestion_filters_by_dest_compra_and_resets_cursor(
         connect_fn=FakePrecoConnect(conn),
         fetch_for_codes=fetch_for_codes,
     )
-    assert captured == [
-        {"tipo": "codigoPdm", "codigo": "10", "dataCompraInicio": "2024-03-01"}
+    assert fetch_for_codes.calls == [
+        {
+            "tipo": "codigoPdm",
+            "codigo": "10",
+            "dataCompraInicio": "2024-03-01",
+            "parallel_codes": 4,
+        }
     ]
     assert cursor.saved[-1] == 0

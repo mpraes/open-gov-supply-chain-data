@@ -1,6 +1,9 @@
 from typing import Any
 
-from etl.ingestion.dest_schema import dest_table as qualify_dest_table, require_sql_ident
+from etl.ingestion.dest_schema import (
+    dest_table as qualify_dest_table,
+    require_sql_ident,
+)
 
 
 def list_int_column(
@@ -97,7 +100,9 @@ def _absent_codes_sql(
     return sql, params
 
 
-def _filter_clauses(dest_filters: dict[str, str | int]) -> tuple[str, dict[str, str | int]]:
+def _filter_clauses(
+    dest_filters: dict[str, str | int],
+) -> tuple[str, dict[str, str | int]]:
     params: dict[str, str | int] = {}
     parts: list[str] = []
     for key, value in dest_filters.items():

@@ -130,3 +130,24 @@ def test_map_material_caracteristica_row_maps_api_keys() -> None:
     )
     assert record.cod_item == 9001
     assert record.nome_caracteristica == "COR"
+
+
+def test_map_material_caracteristica_row_accepts_null_codigo_valor() -> None:
+    record = map_material_caracteristica_row(
+        {
+            "codigoItem": 19,
+            "itemSustentavel": False,
+            "statusItem": True,
+            "codigoCaracteristica": "AAYZ",
+            "nomeCaracteristica": "NOME",
+            "statusCaracteristica": True,
+            "codigoValorCaracteristica": None,
+            "nomeValorCaracteristica": "JAPONA MASCULINA",
+            "statusValorCaracteristica": None,
+            "numeroCaracteristica": 1,
+            "siglaUnidadeMedida": None,
+            "dataHoraAtualizacao": "2024-05-14T03:00:00.143484",
+        }
+    )
+    assert record.codigo_valor_caracteristica == "JAPONA MASCULINA"
+    assert record.nome_valor_caracteristica == "JAPONA MASCULINA"

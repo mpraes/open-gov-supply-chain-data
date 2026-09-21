@@ -21,7 +21,7 @@
 
 ## Tests
 
-- Tests run with a single command: `<project-specific>`.
+- Tests run with a single command: `PYTHONPATH=src pytest src/tests -q`
 - Every new function gets a test. Bug fixes get a regression test.
 - Mock external I/O (API, DB, filesystem) with named fake classes,
   not inline stubs.

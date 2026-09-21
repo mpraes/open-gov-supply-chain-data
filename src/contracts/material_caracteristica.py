@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 
 class MaterialCaracteristicaRecord(BaseModel):
@@ -36,13 +36,36 @@ class MaterialCaracteristicaRecord(BaseModel):
     sigla_unidade_medida: str | None
     data_hora_atualizacao: str | None
 
-    @field_validator("codigo_caracteristica", "codigo_valor_caracteristica")
+    @field_validator("codigo_caracteristica")
     @classmethod
     def codigo_must_be_upper_non_empty(cls, value: str) -> str:
         cleaned = value.strip()
         if not cleaned:
             raise ValueError("codigo fields must be non-empty")
         return cleaned.upper()
+
+    @field_validator("codigo_valor_caracteristica", mode="before")
+    @classmethod
+    def codigo_valor_null_to_empty(cls, value: object) -> str:
+        if value is None:
+            return ""
+        if not isinstance(value, str):
+            raise ValueError(
+                "codigo_valor_caracteristica expected str or None, "
+                f"got {type(value).__name__}: {value!r}"
+            )
+        return value.strip().upper()
+
+    @model_validator(mode="after")
+    def fill_missing_codigo_valor_from_nome(self) -> "MaterialCaracteristicaRecord":
+        # PK is NOT NULL; API sends null codes for name-only values.
+        if self.codigo_valor_caracteristica:
+            return self
+        nome = self.nome_valor_caracteristica
+        if nome is None:
+            return self
+        self.codigo_valor_caracteristica = nome[:100]
+        return self
 
     @field_validator("nome_caracteristica", "nome_valor_caracteristica", "sigla_unidade_medida")
     @classmethod

@@ -26,6 +26,8 @@ class SupportsCursorExecute(Protocol):
 class SupportsDbConnection(Protocol):
     def cursor(self) -> SupportsCursorExecute: ...
 
+    def close(self) -> None: ...
+
     def __enter__(self) -> "SupportsDbConnection": ...
 
     def __exit__(self, *args: object) -> None: ...
@@ -160,7 +162,9 @@ def _run_upsert_transaction(
     count: _UpsertCount,
 ) -> None:
     with conn:
-        _run_upsert_on_connection(conn, upsert_sql, rows, map_row, log, table_name, count)
+        _run_upsert_on_connection(
+            conn, upsert_sql, rows, map_row, log, table_name, count
+        )
 
 
 def _run_upsert_on_connection(

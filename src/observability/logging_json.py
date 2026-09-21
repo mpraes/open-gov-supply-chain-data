@@ -3,7 +3,6 @@ import logging
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 DEFAULT_LOG_DIR = Path(__file__).resolve().parent / "logs"
 
@@ -12,8 +11,10 @@ class JsonFormatter(logging.Formatter):
     """Format log records as one JSON object per line."""
 
     def format(self, record: logging.LogRecord) -> str:
-        payload: dict[str, Any] = {
-            "timestamp": datetime.fromtimestamp(record.created, tz=timezone.utc).isoformat(),
+        payload: dict[str, object] = {
+            "timestamp": datetime.fromtimestamp(
+                record.created, tz=timezone.utc
+            ).isoformat(),
             "level": record.levelname,
             "message": record.getMessage(),
             "logger": record.name,
@@ -50,37 +51,58 @@ def get_json_logger(
     if logger.handlers:
         return logger
     target_dir = log_dir if log_dir is not None else DEFAULT_LOG_DIR
-    target_dir.mkdir(parents=True, exist_ok=True)
     formatter = JsonFormatter()
-    logger.addHandler(_build_stdout_handler(formatter))
-    for level_name, level_no in (("info", logging.INFO), ("warning", logging.WARNING), ("error", logging.ERROR)):
-        logger.addHandler(
-            _build_level_file_handler(target_dir, name, level_name, level_no, formatter)
-        )
+    logger.addHandler(_build_stdout_log(formatter))
+    _add_writable_file_logs(logger, target_dir, name, formatter)
     logger.setLevel(level)
     logger.propagate = False
     return logger
 
 
-def _build_stdout_handler(formatter: logging.Formatter) -> logging.Handler:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(formatter)
-    return handler
+def _add_writable_file_logs(
+    logger: logging.Logger,
+    target_dir: Path,
+    name: str,
+    formatter: logging.Formatter,
+) -> None:
+    try:
+        target_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return
+    for level_name, level_no in (
+        ("info", logging.INFO),
+        ("warning", logging.WARNING),
+        ("error", logging.ERROR),
+    ):
+        file_log = _try_level_file_log(
+            target_dir, name, level_name, level_no, formatter
+        )
+        if file_log is not None:
+            logger.addHandler(file_log)
 
 
-def _build_level_file_handler(
+def _build_stdout_log(formatter: logging.Formatter) -> logging.Handler:
+    stdout_log = logging.StreamHandler(sys.stdout)
+    stdout_log.setFormatter(formatter)
+    return stdout_log
+
+
+def _try_level_file_log(
     log_dir: Path,
     logger_name: str,
     level_name: str,
     level_no: int,
     formatter: logging.Formatter,
-) -> logging.Handler:
+) -> logging.Handler | None:
     path = log_dir / f"{logger_name}_{level_name}.log"
-    handler = logging.FileHandler(path, encoding="utf-8")
-    handler.setLevel(level_no)
-    handler.addFilter(ExactLevelFilter(level_no))
-    handler.setFormatter(formatter)
-    return handler
+    try:
+        file_log = logging.FileHandler(path, encoding="utf-8")
+    except OSError:
+        return None
+    file_log.setLevel(level_no)
+    file_log.addFilter(ExactLevelFilter(level_no))
+    file_log.setFormatter(formatter)
+    return file_log
 
 
 def log_info(logger: logging.Logger, message: str, **fields: object) -> None:
