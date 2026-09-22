@@ -10,15 +10,15 @@ from etl.ingestion.script_runner import DEFAULT_ENV_PATH, _open_connection
 
 
 def main() -> None:
-    ata, unidade = arp_ata_header(DEFAULT_ENV_PATH, load_secret_key_func)
-    for ata_key, unidade_key in _empenho_keys(ata, unidade):
+    fallback = arp_ata_header(DEFAULT_ENV_PATH, load_secret_key_func)
+    for ata_key, unidade_key in _empenho_keys(fallback):
         _ingest_empenho(ata_key, unidade_key)
 
 
-def _empenho_keys(ata: str, unidade: str) -> list[tuple[str, str]]:
+def _empenho_keys(fallback: tuple[str, str] | None) -> list[tuple[str, str]]:
     conn = _open_connection(DEFAULT_ENV_PATH, load_secret_key_func, None)
     try:
-        return resolve_empenho_keys(conn, (ata, unidade))
+        return resolve_empenho_keys(conn, fallback)
     finally:
         conn.close()
 

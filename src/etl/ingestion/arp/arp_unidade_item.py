@@ -15,7 +15,7 @@ def main() -> None:
         _ingest_unidade(ata, unidade, item)
 
 
-def _item_keys(fallback: tuple[str, str, str]) -> list[tuple[str, str, str]]:
+def _item_keys(fallback: tuple[str, str, str] | None) -> list[tuple[str, str, str]]:
     conn = _open_connection(DEFAULT_ENV_PATH, load_secret_key_func, None)
     try:
         return resolve_item_keys(conn, CHILD_TABLE, fallback)

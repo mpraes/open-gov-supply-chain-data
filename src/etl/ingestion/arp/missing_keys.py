@@ -48,17 +48,31 @@ def table_has_rows(conn: Any, table: str) -> bool:
         return cur.fetchone() is not None
 
 
-def resolve_empenho_keys(conn: Any, fallback: AtaHeader) -> list[AtaHeader]:
-    """Use dest ARP headers when present, otherwise the env ATA pair."""
+def resolve_empenho_keys(conn: Any, fallback: AtaHeader | None) -> list[AtaHeader]:
+    """Use dest ARP headers when present, otherwise the env ATA pair.
+
+    Example:
+        resolve_empenho_keys(conn, None)
+    """
     if table_has_rows(conn, "arp"):
         return missing_ata_headers(conn, "arp_empenho")
+    if fallback is None:
+        return []
     return [fallback]
 
 
-def resolve_item_keys(conn: Any, child_table: str, fallback: AtaItem) -> list[AtaItem]:
-    """Use dest ARP item keys when present, otherwise the env ATA triple."""
+def resolve_item_keys(
+    conn: Any, child_table: str, fallback: AtaItem | None
+) -> list[AtaItem]:
+    """Use dest ARP item keys when present, otherwise the env ATA triple.
+
+    Example:
+        resolve_item_keys(conn, "arp_adesao", None)
+    """
     if table_has_rows(conn, "arp_item"):
         return missing_ata_item_triples(conn, child_table)
+    if fallback is None:
+        return []
     return [fallback]
 
 

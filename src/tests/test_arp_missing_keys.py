@@ -90,3 +90,13 @@ def test_resolve_item_keys_falls_back_when_arp_item_empty() -> None:
     assert resolve_item_keys(conn, "arp_unidade_item", ("ata", "ug", "1")) == [
         ("ata", "ug", "1")
     ]
+
+
+def test_resolve_empenho_keys_empty_when_no_dest_and_no_fallback() -> None:
+    conn = FakeKeyConnection(FakeKeyCursor([]))
+    assert resolve_empenho_keys(conn, None) == []
+
+
+def test_resolve_item_keys_empty_when_no_dest_and_no_fallback() -> None:
+    conn = FakeKeyConnection(FakeKeyCursor([]))
+    assert resolve_item_keys(conn, "arp_adesao", None) == []

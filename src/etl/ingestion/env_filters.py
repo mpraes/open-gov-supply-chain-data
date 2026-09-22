@@ -60,6 +60,39 @@ def optional_text(env_path: Path, load_secret: LoadSecret, key: str) -> str | No
     return cleaned
 
 
+def optional_iso_date_pair(
+    env_path: Path,
+    load_secret: LoadSecret,
+    inicial_key: str,
+    final_key: str,
+) -> tuple[str, str] | None:
+    """Load an optional YYYY-MM-DD pair; both missing becomes None.
+
+    Example:
+        optional_iso_date_pair(Path(".env"), load, "A", "B")
+    """
+    inicial = optional_text(env_path, load_secret, inicial_key)
+    final = optional_text(env_path, load_secret, final_key)
+    if inicial is None and final is None:
+        return None
+    if inicial is None or final is None:
+        raise ValueError(
+            f"expected both {inicial_key} and {final_key} or neither, "
+            f"got {inicial!r} and {final!r}"
+        )
+    return _require_iso_date(inicial, inicial_key), _require_iso_date(final, final_key)
+
+
+def default_iso_date_pair(*, today: date | None = None) -> tuple[str, str]:
+    """Full ISO dump window from 2000-01-01 through `today`.
+
+    Example:
+        default_iso_date_pair(today=date(2026, 9, 22))
+    """
+    day = today if today is not None else date.today()
+    return "2000-01-01", day.isoformat()
+
+
 def _require_iso_date(raw: str, label: str) -> str:
     try:
         date.fromisoformat(raw)

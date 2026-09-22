@@ -2,7 +2,11 @@ from pathlib import Path
 
 import pytest
 
+from datetime import date
+
 from etl.ingestion.env_filters import (
+    default_iso_date_pair,
+    optional_iso_date_pair,
     optional_text,
     require_int_value,
     require_iso_date_pair,
@@ -40,3 +44,35 @@ def test_optional_text_missing_is_none() -> None:
         raise KeyError(name)
 
     assert optional_text(Path(".env"), load_secret, "X") is None
+
+
+def test_optional_iso_date_pair_reads_keys() -> None:
+    def load_secret(_env_path: Path, name: str) -> str:
+        return {"A": "2024-01-01", "B": "2024-12-31"}[name]
+
+    assert optional_iso_date_pair(Path(".env"), load_secret, "A", "B") == (
+        "2024-01-01",
+        "2024-12-31",
+    )
+
+
+def test_optional_iso_date_pair_missing_is_none() -> None:
+    def load_secret(_env_path: Path, name: str) -> str:
+        raise KeyError(name)
+
+    assert optional_iso_date_pair(Path(".env"), load_secret, "A", "B") is None
+
+
+def test_optional_iso_date_pair_rejects_one_sided() -> None:
+    def load_secret(_env_path: Path, name: str) -> str:
+        return {"A": "2024-01-01"}[name]
+
+    with pytest.raises(ValueError, match="expected both A and B or neither"):
+        optional_iso_date_pair(Path(".env"), load_secret, "A", "B")
+
+
+def test_default_iso_date_pair_uses_injected_today() -> None:
+    assert default_iso_date_pair(today=date(2026, 9, 22)) == (
+        "2000-01-01",
+        "2026-09-22",
+    )

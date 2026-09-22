@@ -10,3 +10,7 @@ def test_preco_material_dag_is_manual_airflow3_task() -> None:
     assert "register_ingest_dag" in src
     assert "etl.ingestion.precos.preco_material" in src
     assert 'tags=["open-gov", "precos"]' in src
+    # Airflow dag_discovery_safe_mode only parses files containing "airflow".
+    assert "airflow" in src.lower()
+    # Airflow loads the file without adding its directory to sys.path.
+    assert "sys.path.insert(0, str(Path(__file__).resolve().parent))" in src

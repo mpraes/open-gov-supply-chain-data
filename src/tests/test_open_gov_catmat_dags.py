@@ -30,3 +30,7 @@ def test_catmat_dag_is_manual_airflow3_task(script: str) -> None:
     assert "register_ingest_dag" in src
     assert f"etl.ingestion.material.{script}" in src
     assert 'tags=["open-gov", "catmat"]' in src
+    # Airflow dag_discovery_safe_mode only parses files containing "airflow".
+    assert "airflow" in src.lower()
+    # Airflow loads the file without adding its directory to sys.path.
+    assert "sys.path.insert(0, str(Path(__file__).resolve().parent))" in src
