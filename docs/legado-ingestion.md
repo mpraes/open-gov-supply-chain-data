@@ -4,6 +4,8 @@ Date: 2026-09-19
 Status: implemented  
 Approach: Reuse `run_page_batch_ingestion`; skip `_Id` lookups
 
+Operação (dev/prod/CI): [guia-deploy.md](./guia-deploy.md).
+
 ## Scope
 
 JSON list endpoints from `docs/dados_api.md` §06. Lookup-by-id variants

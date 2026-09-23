@@ -4,6 +4,8 @@ Date: 2026-09-18
 Status: implemented (scope A)  
 Approach: Reuse `run_script_ingestion` / `run_api_upsert_ingestion`; mirror material layout
 
+Operação (dev/prod/CI): [guia-deploy.md](./guia-deploy.md).
+
 ## Scope
 
 All CATSER catalog endpoints from `docs/dados_api.md` §02:

@@ -1,9 +1,11 @@
 # Architecture — Open Gov Supply Chain Data
 
-Snapshot as of 2026-09-19: shared API→upsert pipeline plus CATMAT (material),
+Snapshot as of 2026-09-23: shared API→upsert pipeline plus CATMAT (material),
 CATSER (serviço), pesquisa de preço (preços praticados), PGC (planejamento),
 UASG, LEGADO (Lei 8.666), and the remaining list dumps
 (contratações, ARP, contratos, fornecedor, OCDS, indicadores, Alice avisos).
+Airflow 3 DAGs in `dags/`. Dev is WSL; prod is the homelab clone after CI.
+See [guia-deploy.md](./guia-deploy.md).
 
 ## System layers
 
@@ -190,7 +192,22 @@ Lei 14.133 contratações, ARP, contratos, fornecedor, OCDS, indicadores, and
 Alice avisos. Lookup-by-id, Alice chave/ticket, usuarios, and autenticacao
 are skipped.
 
+ARP (and ARP item / fim de vigência) date windows are split into slices of at
+most 365 days (`run_sliced_remaining_ingestion` / `iso_date_slices`). When
+`numeroControlePncpAta` is null the mapper derives
+`{codigo_unidade_gerenciadora}:{numero_ata_registro_preco}`.
+
 See [remaining-ingestion.md](./remaining-ingestion.md).
+
+## Environments and Airflow
+
+Manual Airflow 3 DAGs (`dags/open_gov_*.py`) call `register_ingest_dag` and
+`run_named_ingest`. Prod Airflow bind-mounts the homelab clone so a `git pull`
+is enough. DAGs stay paused until someone triggers them.
+
+CI: [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs pytest on
+GitHub, then a self-hosted runner fast-forwards prod. Deploy steps:
+[guia-deploy.md](./guia-deploy.md). Analytics models live under `dbt-open-gov/`.
 
 ## Shared ingestion pipeline
 
@@ -250,8 +267,12 @@ sequenceDiagram
 | UASG ETL | `src/etl/ingestion/uasg/*.py` | UASG and órgão scripts |
 | LEGADO ETL | `src/etl/ingestion/legado/*.py` | Lei 8.666 licitação scripts |
 | Remaining ETL | `src/etl/ingestion/{contratacoes,arp,contratos,fornecedor,ocds,indicadores,alice}/` | Lei 14.133, ARP, contratos, and related dumps |
+| Date slices | `src/etl/ingestion/iso_date_slices.py` | Split ISO windows (ARP ≤ 365 days) |
+| Airflow factory | `dags/open_gov_ingest.py` | One manual DAG per ingest script |
+| CI | `.github/workflows/ci.yml` | pytest then prod `git pull` |
 | SQL | `src/sql/create_table_*.sql` | Table DDL |
 | Observability | `src/observability/logging_json.py` | JSON logs |
+| Analytics | `dbt-open-gov/` | Staging + analytics models |
 
 ## Run scripts
 

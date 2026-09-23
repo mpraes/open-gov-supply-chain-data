@@ -18,7 +18,7 @@ Cada script de ingestão baixa um endpoint, valida o JSON e faz upsert no schema
 | Legado (Lei 8.666) | licitação, pregão, RDC, compra sem licitação |
 | Lei 14.133 e afins | contratações, ARP, contratos, fornecedor, OCDS, indicadores, Alice |
 
-DDL em `src/sql/create_table_*.sql`. Detalhes de ordem e filtros: [`docs/architecture.md`](docs/architecture.md).
+DDL em `src/sql/create_table_*.sql`. Índice da documentação: [`docs/README.md`](docs/README.md). Deploy no homelab: [`docs/guia-deploy.md`](docs/guia-deploy.md). Arquitetura: [`docs/architecture.md`](docs/architecture.md).
 
 ## Como a ingestão funciona
 
@@ -75,3 +75,18 @@ PYTHONPATH=src .venv/bin/pytest src/tests -q
 ```
 
 I/O externo (API, Postgres, filesystem) é mockado com fakes nomeadas.
+
+## Dev e produção
+
+| Ambiente | Onde | Papel |
+| --- | --- | --- |
+| **Dev** | WSL (`/home/renan/personal/projects/open-gov-supply-chain-data`) | Editar, testar, commitar, `git push` |
+| **Prod** | Homelab (`~/projetos/open-gov-supply-chain-data`) + Airflow em `:8080` | Código atualizado só depois do CI verde |
+
+O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda `pytest` no GitHub (`ubuntu-latest`) em todo push/PR para `main`. Se os testes passam e o evento é push (ou *Run workflow*), o runner self-hosted no homelab faz `git pull --ff-only` em produção. DAGs continuam pausadas; dispare no Airflow quando quiser.
+
+`.env` não entra no git e não é sobrescrito pelo deploy.
+
+O runner de produção (`open-gov-homelab`) roda no notebook via `systemctl --user` (`actions.runner.open-gov-homelab.service`). Ele precisa da sessão do usuário `renan` (ou `loginctl enable-linger renan` com sudo) para sobreviver a logout/reboot.
+
+Passo a passo (hosts, Airflow, runner, troubleshooting): [`docs/guia-deploy.md`](docs/guia-deploy.md).

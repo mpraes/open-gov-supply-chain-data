@@ -83,6 +83,9 @@ Run:
 .venv/bin/pytest src/tests/ -q
 ```
 
+Airflow 3 wraps each `main()` via `dags/open_gov_ingest.py` →
+`run_named_ingest`. Prod deploy: [guia-deploy.md](./guia-deploy.md).
+
 ## How to run a script (Airflow-friendly)
 
 Same paths as before; ensure `src` is on `PYTHONPATH`:

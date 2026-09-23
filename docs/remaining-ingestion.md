@@ -1,8 +1,10 @@
 # Design: remaining API modules — list dumps
 
-Date: 2026-09-19  
+Date: 2026-09-23  
 Status: implemented  
 Approach: Reuse `run_page_batch_ingestion` via `run_remaining_ingestion`; skip `_Id` lookups
+
+Operação (dev/prod/CI): [guia-deploy.md](./guia-deploy.md).
 
 ## In scope
 
@@ -25,6 +27,15 @@ cannot skip dest rows at the API.
 ARP children (`empenho`, `unidade_item`, `adesao`) call the API only for ATA keys
 present in dest `arp` / `arp_item` and missing from the child table. `.env`
 `ARP_NUMERO_ATA` is used only when the parent dest table is empty.
+
+`arp`, `arp_item`, and `arp_fim_vigencia` call `run_sliced_remaining_ingestion`
+so a window longer than 365 days becomes consecutive jobs
+(`arp:2024-01-01:2024-12-31`, …). The API rejects larger ranges.
+
+When `numeroControlePncpAta` is null, `arp_pncp_ata_when_missing` sets the PK to
+`{codigo_unidade_gerenciadora}:{numero_ata_registro_preco}`. Rows that lack both
+the PNCP id and that pair still fail mapping. A later real PNCP id would be a
+second row.
 
 ## Out of scope
 

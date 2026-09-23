@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv sync
+      - run: PYTHONPATH=src uv run pytest src/tests -q
+
+  deploy-prod:
+    needs: test
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: [self-hosted, homelab]
+    steps:
+      - name: Fast-forward production checkout
+        run: |
+          cd /home/renan/projetos/open-gov-supply-chain-data
+          git fetch origin
+          git checkout main
+          git pull --ff-only
