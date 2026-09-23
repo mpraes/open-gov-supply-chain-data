@@ -76,12 +76,38 @@ def contratacao_resultado_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 def arp_fields(row: dict[str, Any]) -> dict[str, Any]:
     """Map consultarARP to arp columns."""
-    return mapped_columns(row, ARP_PK, ARP_COLUMNS)
+    return mapped_columns(row, ARP_PK, ARP_COLUMNS, extra=arp_pncp_ata_when_missing(row))
 
 
 def arp_item_fields(row: dict[str, Any]) -> dict[str, Any]:
     """Map consultarARPItem to arp_item columns."""
-    return mapped_columns(row, ARP_ITEM_PK, ARP_ITEM_COLUMNS)
+    return mapped_columns(
+        row, ARP_ITEM_PK, ARP_ITEM_COLUMNS, extra=arp_pncp_ata_when_missing(row)
+    )
+
+
+def arp_pncp_ata_when_missing(row: dict[str, Any]) -> dict[str, Any]:
+    """Derive PK from unidade+ata when consultarARP omits numeroControlePncpAta.
+
+    Example:
+        arp_pncp_ata_when_missing(
+            {"codigoUnidadeGerenciadora": "120636",
+             "numeroAtaRegistroPreco": "00265/2026"}
+        )
+    """
+    snake = snake_row(row)
+    if snake.get("numero_controle_pncp_ata"):
+        return {}
+    unidade = snake.get("codigo_unidade_gerenciadora")
+    ata = snake.get("numero_ata_registro_preco")
+    if unidade in (None, "") or ata in (None, ""):
+        return {}
+    return {
+        "numero_controle_pncp_ata": (
+            f"{coerce_id_text(unidade, 'codigo_unidade_gerenciadora')}:"
+            f"{coerce_id_text(ata, 'numero_ata_registro_preco')}"
+        )
+    }
 
 
 def arp_unidade_fields(row: dict[str, Any]) -> dict[str, Any]:

@@ -1,6 +1,9 @@
+import pytest
+
 from etl.ingestion.remaining_maps import (
     map_alice_aviso_row,
     map_arp_empenho_row,
+    map_arp_item_row,
     map_arp_row,
     map_contratacao_row,
     map_contrato_row,
@@ -31,6 +34,36 @@ def test_map_arp_row_uses_pncp_ata_key() -> None:
     )
     assert record.numero_controle_pncp_ata == "ata-1"
     assert record.model_dump()["objeto"] == "REGISTRO"
+
+
+def test_map_arp_row_derives_pncp_ata_when_api_sends_null() -> None:
+    record = map_arp_row(
+        {
+            "numeroAtaRegistroPreco": "00265/2026",
+            "codigoUnidadeGerenciadora": "120636",
+            "numeroControlePncpAta": None,
+            "objeto": "pecas",
+        }
+    )
+    assert record.numero_controle_pncp_ata == "120636:00265/2026"
+
+
+def test_map_arp_row_rejects_null_pncp_ata_without_business_key() -> None:
+    with pytest.raises(KeyError, match="numero_controle_pncp_ata"):
+        map_arp_row({"numeroControlePncpAta": None, "objeto": "pecas"})
+
+
+def test_map_arp_item_row_derives_pncp_ata_when_api_sends_null() -> None:
+    record = map_arp_item_row(
+        {
+            "numeroAtaRegistroPreco": "00265/2026",
+            "codigoUnidadeGerenciadora": "120636",
+            "numeroItem": "1",
+            "numeroControlePncpAta": None,
+        }
+    )
+    assert record.numero_controle_pncp_ata == "120636:00265/2026"
+    assert record.numero_item == "1"
 
 
 def test_map_arp_empenho_row_injects_filter_keys() -> None:
