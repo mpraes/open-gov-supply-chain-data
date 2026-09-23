@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: open_gov_staging
+    description: "Tabelas brutas de catalogo e compras ingeridas no Postgres."
+    schema: staging
+    tables:
+      # Materiais
+      - name: material_group
+      - name: material_class
+      - name: material_pdm
+      - name: material_item
+      - name: material_unidade_fornecimento
+      - name: material_natureza_despesa
+      # Serviços
+      - name: servico_secao
+      - name: servico_divisao
+      - name: servico_grupo
+      - name: servico_classe
+      - name: servico_subclasse
+      - name: servico_item
+      - name: servico_unidade_medida
+      - name: servico_natureza_despesa
+      - name: material_caracteristica
+      # Novas Entidades de dimensões
+      - name: fornecedor
+      - name: uasg
+      - name: preco_material
+      - name: preco_servico

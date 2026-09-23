@@ -1,0 +1,95 @@
+version: 2
+
+models:
+  - name: dim_servico_secao
+    columns:
+      - name: cod_secao
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_servico_divisao
+    columns:
+      - name: cod_divisao
+        tests:
+          - unique
+          - not_null
+      - name: cod_secao
+        tests:
+          - relationships:
+              to: ref('dim_servico_secao')
+              field: cod_secao
+
+  - name: dim_servico_grupo
+    columns:
+      - name: cod_grupo
+        tests:
+          - unique
+          - not_null
+      - name: cod_divisao
+        tests:
+          - relationships:
+              to: ref('dim_servico_divisao')
+              field: cod_divisao
+
+  - name: dim_servico_classe
+    columns:
+      - name: cod_classe
+        tests:
+          - unique
+          - not_null
+      - name: cod_grupo
+        tests:
+          - relationships:
+              to: ref('dim_servico_grupo')
+              field: cod_grupo
+
+  - name: dim_servico_subclasse
+    columns:
+      - name: cod_subclasse
+        tests:
+          - unique
+          - not_null
+      - name: cod_classe
+        tests:
+          - relationships:
+              to: ref('dim_servico_classe')
+              field: cod_classe
+
+  - name: dim_servico_item
+    columns:
+      - name: cod_servico
+        tests:
+          - unique
+          - not_null
+      - name: cod_subclasse
+        tests:
+          - relationships:
+              to: ref('dim_servico_subclasse')
+              field: cod_subclasse
+
+  - name: bridge_servico_unidade_medida
+    columns:
+      - name: id_servico_unidade_medida
+        tests:
+          - unique
+          - not_null
+      - name: cod_servico
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_servico_item')
+              field: cod_servico
+
+  - name: bridge_servico_natureza_despesa
+    columns:
+      - name: id_servico_natureza_despesa
+        tests:
+          - unique
+          - not_null
+      - name: cod_servico
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_servico_item')
+              field: cod_servico

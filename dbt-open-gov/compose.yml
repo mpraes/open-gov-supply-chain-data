@@ -1,0 +1,41 @@
+services:
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.9.latest
+    working_dir: /usr/app
+    volumes:
+      - .:/usr/app
+    ports:
+      - "8580:8580"
+    environment:
+      DBT_PROFILES_DIR: /usr/app/profiles
+      DBT_POSTGRES_USER: "${DBT_POSTGRES_USER}"
+      DBT_POSTGRES_PASSWORD: "${DBT_POSTGRES_PASSWORD}"
+      DBT_POSTGRES_DB: "${DBT_POSTGRES_DB}"
+    networks:
+      - postgres_network
+    mem_limit: 1250m
+    cpus: 1.0
+    entrypoint: ["dbt"]
+  dbt-docs:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.9.latest
+    container_name: dbt_docs_server
+    working_dir: /usr/app
+    restart: unless-stopped
+    volumes:
+      - .:/usr/app
+    ports:
+      - "8580:8580"
+    environment:
+      DBT_PROFILES_DIR: /usr/app/profiles
+      DBT_POSTGRES_USER: "{DBT_POSTGRES_USER}"
+      DBT_POSTGRES_PASSWORD: "${DBT_POSTGRES_PASSWORD}"
+      DBT_POSTGRES_DB: "${DBT_POSTGRES_DB}"
+    networks:
+      - postgres_network
+    command: ["docs", "serve", "--host", "0.0.0.0", "--port", "8580"]
+
+
+networks:
+  postgres_network:
+    external: true
+    name: workspace-dados_dataeng

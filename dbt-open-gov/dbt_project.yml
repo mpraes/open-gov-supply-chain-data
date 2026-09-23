@@ -1,0 +1,28 @@
+name: 'open_gov_supply_chain'
+version: '1.0.0'
+config-version: 2
+
+profile: 'open_gov_supply_chain'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Acionado automaticamente ao final da execução do dbt
+on-run-end:
+  - "{{ apply_database_constraints() }}"
+
+models:
+  open_gov_supply_chain:
+    staging:
+      +materialized: view
+      +schema: analytics
+    analytics:
+      +materialized: table
+      +schema: analytics

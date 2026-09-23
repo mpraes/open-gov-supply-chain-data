@@ -1,0 +1,13 @@
+open_gov_supply_chain:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "postgres_db"
+      port: 5432
+      user: "{{ env_var('DBT_POSTGRES_USER') }}"
+      password: "{{ env_var('DBT_POSTGRES_PASSWORD') }}"
+      dbname: "{{ env_var('DBT_POSTGRES_DB') }}"
+      schema: "analytics"
+      threads: 2
+      connect_timeout: 10

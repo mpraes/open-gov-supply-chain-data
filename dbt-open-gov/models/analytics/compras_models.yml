@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: dim_fornecedor
+    columns:
+      - name: ni_fornecedor
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_uasg
+    columns:
+      - name: codigo_uasg
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_preco_material
+    columns:
+      - name: id_preco_material_fato
+        tests:
+          - unique
+          - not_null
+      - name: cod_item
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_material_item')
+              field: cod_item
+      - name: ni_fornecedor
+        tests:
+          - relationships:
+              to: ref('dim_fornecedor')
+              field: ni_fornecedor
+      - name: codigo_uasg
+        tests:
+          - relationships:
+              to: ref('dim_uasg')
+              field: codigo_uasg
+
+  - name: fct_preco_servico
+    columns:
+      - name: id_preco_servico_fato
+        tests:
+          - unique
+          - not_null
+      - name: cod_servico
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_servico_item')
+              field: cod_servico
+      - name: ni_fornecedor
+        tests:
+          - relationships:
+              to: ref('dim_fornecedor')
+              field: ni_fornecedor
+      - name: codigo_uasg
+        tests:
+          - relationships:
+              to: ref('dim_uasg')
+              field: codigo_uasg

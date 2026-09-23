@@ -1,0 +1,84 @@
+version: 2
+
+models:
+  - name: dim_material_grupo
+    columns:
+      - name: cod_grupo
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_material_classe
+    columns:
+      - name: cod_classe
+        tests:
+          - unique
+          - not_null
+      - name: cod_grupo
+        tests:
+          - relationships:
+              to: ref('dim_material_grupo')
+              field: cod_grupo
+
+  - name: dim_material_pdm
+    columns:
+      - name: cod_pdm
+        tests:
+          - unique
+          - not_null
+      - name: cod_classe
+        tests:
+          - relationships:
+              to: ref('dim_material_classe')
+              field: cod_classe
+
+  - name: dim_material_item
+    columns:
+      - name: cod_item
+        tests:
+          - unique
+          - not_null
+      - name: cod_pdm
+        tests:
+          - relationships:
+              to: ref('dim_material_pdm')
+              field: cod_pdm
+
+  - name: dim_material_unidade_fornecimento
+    columns:
+      - name: id_unidade_fornecimento
+        tests:
+          - unique
+          - not_null
+      - name: cod_pdm
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_material_pdm')
+              field: cod_pdm
+
+  - name: bridge_material_pdm_natureza_despesa
+    columns:
+      - name: id_pdm_natureza_despesa
+        tests:
+          - unique
+          - not_null
+      - name: cod_pdm
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_material_pdm')
+              field: cod_pdm
+
+  - name: dim_material_caracteristica
+    columns:
+      - name: id_material_caracteristica
+        tests:
+          - unique
+          - not_null
+      - name: cod_item
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_material_item')
+              field: cod_item
