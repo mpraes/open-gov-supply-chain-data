@@ -16,8 +16,8 @@ dependencies = [
     "requests>=2.34.2",
 ]
 
-[project.scripts]
-open-gov-supply-chain-data = "open_gov_supply_chain_data:main"
+[tool.uv]
+package = false
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13.0"]

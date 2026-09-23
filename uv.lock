@@ -262,7 +262,7 @@ wheels = [
 [[package]]
 name = "open-gov-supply-chain-data"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "pandas" },
     { name = "psycopg2-binary" },
