@@ -1,29 +1,60 @@
 from datetime import date
 from pathlib import Path
 
+import pytest
+
 from etl.ingestion.remaining_filters import (
+    PNCP_CONTRATACAO_MODALIDADES,
     alice_datetimes,
     arp_ata_header,
     arp_ata_keys,
     arp_dates,
-    contratacoes_date_modalidade,
+    contratacoes_dates,
+    contratacoes_modalidades,
     contratos_orgao_dates,
 )
 
 
-def test_contratacoes_date_modalidade_reads_env() -> None:
+def test_contratacoes_dates_reads_env() -> None:
     def load_secret(_env_path: Path, name: str) -> str:
         return {
             "CONTRATACOES_DATA_INICIAL": "2024-01-01",
             "CONTRATACOES_DATA_FINAL": "2024-12-31",
-            "CONTRATACOES_MODALIDADE": "6",
         }[name]
 
-    assert contratacoes_date_modalidade(Path(".env"), load_secret) == (
+    assert contratacoes_dates(Path(".env"), load_secret) == (
         "2024-01-01",
         "2024-12-31",
-        6,
     )
+
+
+def test_contratacoes_dates_defaults_to_full_window_when_env_missing() -> None:
+    assert contratacoes_dates(Path(".env"), _missing_secret, today=date(2026, 9, 22)) == (
+        "2000-01-01",
+        "2026-09-22",
+    )
+
+
+def test_contratacoes_modalidades_reads_env() -> None:
+    def load_secret(_env_path: Path, name: str) -> str:
+        return {"CONTRATACOES_MODALIDADE": "6"}[name]
+
+    assert contratacoes_modalidades(Path(".env"), load_secret) == (6,)
+
+
+def test_contratacoes_modalidades_defaults_to_all_pncp_codes_when_missing() -> None:
+    assert contratacoes_modalidades(Path(".env"), _missing_secret) == (
+        PNCP_CONTRATACAO_MODALIDADES
+    )
+    assert PNCP_CONTRATACAO_MODALIDADES == tuple(range(1, 14))
+
+
+def test_contratacoes_modalidades_rejects_non_digits() -> None:
+    def load_secret(_env_path: Path, name: str) -> str:
+        return "pregao"
+
+    with pytest.raises(ValueError, match="CONTRATACOES_MODALIDADE expected digits"):
+        contratacoes_modalidades(Path(".env"), load_secret)
 
 
 def test_contratos_orgao_dates_reads_env() -> None:

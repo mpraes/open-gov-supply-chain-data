@@ -79,3 +79,14 @@ def test_arp_date_window_scripts_slice_api_windows() -> None:
         src = (root / name).read_text(encoding="utf-8")
         assert "run_sliced_remaining_ingestion" in src
         assert "params_for_slice" in src
+
+
+def test_contratacao_script_dumps_all_modalidades_without_required_env() -> None:
+    src = (
+        Path(__file__).resolve().parents[1]
+        / "etl/ingestion/contratacoes/contratacao.py"
+    ).read_text(encoding="utf-8")
+    assert "contratacoes_date_modalidade" not in src
+    assert "contratacoes_dates" in src
+    assert "contratacoes_modalidades" in src
+    assert "run_sliced_remaining_ingestion" in src

@@ -11,22 +11,39 @@ from etl.ingestion.env_filters import (
 )
 from etl.ingestion.script_runner import LoadSecret
 
+PNCP_CONTRATACAO_MODALIDADES: tuple[int, ...] = tuple(range(1, 14))
 
-def contratacoes_date_modalidade(
+
+def contratacoes_dates(
+    env_path: Path, load_secret: LoadSecret, *, today: date | None = None
+) -> tuple[str, str]:
+    """Load CONTRATACOES_DATA_* or a full dump window when both keys are missing.
+
+    Example:
+        contratacoes_dates(Path(".env"), load)
+    """
+    pair = optional_iso_date_pair(
+        env_path, load_secret, "CONTRATACOES_DATA_INICIAL", "CONTRATACOES_DATA_FINAL"
+    )
+    if pair is not None:
+        return pair
+    return default_iso_date_pair(today=today)
+
+
+def contratacoes_modalidades(
     env_path: Path, load_secret: LoadSecret
-) -> tuple[str, str, int]:
-    """Load CONTRATACOES_DATA_* and CONTRATACOES_MODALIDADE."""
-    inicial, final = require_iso_date_pair(
-        env_path, load_secret, "CONTRATACOES_DATA_INICIAL", "CONTRATACOES_DATA_FINAL"
-    )
-    return inicial, final, require_int_value(env_path, load_secret, "CONTRATACOES_MODALIDADE")
+) -> tuple[int, ...]:
+    """Load CONTRATACOES_MODALIDADE or every PNCP code when the key is missing.
 
-
-def contratacoes_dates(env_path: Path, load_secret: LoadSecret) -> tuple[str, str]:
-    """Load CONTRATACOES_DATA_INICIAL and CONTRATACOES_DATA_FINAL."""
-    return require_iso_date_pair(
-        env_path, load_secret, "CONTRATACOES_DATA_INICIAL", "CONTRATACOES_DATA_FINAL"
-    )
+    Example:
+        contratacoes_modalidades(Path(".env"), load)
+    """
+    raw = optional_text(env_path, load_secret, "CONTRATACOES_MODALIDADE")
+    if raw is None:
+        return PNCP_CONTRATACAO_MODALIDADES
+    if not raw.isdigit():
+        raise ValueError(f"CONTRATACOES_MODALIDADE expected digits, got {raw!r}")
+    return (int(raw),)
 
 
 def arp_dates(
