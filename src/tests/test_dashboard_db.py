@@ -44,6 +44,6 @@ def test_connect_analytics_sets_analytics_search_path() -> None:
             "user": "u",
             "password": "p",
             "dbname": "d",
-            "options": "-c search_path=analytics -c statement_timeout=60s",
+            "options": "-c search_path=analytics -c statement_timeout=180s",
         }
     ]
