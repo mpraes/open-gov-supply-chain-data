@@ -181,4 +181,5 @@ pyrightconfig.json
 data/
 .cursor/
 docs/superpowers/
+.worktrees/
 src/observability/logs
