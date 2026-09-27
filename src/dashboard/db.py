@@ -31,5 +31,5 @@ def connect_analytics(
         user=settings.user,
         password=settings.password,
         dbname=settings.dbname,
-        options="-c search_path=analytics",
+        options="-c search_path=analytics -c statement_timeout=60s",
     )

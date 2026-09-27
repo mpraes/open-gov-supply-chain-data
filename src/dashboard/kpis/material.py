@@ -22,7 +22,7 @@ def load_material_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> Theme
         _material_cards(itens, ativos, sustentaveis, margem, spend, priced),
         (_monthly(conn, pred),),
         ranked_with_pct(_label_amounts(conn, _GRUPO_COUNT_SQL)),
-        ranked_with_pct(_label_amounts(conn, _grupo_spend_sql(pred))),
+        ranked_with_pct(_label_amounts(conn, _grupo_spend_sql(pred)), formatter=format_brl),
         _item_leaders(conn, pred),
         _supplier_leaders(conn, pred),
     )
@@ -137,6 +137,6 @@ def _supplier_leaders(
         f"WHERE {pred} GROUP BY 1, 2 ORDER BY 3 DESC LIMIT 8",
     )
     return tuple(
-        LeaderboardRow(str(title), str(subtitle), index)
-        for index, (title, subtitle, _amount) in enumerate(rows, start=1)
+        LeaderboardRow(str(title), format_brl(float(amount)), index)
+        for index, (title, _ni, amount) in enumerate(rows, start=1)
     )

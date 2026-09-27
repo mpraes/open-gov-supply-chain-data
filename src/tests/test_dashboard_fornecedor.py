@@ -22,7 +22,9 @@ def test_load_fornecedor_kpis_fills_six_cards_and_lists() -> None:
     assert payload.cards[2].label == "Habilitados"
     assert payload.ranked_left[0].label == "SP"
     assert payload.leaderboard_left[0].title == "ACME"
+    assert payload.leaderboard_left[0].subtitle.startswith("R$")
     assert payload.leaderboard_right[0].title == "Construção"
+    assert payload.leaderboard_right[0].subtitle == "20"
 
 
 def test_load_fornecedor_kpis_12m_predicate_on_fact_queries() -> None:

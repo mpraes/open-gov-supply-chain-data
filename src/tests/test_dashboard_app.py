@@ -57,7 +57,8 @@ def test_api_connect_failure_503() -> None:
     assert response.status_code == 503
     body = response.json()
     assert body["error"] == "analytics_unavailable"
-    assert "postgres down" in body["detail"]
+    assert body["detail"] == "analytics_unavailable"
+    assert "postgres down" not in response.text
 
 
 def test_page_routes_render() -> None:

@@ -22,5 +22,8 @@ def test_load_servico_kpis_uses_stg_for_ranked_section() -> None:
     assert payload.cards[2].label == "Cobertura hierarquia"
     assert "3,6%" in payload.cards[2].value or payload.cards[2].value == "3,6%"
     assert payload.ranked_left[0].label == "Construção"
+    assert payload.ranked_right[0].value.startswith("R$")
+    assert payload.leaderboard_left[0].subtitle.startswith("R$")
+    assert payload.leaderboard_right[0].subtitle.startswith("R$")
     ranked_sql = conn.cursor_obj.queries[5]
     assert "stg_servico_item" in ranked_sql

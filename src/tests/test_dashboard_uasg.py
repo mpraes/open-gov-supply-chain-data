@@ -21,4 +21,6 @@ def test_load_uasg_kpis_maps_buyer_cards() -> None:
     assert payload.ranked_left[0].label == "SP"
     assert payload.ranked_right[0].label == "SISG"
     assert payload.leaderboard_left[0].title == "UASG 1"
+    assert payload.leaderboard_left[0].subtitle.startswith("R$")
     assert payload.leaderboard_right[0].title == "Órgão 1"
+    assert payload.leaderboard_right[0].subtitle.startswith("R$")

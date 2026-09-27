@@ -105,22 +105,40 @@ function renderChart(series) {
   );
 }
 
+function clearListsAndChart() {
+  renderRanked(rankedLeft, []);
+  renderRanked(rankedRight, []);
+  renderBoard(boardLeft, []);
+  renderBoard(boardRight, []);
+  document.getElementById("kpi-chart").innerHTML = "";
+  chart = undefined;
+}
+
+function showEmpty() {
+  emptyState.hidden = false;
+  dashCards();
+  clearListsAndChart();
+}
+
 async function loadKpis() {
   emptyState.hidden = true;
   const url = `${kpiUrl}?timeframe=${encodeURIComponent(timeframeEl.value)}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    emptyState.hidden = false;
-    dashCards();
-    return;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      showEmpty();
+      return;
+    }
+    const payload = await response.json();
+    renderCards(payload.cards || []);
+    renderChart(payload.series || []);
+    renderRanked(rankedLeft, payload.ranked_left || []);
+    renderRanked(rankedRight, payload.ranked_right || []);
+    renderBoard(boardLeft, payload.leaderboard_left || []);
+    renderBoard(boardRight, payload.leaderboard_right || []);
+  } catch (_error) {
+    showEmpty();
   }
-  const payload = await response.json();
-  renderCards(payload.cards || []);
-  renderChart(payload.series || []);
-  renderRanked(rankedLeft, payload.ranked_left || []);
-  renderRanked(rankedRight, payload.ranked_right || []);
-  renderBoard(boardLeft, payload.leaderboard_left || []);
-  renderBoard(boardRight, payload.leaderboard_right || []);
 }
 
 applyThemeHeadings();

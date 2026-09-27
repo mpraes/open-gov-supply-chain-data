@@ -21,4 +21,8 @@ def test_load_material_kpis_maps_catalog_and_spend() -> None:
     assert payload.cards[2].label == "Sustentáveis"
     assert payload.series[0].name == "Material"
     assert payload.ranked_left[0].label == "Médico"
+    assert payload.ranked_right[0].value.startswith("R$")
     assert payload.leaderboard_left[0].title == "Gaze"
+    assert payload.leaderboard_left[0].subtitle.startswith("R$")
+    assert payload.leaderboard_right[0].title == "Fornecedor A"
+    assert payload.leaderboard_right[0].subtitle.startswith("R$")

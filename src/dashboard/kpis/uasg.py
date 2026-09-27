@@ -133,6 +133,6 @@ def _leaderboard_from_spend_rows(
     rows: list[tuple[object, ...]],
 ) -> tuple[LeaderboardRow, ...]:
     return tuple(
-        LeaderboardRow(str(title), str(subtitle), index)
-        for index, (title, subtitle, _amount) in enumerate(rows, start=1)
+        LeaderboardRow(str(title), format_brl(float(amount)), index)
+        for index, (title, _code, amount) in enumerate(rows, start=1)
     )

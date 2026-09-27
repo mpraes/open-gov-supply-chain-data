@@ -127,8 +127,8 @@ def _spend_leaders(conn: AnalyticsConnection, pred: str) -> tuple[LeaderboardRow
         "GROUP BY 1, 2 ORDER BY 3 DESC LIMIT 8",
     )
     return tuple(
-        LeaderboardRow(str(title), str(subtitle), index)
-        for index, (title, subtitle, _amount) in enumerate(rows, start=1)
+        LeaderboardRow(str(title), format_brl(float(amount)), index)
+        for index, (title, _ni, amount) in enumerate(rows, start=1)
     )
 
 

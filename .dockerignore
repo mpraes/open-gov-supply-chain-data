@@ -1,0 +1,7 @@
+.env
+.git
+.venv
+data/
+**/__pycache__
+.worktrees
+.superpowers

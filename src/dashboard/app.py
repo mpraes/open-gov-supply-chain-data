@@ -120,7 +120,7 @@ def _load_or_503(
     except Exception as exc:
         log_error(_LOG, "analytics_unavailable", theme=theme, detail=str(exc))
         return JSONResponse(
-            {"error": "analytics_unavailable", "detail": str(exc)},
+            {"error": "analytics_unavailable", "detail": "analytics_unavailable"},
             status_code=503,
         )
     return JSONResponse(theme_kpis_json(payload))
