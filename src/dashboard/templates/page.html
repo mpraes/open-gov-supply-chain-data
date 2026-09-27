@@ -1,7 +1,49 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head><meta charset="utf-8"><title>{{ title }}</title></head>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} · Open Gov</title>
+    <link rel="stylesheet" href="https://unpkg.com/uplot@1.6.31/dist/uPlot.min.css">
+    <link rel="stylesheet" href="/static/dashboard.css">
+  </head>
   <body data-kpi-url="{{ kpi_url }}" data-theme="{{ theme }}">
-    <h1>{{ title }}</h1>
+    <aside class="sidebar">
+      <div class="brand">Open Gov</div>
+      <nav>
+        <a href="/" class="{% if theme == 'overview' %}active{% endif %}">Relatórios</a>
+        <a href="/fornecedor" class="{% if theme == 'fornecedor' %}active{% endif %}">Fornecedor</a>
+        <a href="/material" class="{% if theme == 'material' %}active{% endif %}">Material</a>
+        <a href="/servico" class="{% if theme == 'servico' %}active{% endif %}">Serviço</a>
+        <a href="/uasg" class="{% if theme == 'uasg' %}active{% endif %}">UASG</a>
+      </nav>
+    </aside>
+    <main>
+      <header>
+        <h1>{{ title }}</h1>
+        <label>Período
+          <select id="timeframe">
+            <option value="all">Todo o período</option>
+            <option value="12m">Últimos 12 meses</option>
+          </select>
+        </label>
+      </header>
+      <p id="empty-state" hidden>Analytics indisponível.</p>
+      <section id="kpi-cards" class="cards"></section>
+      <section class="panel">
+        <h2>Atividade</h2>
+        <div id="kpi-chart"></div>
+      </section>
+      <section class="split">
+        <article class="panel"><h2 id="ranked-left-title">Ranking</h2><ul id="ranked-left"></ul></article>
+        <article class="panel"><h2 id="ranked-right-title">Ranking</h2><ul id="ranked-right"></ul></article>
+      </section>
+      <section class="split">
+        <article class="panel"><h2 id="board-left-title">Lista</h2><ol id="leaderboard-left"></ol></article>
+        <article class="panel"><h2 id="board-right-title">Lista</h2><ol id="leaderboard-right"></ol></article>
+      </section>
+    </main>
+    <script src="https://unpkg.com/uplot@1.6.31/dist/uPlot.iife.min.js"></script>
+    <script src="/static/dashboard.js"></script>
   </body>
 </html>

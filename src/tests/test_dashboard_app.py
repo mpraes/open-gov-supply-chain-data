@@ -67,3 +67,18 @@ def test_page_routes_render() -> None:
         response = client.get(path)
         assert response.status_code == 200
         assert "text/html" in response.headers["content-type"]
+
+
+def test_page_has_sidebar_and_kpi_slots() -> None:
+    factory = FakeConnectFactory(FakeAnalyticsConnection([]))
+    client = TestClient(create_app(connect_factory=factory))
+    html = client.get("/fornecedor").text
+    assert 'href="/"' in html
+    assert 'href="/fornecedor"' in html
+    assert 'href="/material"' in html
+    assert 'href="/servico"' in html
+    assert 'href="/uasg"' in html
+    assert 'id="kpi-cards"' in html
+    assert 'id="kpi-chart"' in html
+    assert 'id="empty-state"' in html
+    assert "dashboard.js" in html
