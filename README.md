@@ -74,6 +74,7 @@ flowchart LR
 | Orquestração | `dags/open_gov_*.py` | Dispara `main()` de cada script |
 | Destino bruto | schema `staging` | DDL em `src/sql/` |
 | Análise | `dbt-open-gov/models/` | `staging` views → `analytics` |
+| Análise UI | `src/dashboard/` | FastAPI on `:8050` |
 | Dev | WSL | Código e testes |
 | Prod | notebook | Airflow + Postgres + dbt + CI pull |
 

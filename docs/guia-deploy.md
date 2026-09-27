@@ -61,6 +61,7 @@ Para redeploy sem commit novo: **Actions → CI → Run workflow**.
 | Filebrowser | http://meu_servidor:8084 |
 | Portainer | http://meu_servidor:9443 |
 | dbt docs | http://meu_servidor:8580 |
+| Dashboard | http://meu_servidor:8050 |
 
 No notebook, uma vez (pede sudo):
 
@@ -156,6 +157,16 @@ Trocar a porta da UI: `ports` no `docker-compose.yaml` e
 
 Opcional, no clone: `dbt-open-gov/`. Não entra no job de deploy além do
 `git pull`. Rode `dbt` no notebook quando quiser materializar o analytics.
+
+## Dashboard
+
+```bash
+ssh homelab
+cd ~/projetos/open-gov-supply-chain-data/src/dashboard
+docker compose up -d --build
+```
+
+UI: `http://192.168.2.120:8050`. Do not copy `.env` into the image.
 
 ## Problemas comuns
 

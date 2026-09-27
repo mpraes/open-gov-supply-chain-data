@@ -1,0 +1,15 @@
+services:
+  dashboard:
+    build:
+      context: ../..
+      dockerfile: src/dashboard/Dockerfile
+    container_name: open_gov_dashboard
+    env_file:
+      - ../../.env
+    volumes:
+      - ../../.env:/app/.env:ro
+    ports:
+      - "8050:8050"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
