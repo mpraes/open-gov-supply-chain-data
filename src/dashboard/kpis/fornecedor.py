@@ -1,6 +1,7 @@
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import format_brl, format_count, ranked_with_pct
 from dashboard.kpis.sql_fetch import fetch_one_row, fetch_rows
+from dashboard.kpis.sql_scalars import four_ints, scalar_float, scalar_int
 from dashboard.kpis.timeframe import fact_predicate
 from dashboard.kpis.types import (
     KpiCard,
@@ -53,11 +54,11 @@ def _catalog_counts(conn: AnalyticsConnection) -> tuple[int, int, int, int]:
         f"COUNT(*) FILTER (WHERE nome_razao_social = '{_NOT_REGISTERED}') "
         "FROM analytics.dim_fornecedor",
     )
-    return _four_ints(row)
+    return four_ints(row)
 
 
 def _union_homologado_spend(conn: AnalyticsConnection, pred: str) -> float:
-    return _scalar_float(
+    return scalar_float(
         conn,
         "SELECT COALESCE(SUM(valor_total_homologado), 0) FROM ("
         f"SELECT valor_total_homologado FROM analytics.fct_preco_material WHERE {pred} "
@@ -68,7 +69,7 @@ def _union_homologado_spend(conn: AnalyticsConnection, pred: str) -> float:
 
 
 def _distinct_ni_in_facts(conn: AnalyticsConnection, pred: str) -> int:
-    return _scalar_int(
+    return scalar_int(
         conn,
         "SELECT COUNT(DISTINCT ni_fornecedor) FROM ("
         f"SELECT ni_fornecedor FROM analytics.fct_preco_material WHERE {pred} "
@@ -96,22 +97,6 @@ def _fornecedor_cards(
     )
 
 
-def _four_ints(row: tuple[object, ...] | None) -> tuple[int, int, int, int]:
-    if row is None:
-        return (0, 0, 0, 0)
-    return (int(row[0]), int(row[1]), int(row[2]), int(row[3]))
-
-
-def _scalar_float(conn: AnalyticsConnection, query: str) -> float:
-    row = fetch_one_row(conn, query)
-    return float(row[0]) if row else 0.0
-
-
-def _scalar_int(conn: AnalyticsConnection, query: str) -> int:
-    row = fetch_one_row(conn, query)
-    return int(row[0]) if row else 0
-
-
 def _monthly(
     conn: AnalyticsConnection, table: str, pred: str, name: str
 ) -> NamedSeries:
@@ -126,9 +111,7 @@ def _monthly(
     )
 
 
-def _label_amounts(
-    conn: AnalyticsConnection, query: str
-) -> list[tuple[str, float]]:
+def _label_amounts(conn: AnalyticsConnection, query: str) -> list[tuple[str, float]]:
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 
 

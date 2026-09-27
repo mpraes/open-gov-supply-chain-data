@@ -1,6 +1,7 @@
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import format_brl, format_count
-from dashboard.kpis.sql_fetch import fetch_one_row, fetch_rows
+from dashboard.kpis.sql_fetch import fetch_rows
+from dashboard.kpis.sql_scalars import scalar_float, scalar_int
 from dashboard.kpis.timeframe import fact_predicate
 from dashboard.kpis.types import (
     KpiCard,
@@ -40,17 +41,15 @@ _CATALOG_TABLES = (
 
 
 def _count(conn: AnalyticsConnection, table: str) -> int:
-    row = fetch_one_row(conn, f"SELECT COUNT(*) FROM analytics.{table}")
-    return int(row[0]) if row else 0
+    return scalar_int(conn, f"SELECT COUNT(*) FROM analytics.{table}")
 
 
 def _sum_fact(conn: AnalyticsConnection, table: str, pred: str) -> float:
-    row = fetch_one_row(
+    return scalar_float(
         conn,
         f"SELECT COALESCE(SUM(valor_total_homologado), 0) "
         f"FROM analytics.{table} WHERE {pred}",
     )
-    return float(row[0]) if row else 0.0
 
 
 def _monthly_series(
