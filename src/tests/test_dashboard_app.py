@@ -21,10 +21,7 @@ class BoomConnectFactory:
 
 def _overview_sets() -> list[list[tuple[object, ...]]]:
     return [
-        [(1,)],
-        [(2,)],
-        [(3,)],
-        [(4,)],
+        [(1, 2, 3, 4)],
         [(0,)],
         [(0,)],
         [],
@@ -83,3 +80,4 @@ def test_page_has_sidebar_and_kpi_slots() -> None:
     assert 'id="kpi-chart"' in html
     assert 'id="empty-state"' in html
     assert "dashboard.js" in html
+    assert "chart_ticks.js" in html

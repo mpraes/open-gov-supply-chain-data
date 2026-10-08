@@ -6,8 +6,7 @@ from dashboard.kpis.uasg import load_uasg_kpis
 def test_load_uasg_kpis_maps_buyer_cards() -> None:
     conn = FakeAnalyticsConnection(
         result_sets=[
-            [(45592, 22092, 22289, 41052)],
-            [(12000,)],
+            [(45592, 22092, 22289, 41052, 12000)],
             [(200.0,)],
             [("2026-01", 20.0)],
             [("SP", 5440)],
@@ -24,3 +23,9 @@ def test_load_uasg_kpis_maps_buyer_cards() -> None:
     assert payload.leaderboard_left[0].subtitle.startswith("R$")
     assert payload.leaderboard_right[0].title == "Órgão 1"
     assert payload.leaderboard_right[0].subtitle.startswith("R$")
+    assert "kpi_catalog_uasg" in conn.cursor_obj.queries[0]
+    assert "kpi_uasg_uf" in conn.cursor_obj.queries[3]
+    fact_sql = " ".join(conn.cursor_obj.queries[1:])
+    assert "kpi_mes_" in fact_sql
+    assert "kpi_top_spend" in fact_sql
+    assert "fct_preco_" not in fact_sql

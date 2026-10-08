@@ -25,6 +25,10 @@ def test_load_fornecedor_kpis_fills_six_cards_and_lists() -> None:
     assert payload.leaderboard_left[0].subtitle.startswith("R$")
     assert payload.leaderboard_right[0].title == "Construção"
     assert payload.leaderboard_right[0].subtitle == "20"
+    priced_sql = conn.cursor_obj.queries[2]
+    assert "kpi_priced_counts" in priced_sql
+    assert "COUNT(" not in priced_sql
+    assert "kpi_top_spend" in conn.cursor_obj.queries[7]
 
 
 def test_load_fornecedor_kpis_12m_predicate_on_fact_queries() -> None:
@@ -42,4 +46,7 @@ def test_load_fornecedor_kpis_12m_predicate_on_fact_queries() -> None:
         ]
     )
     load_fornecedor_kpis(conn, "12m")
-    assert any("12 months" in query for query in conn.cursor_obj.queries)
+    fact_sql = " ".join(conn.cursor_obj.queries[1:])
+    assert "janela = '12m'" in fact_sql
+    assert "kpi_mes_" in fact_sql
+    assert "fct_preco_" not in fact_sql

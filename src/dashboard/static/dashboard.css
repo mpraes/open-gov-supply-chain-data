@@ -47,14 +47,22 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .card .label, .hint { color: var(--muted); font-size: 12px; }
 .card .value { font-size: 28px; font-weight: 600; margin: 8px 0; }
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-#kpi-chart { height: 240px; }
+#kpi-chart { height: 280px; }
 .bar {
-  height: 8px;
+  height: 22px;
   background: #edf2ff;
   border-radius: 999px;
   overflow: hidden;
+  margin-top: 6px;
 }
 .bar > span { display: block; height: 100%; background: var(--accent); }
+.rank-value {
+  flex: 0 0 auto;
+  margin-left: 12px;
+  font-variant-numeric: tabular-nums;
+  align-self: center;
+}
 #empty-state { color: #c92a2a; }
 ul, ol { list-style: none; padding: 0; margin: 0; }
-li { display: flex; justify-content: space-between; padding: 8px 0; }
+li { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+li > div { flex: 1; min-width: 0; }

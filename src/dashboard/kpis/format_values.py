@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from dashboard.kpis.types import RankedRow
+from dashboard.kpis.types import LeaderboardRow, RankedRow
 
 
 def format_count(value: int | float) -> str:
@@ -35,4 +35,16 @@ def ranked_with_pct(
             pct=(amount / peak * 100.0) if peak else 0.0,
         )
         for label, amount in rows
+    )
+
+
+def brl_leaderboard(rows: list[tuple[object, ...]]) -> tuple[LeaderboardRow, ...]:
+    """Map (label, key, amount) snapshot rows onto ranked BRL cards.
+
+    Example:
+        brl_leaderboard([("ACME", "1", 500.0)])[0].rank == 1
+    """
+    return tuple(
+        LeaderboardRow(str(title), format_brl(float(amount)), index)
+        for index, (title, _key, amount) in enumerate(rows, start=1)
     )

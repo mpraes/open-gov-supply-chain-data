@@ -58,10 +58,13 @@ function renderRanked(target, rows) {
     const item = document.createElement("li");
     const fill = document.createElement("span");
     fill.style.width = `${row.pct}%`;
-    item.innerHTML = `<div><strong></strong><div class="bar"></div></div><span></span>`;
+    item.innerHTML = (
+      `<div><strong></strong><div class="bar"></div></div>`
+      + `<span class="rank-value"></span>`
+    );
     item.querySelector("strong").textContent = row.label;
     item.querySelector(".bar").appendChild(fill);
-    item.querySelector("span").textContent = row.value;
+    item.querySelector(".rank-value").textContent = row.value;
     target.appendChild(item);
   });
 }
@@ -92,17 +95,47 @@ function renderChart(series) {
     return;
   }
   const periods = [...new Set(series.flatMap((s) => s.points.map((p) => p.period)))].sort();
-  const xs = periods.map((_, index) => index);
+  const xs = periods.map(periodToUnix);
   const data = [xs].concat(chartSeries(series, periods));
-  chart = new uPlot(
+  chart = new uPlot(chartOpts(mount, series), data, mount);
+}
+
+function chartOpts(mount, series) {
+  return {
+    width: mount.clientWidth || 640,
+    height: 260,
+    scales: { x: { time: true } },
+    axes: [
+      {
+        stroke: "#7b8794",
+        space: 56,
+        values: (_u, splits) => splits.map(formatMonthTick),
+      },
+      {
+        stroke: "#7b8794",
+        size: 80,
+        grid: { stroke: "#edf2ff" },
+        values: (_u, splits) => splits.map(formatBrlTick),
+      },
+    ],
+    series: chartSeriesOpts(series),
+  };
+}
+
+function chartSeriesOpts(series) {
+  const strokes = ["#3b5bdb", "#0ca678", "#e8590c"];
+  return [
     {
-      width: mount.clientWidth || 640,
-      height: 240,
-      series: [{}, ...series.map((s) => ({ label: s.name, stroke: "#3b5bdb" }))],
+      label: "Mês",
+      value: (_u, raw) => (raw == null ? "--" : formatMonthTick(raw)),
     },
-    data,
-    mount
-  );
+    ...series.map((item, index) => ({
+      label: item.name,
+      stroke: strokes[index % strokes.length],
+      width: 2,
+      value: (_u, raw) => (raw == null ? "--" : formatBrlTick(raw)),
+    })),
+  ];
 }
 
 function clearListsAndChart() {

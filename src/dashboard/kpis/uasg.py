@@ -1,8 +1,14 @@
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import format_brl, format_count, ranked_with_pct
 from dashboard.kpis.sql_fetch import fetch_one_row, fetch_rows
+from dashboard.kpis.rollup_sql import (
+    monthly_both_origens_sql,
+    spend_leader_sql,
+    spend_source,
+    sum_both_origens_sql,
+)
 from dashboard.kpis.sql_scalars import four_ints, scalar_float, scalar_int
-from dashboard.kpis.timeframe import fact_predicate
+from dashboard.kpis.timeframe import mes_predicate
 from dashboard.kpis.types import (
     KpiCard,
     LeaderboardRow,
@@ -19,20 +25,20 @@ _UF_SQL = (
 
 
 def load_uasg_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis:
-    pred = fact_predicate(timeframe)
+    pred = mes_predicate(timeframe)
     uasgs, ativas, sisg, siasg = _catalog_counts(conn)
     orgaos = scalar_int(
         conn, "SELECT COUNT(DISTINCT codigo_orgao) FROM analytics.dim_uasg"
     )
-    spend = scalar_float(conn, _spend_sql(pred))
+    spend = scalar_float(conn, sum_both_origens_sql(pred))
     cards = _uasg_cards(uasgs, ativas, sisg, siasg, orgaos, spend)
     return ThemeKpis(
         cards,
         (_monthly(conn, pred),),
         ranked_with_pct(_label_amounts(conn, _UF_SQL)),
         ranked_with_pct(_sisg_rank_rows(sisg, uasgs)),
-        _uasg_leaders(conn, pred),
-        _orgao_leaders(conn, pred),
+        _uasg_leaders(conn, timeframe, pred),
+        _orgao_leaders(conn, timeframe, pred),
     )
 
 
@@ -70,26 +76,8 @@ def _sisg_rank_rows(sisg: int, uasgs: int) -> list[tuple[str, float]]:
     return [("SISG", float(sisg)), ("Fora do SISG", float(uasgs - sisg))]
 
 
-def _spend_sql(pred: str) -> str:
-    return (
-        "SELECT COALESCE(SUM(valor_total_homologado), 0) FROM ("
-        f"SELECT valor_total_homologado FROM analytics.fct_preco_material WHERE {pred} "
-        "UNION ALL "
-        f"SELECT valor_total_homologado FROM analytics.fct_preco_servico WHERE {pred}"
-        ") s"
-    )
-
-
 def _monthly(conn: AnalyticsConnection, pred: str) -> NamedSeries:
-    rows = fetch_rows(
-        conn,
-        "SELECT to_char(date_trunc('month', data_compra), 'YYYY-MM'), "
-        "COALESCE(SUM(valor_total_homologado), 0) FROM ("
-        f"SELECT data_compra, valor_total_homologado FROM analytics.fct_preco_material WHERE {pred} "
-        "UNION ALL "
-        f"SELECT data_compra, valor_total_homologado FROM analytics.fct_preco_servico WHERE {pred}"
-        ") s WHERE data_compra IS NOT NULL GROUP BY 1 ORDER BY 1",
-    )
+    rows = fetch_rows(conn, monthly_both_origens_sql(pred))
     return NamedSeries(
         "Compras", tuple(SeriesPoint(str(p), float(v)) for p, v in rows)
     )
@@ -101,29 +89,34 @@ def _label_amounts(
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 
 
-def _uasg_leaders(conn: AnalyticsConnection, pred: str) -> tuple[LeaderboardRow, ...]:
+def _uasg_leaders(
+    conn: AnalyticsConnection, timeframe: Timeframe, pred: str
+) -> tuple[LeaderboardRow, ...]:
+    table = spend_source(timeframe, "kpi_mes_uasg", "kpi_uasg_total")
     rows = fetch_rows(
         conn,
-        "SELECT COALESCE(u.nome_uasg, f.codigo_uasg), f.codigo_uasg, "
-        "SUM(f.valor_total_homologado) FROM ("
-        f"SELECT codigo_uasg, valor_total_homologado FROM analytics.fct_preco_material WHERE {pred} "
-        "UNION ALL "
-        f"SELECT codigo_uasg, valor_total_homologado FROM analytics.fct_preco_servico WHERE {pred}"
-        ") f LEFT JOIN analytics.dim_uasg u ON u.codigo_uasg = f.codigo_uasg "
-        "GROUP BY 1, 2 ORDER BY 3 DESC LIMIT 8",
+        spend_leader_sql(
+            table,
+            "codigo_uasg",
+            "d.nome_uasg",
+            "analytics.dim_uasg",
+            pred,
+        ),
     )
     return _leaderboard_from_spend_rows(rows)
 
 
-def _orgao_leaders(conn: AnalyticsConnection, pred: str) -> tuple[LeaderboardRow, ...]:
+def _orgao_leaders(
+    conn: AnalyticsConnection, timeframe: Timeframe, pred: str
+) -> tuple[LeaderboardRow, ...]:
+    table = spend_source(timeframe, "kpi_mes_uasg", "kpi_uasg_total")
     rows = fetch_rows(
         conn,
         "SELECT COALESCE(CAST(u.codigo_orgao AS text), '(sem órgão)'), "
-        "CAST(u.codigo_orgao AS text), SUM(f.valor_total_homologado) FROM ("
-        f"SELECT codigo_uasg, valor_total_homologado FROM analytics.fct_preco_material WHERE {pred} "
-        "UNION ALL "
-        f"SELECT codigo_uasg, valor_total_homologado FROM analytics.fct_preco_servico WHERE {pred}"
-        ") f JOIN analytics.dim_uasg u ON u.codigo_uasg = f.codigo_uasg "
+        "CAST(u.codigo_orgao AS text), SUM(s.valor_total) FROM ("
+        f"SELECT codigo_uasg, SUM(valor_total) AS valor_total "
+        f"FROM analytics.{table} WHERE {pred} GROUP BY 1"
+        ") s JOIN analytics.dim_uasg u ON u.codigo_uasg = s.codigo_uasg "
         "GROUP BY 1, 2 ORDER BY 3 DESC LIMIT 8",
     )
     return _leaderboard_from_spend_rows(rows)

@@ -19,7 +19,8 @@ CATMAT_SCRIPTS = (
 def test_ingest_dag_factory_is_manual_airflow3() -> None:
     src = FACTORY.read_text(encoding="utf-8")
     assert "from airflow.sdk import dag, task" in src
-    assert "schedule=None" in src
+    assert "schedule: str | timedelta | None = None" in src
+    assert "schedule=schedule" in src
     assert "run_named_ingest" in src
 
 
@@ -34,3 +35,23 @@ def test_catmat_dag_is_manual_airflow3_task(script: str) -> None:
     assert "airflow" in src.lower()
     # Airflow loads the file without adding its directory to sys.path.
     assert "sys.path.insert(0, str(Path(__file__).resolve().parent))" in src
+
+
+CATMAT_TWO_DAY_SLOTS = (
+    ("material_group", 8, 0),
+    ("material_item", 8, 15),
+    ("material_pdm", 8, 30),
+    ("material_class", 9, 0),
+    ("material_natureza_despesa", 9, 15),
+    ("material_caracteristica", 9, 30),
+    ("material_unidade_fornecimento", 10, 0),
+)
+
+
+@pytest.mark.parametrize("script,hour,minute", CATMAT_TWO_DAY_SLOTS)
+def test_catmat_dag_runs_every_even_two_days_at_slot(
+    script: str, hour: int, minute: int
+) -> None:
+    src = (DAGS_DIR / f"open_gov_{script}.py").read_text(encoding="utf-8")
+    assert f'every_two_days_at({hour}, {minute}, days="even")' in src
+    assert "paused=False" in src

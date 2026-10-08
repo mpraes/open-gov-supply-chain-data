@@ -1,8 +1,19 @@
 from dashboard.db import AnalyticsConnection
-from dashboard.kpis.format_values import format_brl, format_count, ranked_with_pct
+from dashboard.kpis.format_values import (
+    brl_leaderboard,
+    format_brl,
+    format_count,
+    ranked_with_pct,
+)
 from dashboard.kpis.sql_fetch import fetch_one_row, fetch_rows
+from dashboard.kpis.rollup_sql import (
+    monthly_origem_sql,
+    priced_count_sql,
+    sum_origem_sql,
+    top_spend_sql,
+)
 from dashboard.kpis.sql_scalars import four_ints, scalar_float, scalar_int
-from dashboard.kpis.timeframe import fact_predicate
+from dashboard.kpis.timeframe import mes_predicate
 from dashboard.kpis.types import (
     KpiCard,
     LeaderboardRow,
@@ -14,46 +25,29 @@ from dashboard.kpis.types import (
 
 
 def load_material_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis:
-    pred = fact_predicate(timeframe)
+    pred = mes_predicate(timeframe)
     itens, ativos, sustentaveis, margem = _catalog_counts(conn)
-    spend = _homologado_spend(conn, pred)
-    priced = _priced_item_count(conn, pred)
+    spend = scalar_float(conn, sum_origem_sql("material", pred))
+    priced = scalar_int(
+        conn, distinct_total_sql("kpi_item_material_total", "cod_item", timeframe)
+    )
     return ThemeKpis(
         _material_cards(itens, ativos, sustentaveis, margem, spend, priced),
         (_monthly(conn, pred),),
         ranked_with_pct(_label_amounts(conn, _GRUPO_COUNT_SQL)),
         ranked_with_pct(_label_amounts(conn, _grupo_spend_sql(pred)), formatter=format_brl),
-        _item_leaders(conn, pred),
-        _supplier_leaders(conn, pred),
+        _item_leaders(conn, timeframe, pred),
+        _supplier_leaders(conn, timeframe, pred),
     )
 
 
 def _catalog_counts(conn: AnalyticsConnection) -> tuple[int, int, int, int]:
     row = fetch_one_row(
         conn,
-        "SELECT COUNT(*), "
-        "COUNT(*) FILTER (WHERE is_ativo), "
-        "COUNT(*) FILTER (WHERE is_sustentavel), "
-        "COUNT(*) FILTER (WHERE aplica_margem_preferencia) "
-        "FROM analytics.dim_material_item",
+        "SELECT total, ativos, sustentaveis, margem "
+        "FROM analytics.kpi_catalog_material",
     )
     return four_ints(row)
-
-
-def _homologado_spend(conn: AnalyticsConnection, pred: str) -> float:
-    return scalar_float(
-        conn,
-        "SELECT COALESCE(SUM(valor_total_homologado), 0) "
-        f"FROM analytics.fct_preco_material WHERE {pred}",
-    )
-
-
-def _priced_item_count(conn: AnalyticsConnection, pred: str) -> int:
-    return scalar_int(
-        conn,
-        "SELECT COUNT(DISTINCT cod_item) "
-        f"FROM analytics.fct_preco_material WHERE {pred}",
-    )
 
 
 def _material_cards(
@@ -75,35 +69,22 @@ def _material_cards(
 
 
 def _monthly(conn: AnalyticsConnection, pred: str) -> NamedSeries:
-    rows = fetch_rows(
-        conn,
-        "SELECT to_char(date_trunc('month', data_compra), 'YYYY-MM'), "
-        "COALESCE(SUM(valor_total_homologado), 0) "
-        f"FROM analytics.fct_preco_material WHERE {pred} "
-        "AND data_compra IS NOT NULL GROUP BY 1 ORDER BY 1",
-    )
+    rows = fetch_rows(conn, monthly_origem_sql("material", pred))
     return NamedSeries(
         "Material", tuple(SeriesPoint(str(p), float(v)) for p, v in rows)
     )
 
 
 _GRUPO_COUNT_SQL = (
-    "SELECT g.nome_grupo, COUNT(*) FROM analytics.dim_material_item i "
-    "JOIN analytics.dim_material_pdm p ON p.cod_pdm = i.cod_pdm "
-    "JOIN analytics.dim_material_classe c ON c.cod_classe = p.cod_classe "
-    "JOIN analytics.dim_material_grupo g ON g.cod_grupo = c.cod_grupo "
-    "GROUP BY 1 ORDER BY 2 DESC LIMIT 8"
+    "SELECT label, n FROM analytics.kpi_material_grupo_count "
+    "ORDER BY 2 DESC LIMIT 8"
 )
 
 
 def _grupo_spend_sql(pred: str) -> str:
     return (
-        "SELECT g.nome_grupo, SUM(f.valor_total_homologado) "
-        "FROM analytics.fct_preco_material f "
-        "JOIN analytics.dim_material_item i ON i.cod_item = f.cod_item "
-        "JOIN analytics.dim_material_pdm p ON p.cod_pdm = i.cod_pdm "
-        "JOIN analytics.dim_material_classe c ON c.cod_classe = p.cod_classe "
-        "JOIN analytics.dim_material_grupo g ON g.cod_grupo = c.cod_grupo "
+        "SELECT nome_grupo, SUM(valor_total) "
+        "FROM analytics.kpi_mes_grupo_material "
         f"WHERE {pred} GROUP BY 1 ORDER BY 2 DESC LIMIT 8"
     )
 
@@ -112,29 +93,40 @@ def _label_amounts(conn: AnalyticsConnection, query: str) -> list[tuple[str, flo
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 
 
-def _item_leaders(conn: AnalyticsConnection, pred: str) -> tuple[LeaderboardRow, ...]:
+def _item_leaders(
+    conn: AnalyticsConnection, timeframe: Timeframe, pred: str
+) -> tuple[LeaderboardRow, ...]:
+    table = spend_source(timeframe, "kpi_mes_item_material", "kpi_item_material_total")
     rows = fetch_rows(
         conn,
-        "SELECT COALESCE(i.descricao_item, CAST(f.cod_item AS text)), "
-        "SUM(f.valor_total_homologado) FROM analytics.fct_preco_material f "
-        "LEFT JOIN analytics.dim_material_item i ON i.cod_item = f.cod_item "
-        f"WHERE {pred} GROUP BY 1 ORDER BY 2 DESC LIMIT 8",
+        spend_leader_sql(
+            table,
+            "cod_item",
+            "d.descricao_item",
+            "analytics.dim_material_item",
+            pred,
+        ),
     )
     return tuple(
         LeaderboardRow(str(title), format_brl(float(amount)), index)
-        for index, (title, amount) in enumerate(rows, start=1)
+        for index, (title, _key, amount) in enumerate(rows, start=1)
     )
 
 
 def _supplier_leaders(
-    conn: AnalyticsConnection, pred: str
+    conn: AnalyticsConnection, timeframe: Timeframe, pred: str
 ) -> tuple[LeaderboardRow, ...]:
+    table = spend_source(timeframe, "kpi_mes_fornecedor", "kpi_fornecedor_total")
     rows = fetch_rows(
         conn,
-        "SELECT COALESCE(d.nome_razao_social, f.ni_fornecedor), f.ni_fornecedor, "
-        "SUM(f.valor_total_homologado) FROM analytics.fct_preco_material f "
-        "LEFT JOIN analytics.dim_fornecedor d ON d.ni_fornecedor = f.ni_fornecedor "
-        f"WHERE {pred} GROUP BY 1, 2 ORDER BY 3 DESC LIMIT 8",
+        spend_leader_sql(
+            table,
+            "ni_fornecedor",
+            "d.nome_razao_social",
+            "analytics.dim_fornecedor",
+            pred,
+            extra_pred="origem = 'material'",
+        ),
     )
     return tuple(
         LeaderboardRow(str(title), format_brl(float(amount)), index)

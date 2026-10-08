@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: kpi_mes_origem
+    description: Monthly spend totals by material/servico for the dashboard.
+  - name: kpi_mes_fornecedor
+    description: Monthly spend by supplier for dashboard leaderboards.
+  - name: kpi_mes_uasg
+    description: Monthly spend by buyer UASG for dashboard leaderboards.
+  - name: kpi_mes_item_material
+    description: Monthly material item spend for dashboard leaderboards.
+  - name: kpi_mes_item_servico
+    description: Monthly service item spend for dashboard leaderboards.
+  - name: kpi_mes_grupo_material
+    description: Monthly material group spend for dashboard ranked lists.
+  - name: kpi_mes_grupo_servico
+    description: Monthly service group spend for dashboard ranked lists.
+  - name: kpi_fornecedor_total
+    description: All-time supplier spend with activity span for 12m filters.
+  - name: kpi_item_material_total
+    description: All-time material item spend with activity span.
+  - name: kpi_item_servico_total
+    description: All-time service item spend with activity span.
+  - name: kpi_uasg_total
+    description: All-time UASG spend with activity span.

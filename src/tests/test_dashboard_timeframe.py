@@ -1,6 +1,6 @@
 import pytest
 
-from dashboard.kpis.timeframe import fact_predicate, parse_timeframe
+from dashboard.kpis.timeframe import fact_predicate, mes_predicate, parse_timeframe
 
 
 def test_parse_timeframe_accepts_all_and_12m() -> None:
@@ -22,3 +22,14 @@ def test_fact_predicate_12m_filters_data_compra() -> None:
     assert "data_compra" in sql
     assert "12 months" in sql
     assert sql != "TRUE"
+
+
+def test_mes_predicate_all_is_true() -> None:
+    assert mes_predicate("all") == "TRUE"
+
+
+def test_mes_predicate_12m_filters_mes() -> None:
+    sql = mes_predicate("12m")
+    assert "mes" in sql
+    assert "12 months" in sql
+    assert "data_compra" not in sql

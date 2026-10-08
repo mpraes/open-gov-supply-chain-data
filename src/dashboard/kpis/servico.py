@@ -1,8 +1,15 @@
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import format_brl, format_count, format_pct, ranked_with_pct
 from dashboard.kpis.sql_fetch import fetch_one_row, fetch_rows
+from dashboard.kpis.rollup_sql import (
+    distinct_total_sql,
+    monthly_origem_sql,
+    spend_leader_sql,
+    spend_source,
+    sum_origem_sql,
+)
 from dashboard.kpis.sql_scalars import scalar_float, scalar_int
-from dashboard.kpis.timeframe import fact_predicate
+from dashboard.kpis.timeframe import mes_predicate
 from dashboard.kpis.types import (
     KpiCard,
     LeaderboardRow,
@@ -14,18 +21,20 @@ from dashboard.kpis.types import (
 
 
 def load_servico_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis:
-    pred = fact_predicate(timeframe)
+    pred = mes_predicate(timeframe)
     servicos, ativos, exclusivo = _catalog_counts(conn)
     ratio = _hierarchy_coverage_ratio(conn)
-    spend = _homologado_spend(conn, pred)
-    priced = _priced_servico_count(conn, pred)
+    spend = scalar_float(conn, sum_origem_sql("servico", pred))
+    priced = scalar_int(
+        conn, distinct_total_sql("kpi_item_servico_total", "cod_servico", timeframe)
+    )
     return ThemeKpis(
         _servico_cards(servicos, ativos, exclusivo, ratio, spend, priced),
         (_monthly(conn, pred),),
         ranked_with_pct(_label_amounts(conn, _SECAO_SQL)),
         ranked_with_pct(_label_amounts(conn, _grupo_spend_sql(pred)), formatter=format_brl),
-        _service_leaders(conn, pred),
-        _supplier_leaders(conn, pred),
+        _service_leaders(conn, timeframe, pred),
+        _supplier_leaders(conn, timeframe, pred),
     )
 
 
@@ -55,22 +64,6 @@ def _hierarchy_coverage_ratio(conn: AnalyticsConnection) -> float:
     return (joined / total) if total else 0.0
 
 
-def _homologado_spend(conn: AnalyticsConnection, pred: str) -> float:
-    return scalar_float(
-        conn,
-        "SELECT COALESCE(SUM(valor_total_homologado), 0) "
-        f"FROM analytics.fct_preco_servico WHERE {pred}",
-    )
-
-
-def _priced_servico_count(conn: AnalyticsConnection, pred: str) -> int:
-    return scalar_int(
-        conn,
-        "SELECT COUNT(DISTINCT cod_servico) "
-        f"FROM analytics.fct_preco_servico WHERE {pred}",
-    )
-
-
 def _servico_cards(
     servicos: int,
     ativos: int,
@@ -90,13 +83,7 @@ def _servico_cards(
 
 
 def _monthly(conn: AnalyticsConnection, pred: str) -> NamedSeries:
-    rows = fetch_rows(
-        conn,
-        "SELECT to_char(date_trunc('month', data_compra), 'YYYY-MM'), "
-        "COALESCE(SUM(valor_total_homologado), 0) "
-        f"FROM analytics.fct_preco_servico WHERE {pred} "
-        "AND data_compra IS NOT NULL GROUP BY 1 ORDER BY 1",
-    )
+    rows = fetch_rows(conn, monthly_origem_sql("servico", pred))
     return NamedSeries(
         "Serviço", tuple(SeriesPoint(str(p), float(v)) for p, v in rows)
     )
@@ -112,10 +99,8 @@ _SECAO_SQL = (
 
 def _grupo_spend_sql(pred: str) -> str:
     return (
-        "SELECT COALESCE(g.nome_grupo, CAST(i.cod_grupo AS text)), "
-        "SUM(f.valor_total_homologado) FROM analytics.fct_preco_servico f "
-        "JOIN analytics.stg_servico_item i ON i.cod_servico = f.cod_servico "
-        "LEFT JOIN analytics.dim_servico_grupo g ON g.cod_grupo = i.cod_grupo "
+        "SELECT nome_grupo, SUM(valor_total) "
+        "FROM analytics.kpi_mes_grupo_servico "
         f"WHERE {pred} GROUP BY 1 ORDER BY 2 DESC LIMIT 8"
     )
 
@@ -126,29 +111,40 @@ def _label_amounts(
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 
 
-def _service_leaders(conn: AnalyticsConnection, pred: str) -> tuple[LeaderboardRow, ...]:
+def _service_leaders(
+    conn: AnalyticsConnection, timeframe: Timeframe, pred: str
+) -> tuple[LeaderboardRow, ...]:
+    table = spend_source(timeframe, "kpi_mes_item_servico", "kpi_item_servico_total")
     rows = fetch_rows(
         conn,
-        "SELECT COALESCE(i.nome_servico, CAST(f.cod_servico AS text)), "
-        "SUM(f.valor_total_homologado) FROM analytics.fct_preco_servico f "
-        "LEFT JOIN analytics.dim_servico_item i ON i.cod_servico = f.cod_servico "
-        f"WHERE {pred} GROUP BY 1 ORDER BY 2 DESC LIMIT 8",
+        spend_leader_sql(
+            table,
+            "cod_servico",
+            "d.nome_servico",
+            "analytics.dim_servico_item",
+            pred,
+        ),
     )
     return tuple(
         LeaderboardRow(str(title), format_brl(float(amount)), index)
-        for index, (title, amount) in enumerate(rows, start=1)
+        for index, (title, _key, amount) in enumerate(rows, start=1)
     )
 
 
 def _supplier_leaders(
-    conn: AnalyticsConnection, pred: str
+    conn: AnalyticsConnection, timeframe: Timeframe, pred: str
 ) -> tuple[LeaderboardRow, ...]:
+    table = spend_source(timeframe, "kpi_mes_fornecedor", "kpi_fornecedor_total")
     rows = fetch_rows(
         conn,
-        "SELECT COALESCE(d.nome_razao_social, f.ni_fornecedor), f.ni_fornecedor, "
-        "SUM(f.valor_total_homologado) FROM analytics.fct_preco_servico f "
-        "LEFT JOIN analytics.dim_fornecedor d ON d.ni_fornecedor = f.ni_fornecedor "
-        f"WHERE {pred} GROUP BY 1, 2 ORDER BY 3 DESC LIMIT 8",
+        spend_leader_sql(
+            table,
+            "ni_fornecedor",
+            "d.nome_razao_social",
+            "analytics.dim_fornecedor",
+            pred,
+            extra_pred="origem = 'servico'",
+        ),
     )
     return tuple(
         LeaderboardRow(str(title), format_brl(float(amount)), index)

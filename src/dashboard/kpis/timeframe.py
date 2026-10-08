@@ -18,3 +18,12 @@ def fact_predicate(timeframe: Timeframe, column: str = "data_compra") -> str:
     if timeframe == "all":
         return "TRUE"
     return f"{ident} >= (CURRENT_DATE - INTERVAL '12 months')"
+
+
+def mes_predicate(timeframe: Timeframe) -> str:
+    """Filter monthly KPI rollups; 12m uses month start, not purchase date.
+
+    Example:
+        mes_predicate("all") == "TRUE"
+    """
+    return fact_predicate(timeframe, "mes")

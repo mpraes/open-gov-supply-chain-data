@@ -12,7 +12,7 @@ def test_load_material_kpis_maps_catalog_and_spend() -> None:
             [("2026-01", 9.0)],
             [("Médico", 100)],
             [("Médico", 50.0)],
-            [("Gaze", 10.0)],
+            [("Gaze", 1, 10.0)],
             [("Fornecedor A", "1", 8.0)],
         ]
     )
@@ -26,3 +26,9 @@ def test_load_material_kpis_maps_catalog_and_spend() -> None:
     assert payload.leaderboard_left[0].subtitle.startswith("R$")
     assert payload.leaderboard_right[0].title == "Fornecedor A"
     assert payload.leaderboard_right[0].subtitle.startswith("R$")
+    fact_sql = " ".join(conn.cursor_obj.queries[1:])
+    assert "kpi_mes_" in fact_sql
+    assert "fct_preco_" not in fact_sql
+    assert "kpi_priced_counts" in conn.cursor_obj.queries[2]
+    assert "kpi_top_spend" in conn.cursor_obj.queries[6]
+    assert "kpi_top_spend" in conn.cursor_obj.queries[7]

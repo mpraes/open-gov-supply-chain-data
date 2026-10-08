@@ -1,4 +1,10 @@
-from dashboard.kpis.format_values import format_brl, format_count, format_pct, ranked_with_pct
+from dashboard.kpis.format_values import (
+    brl_leaderboard,
+    format_brl,
+    format_count,
+    format_pct,
+    ranked_with_pct,
+)
 
 
 def test_format_count_uses_dot_thousands() -> None:
@@ -33,3 +39,11 @@ def test_ranked_with_pct_spend_uses_brl() -> None:
     rows = ranked_with_pct([("Grupo", 2_500_000.0)], formatter=format_brl)
     assert rows[0].value.startswith("R$")
     assert rows[0].value == "R$ 2,50 mi"
+
+
+def test_brl_leaderboard_ranks_snapshot_rows() -> None:
+    rows = brl_leaderboard([("ACME", "1", 500.0), ("Beta", "2", 50.0)])
+    assert rows[0].title == "ACME"
+    assert rows[0].rank == 1
+    assert rows[0].subtitle.startswith("R$")
+    assert rows[1].rank == 2
