@@ -13,10 +13,7 @@ def test_themes_are_the_five_routes() -> None:
 def test_load_theme_kpis_overview_returns_six_cards() -> None:
     conn = FakeAnalyticsConnection(
         result_sets=[
-            [(10,)],
-            [(20,)],
-            [(30,)],
-            [(40,)],
+            [(10, 20, 30, 40)],
             [(100.0,)],
             [(50.0,)],
             [("2026-01", 10.0)],

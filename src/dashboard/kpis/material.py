@@ -16,7 +16,6 @@ from dashboard.kpis.sql_scalars import four_ints, scalar_float, scalar_int
 from dashboard.kpis.timeframe import mes_predicate
 from dashboard.kpis.types import (
     KpiCard,
-    LeaderboardRow,
     NamedSeries,
     SeriesPoint,
     ThemeKpis,
@@ -28,16 +27,16 @@ def load_material_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> Theme
     pred = mes_predicate(timeframe)
     itens, ativos, sustentaveis, margem = _catalog_counts(conn)
     spend = scalar_float(conn, sum_origem_sql("material", pred))
-    priced = scalar_int(
-        conn, distinct_total_sql("kpi_item_material_total", "cod_item", timeframe)
-    )
+    priced = scalar_int(conn, priced_count_sql("n_item_material", timeframe))
     return ThemeKpis(
         _material_cards(itens, ativos, sustentaveis, margem, spend, priced),
         (_monthly(conn, pred),),
         ranked_with_pct(_label_amounts(conn, _GRUPO_COUNT_SQL)),
         ranked_with_pct(_label_amounts(conn, _grupo_spend_sql(pred)), formatter=format_brl),
-        _item_leaders(conn, timeframe, pred),
-        _supplier_leaders(conn, timeframe, pred),
+        brl_leaderboard(fetch_rows(conn, top_spend_sql("item_material", timeframe))),
+        brl_leaderboard(
+            fetch_rows(conn, top_spend_sql("fornecedor", timeframe, origem="material"))
+        ),
     )
 
 
@@ -93,42 +92,3 @@ def _label_amounts(conn: AnalyticsConnection, query: str) -> list[tuple[str, flo
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 
 
-def _item_leaders(
-    conn: AnalyticsConnection, timeframe: Timeframe, pred: str
-) -> tuple[LeaderboardRow, ...]:
-    table = spend_source(timeframe, "kpi_mes_item_material", "kpi_item_material_total")
-    rows = fetch_rows(
-        conn,
-        spend_leader_sql(
-            table,
-            "cod_item",
-            "d.descricao_item",
-            "analytics.dim_material_item",
-            pred,
-        ),
-    )
-    return tuple(
-        LeaderboardRow(str(title), format_brl(float(amount)), index)
-        for index, (title, _key, amount) in enumerate(rows, start=1)
-    )
-
-
-def _supplier_leaders(
-    conn: AnalyticsConnection, timeframe: Timeframe, pred: str
-) -> tuple[LeaderboardRow, ...]:
-    table = spend_source(timeframe, "kpi_mes_fornecedor", "kpi_fornecedor_total")
-    rows = fetch_rows(
-        conn,
-        spend_leader_sql(
-            table,
-            "ni_fornecedor",
-            "d.nome_razao_social",
-            "analytics.dim_fornecedor",
-            pred,
-            extra_pred="origem = 'material'",
-        ),
-    )
-    return tuple(
-        LeaderboardRow(str(title), format_brl(float(amount)), index)
-        for index, (title, _ni, amount) in enumerate(rows, start=1)
-    )
