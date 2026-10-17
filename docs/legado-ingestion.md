@@ -14,7 +14,7 @@ JSON list endpoints from `docs/dados_api.md` §06. Lookup-by-id variants
 | # | Endpoint | Script / table | Driver |
 | --- | --- | --- | --- |
 | 1 | `1_consultarLicitacao` | `legado_licitacao` | `LEGADO_DATA_INICIAL` + `LEGADO_DATA_FINAL` |
-| 2 | `2_consultarItemLicitacao` | `legado_item_licitacao` | `LEGADO_MODALIDADE` |
+| 2 | `2_consultarItemLicitacao` | `legado_item_licitacao` | every SIASG licitação code, or `LEGADO_MODALIDADE` |
 | 3 | `3_consultarPregoes` | `legado_pregao` | date range (edital) |
 | 4 | `4_consultarItensPregoes` | `legado_item_pregao` | date range (homologação) |
 | 5 | `5_consultarComprasSemLicitacao` | `legado_compra_sem_licitacao` | `LEGADO_ANO` |
@@ -41,6 +41,7 @@ src/tests/test_legado_*.py
 - Resume cursor includes the raised dest window (`legado_licitacao:2024-06-15:2024-12-31`)
 - Date-window jobs (`licitacao`, `pregao`, `item_pregao`, `rdc`) raise the API start date from dest `MAX` of the matching column; `.env` `LEGADO_DATA_*` is the ceiling
 - Modalidade/year dumps (`item_licitacao`, dispensa) stay page-resume; the API has no dest date filter
+- `item_licitacao` walks SIASG codes 1, 2, 3, 4, 5, 6, 7 and 20 when `LEGADO_MODALIDADE` is absent; each code keeps its own resume cursor
 - No FKs: items can arrive without a parent header in the same window
 - API field `no_ausg` is stored as-is (documented typo for nome UASG)
 
@@ -52,7 +53,7 @@ Set in `.env`:
 LEGADO_DATA_INICIAL=2024-01-01
 LEGADO_DATA_FINAL=2024-12-31
 LEGADO_ANO=2024
-LEGADO_MODALIDADE=5
+# optional: LEGADO_MODALIDADE=5
 # optional: LEGADO_UASG=153001
 ```
 
@@ -69,11 +70,12 @@ PYTHONPATH=src python src/etl/ingestion/legado/legado_rdc.py
 ```
 
 Date-window scripts share `LEGADO_DATA_*`. Dispensa scripts need `LEGADO_ANO`.
-Item de licitação needs `LEGADO_MODALIDADE`.
+Item de licitação calls the API once per SIASG code (1, 2, 3, 4, 5, 6, 7, 20)
+when `LEGADO_MODALIDADE` is absent. Set that variable to load a single code.
 
 ## API quirks
 
-- There is no unfiltered dump: every list endpoint requires a date range, year, or modalidade
+- There is no single unfiltered call: every list endpoint requires a date range, year, or modalidade. Item de licitação supplies modalidade by walking the SIASG codes
 - Pregão amounts arrive as strings; RDC `nome_responsavel` can be numeric
 - RDC has no `id_compra`; the primary key is `identificador`
 
@@ -81,4 +83,4 @@ Item de licitação needs `LEGADO_MODALIDADE`.
 
 - Airflow DAGs
 - Lookup-by-id endpoints
-- Walking every modalidade automatically
+- A modalidade catalog outside the SIASG codes 1, 2, 3, 4, 5, 6, 7 and 20

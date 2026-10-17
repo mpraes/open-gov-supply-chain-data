@@ -170,7 +170,7 @@ See [uasg-ingestion.md](./uasg-ingestion.md).
 
 ## LEGADO load order
 
-Lei 8.666 list endpoints require a date window, year, or modalidade from `.env`.
+Lei 8.666 list endpoints require a date window, year, or modalidade. Item de licitação walks SIASG codes 1, 2, 3, 4, 5, 6, 7 and 20 when `LEGADO_MODALIDADE` is absent.
 Lookup-by-id variants are skipped. Headers and items can be loaded independently.
 
 ```mermaid

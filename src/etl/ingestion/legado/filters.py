@@ -1,7 +1,14 @@
 from datetime import date
 from pathlib import Path
 
+from etl.ingestion.env_filters import optional_text
 from etl.ingestion.script_runner import LoadSecret
+
+# consultarItemLicitacao rejects a call without modalidade. These SIASG
+# codes each return rows: 1 Convite, 2 Tomada de Preços, 3 Concorrência,
+# 4 Concorrência Internacional, 5 Pregão, 6 Dispensa, 7 Inexigibilidade,
+# 20 Concurso.
+LEGADO_ITEM_MODALIDADES: tuple[int, ...] = (1, 2, 3, 4, 5, 6, 7, 20)
 
 
 def legado_date_range(env_path: Path, load_secret: LoadSecret) -> tuple[str, str]:
@@ -28,13 +35,18 @@ def legado_ano(env_path: Path, load_secret: LoadSecret) -> int:
     return _require_ano(load_secret(env_path, "LEGADO_ANO"), "LEGADO_ANO")
 
 
-def legado_modalidade(env_path: Path, load_secret: LoadSecret) -> int:
-    """Load required LEGADO_MODALIDADE from the env file.
+def legado_modalidades(
+    env_path: Path, load_secret: LoadSecret
+) -> tuple[int, ...]:
+    """Load LEGADO_MODALIDADE, or every SIASG licitação code when it is missing.
 
     Example:
-        modalidade = legado_modalidade(Path(".env"), load_secret)
+        legado_modalidades(Path(".env"), load_secret)
     """
-    return _require_int(load_secret(env_path, "LEGADO_MODALIDADE"), "LEGADO_MODALIDADE")
+    raw = optional_text(env_path, load_secret, "LEGADO_MODALIDADE")
+    if raw is None:
+        return LEGADO_ITEM_MODALIDADES
+    return (_require_int(raw, "LEGADO_MODALIDADE"),)
 
 
 def legado_optional_uasg(env_path: Path, load_secret: LoadSecret) -> int | None:

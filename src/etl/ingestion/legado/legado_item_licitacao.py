@@ -2,7 +2,7 @@ from typing import Any
 
 from contracts.legado_item_licitacao import LegadoItemLicitacaoRecord
 from config.load_secret_key import load_secret_key_func
-from etl.ingestion.legado.filters import legado_modalidade, legado_optional_uasg
+from etl.ingestion.legado.filters import legado_modalidades, legado_optional_uasg
 from etl.ingestion.legado.legado_sql import legado_upsert_sql
 from etl.ingestion.legado.map_legado_fields import legado_item_licitacao_fields
 from etl.ingestion.legado.query_params import (
@@ -28,8 +28,12 @@ def map_legado_item_licitacao_row(row: dict[str, Any]) -> LegadoItemLicitacaoRec
 
 
 def main() -> None:
-    modalidade = legado_modalidade(DEFAULT_ENV_PATH, load_secret_key_func)
     uasg = legado_optional_uasg(DEFAULT_ENV_PATH, load_secret_key_func)
+    for modalidade in legado_modalidades(DEFAULT_ENV_PATH, load_secret_key_func):
+        _ingest_item_licitacao(modalidade, uasg)
+
+
+def _ingest_item_licitacao(modalidade: int, uasg: int | None) -> None:
     run_page_batch_ingestion(
         logger_name="legado_item_licitacao",
         endpoint_path=ENDPOINT_PATH,
