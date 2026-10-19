@@ -1,3 +1,5 @@
+"""Contrato da linha de preço de consultarServico."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from contracts.coerce import coerce_id_text, coerce_optional_float
@@ -30,9 +32,9 @@ _NAME_FIELDS = (
 
 
 class PrecoServicoRecord(BaseModel):
-    """Validated price row from consultarServico.
+    """Linha de preço validada de consultarServico.
 
-    Example:
+    Exemplo:
         PrecoServicoRecord(
             id_compra="c1", id_item_compra=1, codigo_item_catalogo=7250,
             descricao_item="servico", preco_unitario=1.5,
@@ -77,14 +79,17 @@ class PrecoServicoRecord(BaseModel):
     @field_validator("id_compra", mode="before")
     @classmethod
     def id_compra_text(cls, value: object) -> str:
+        """Converte id_compra int ou str em texto sem espaços nas bordas."""
         return coerce_id_text(value, "id_compra")
 
     @field_validator(*_FLOAT_FIELDS, mode="before")
     @classmethod
     def optional_floats(cls, value: object) -> float | None:
+        """Coage quantidade, preco_unitario e percentual_maior_desconto para float; None permanece None e bool é rejeitado."""
         return coerce_optional_float(value)
 
     @field_validator(*_NAME_FIELDS)
     @classmethod
     def optional_names_upper(cls, value: str | None) -> str | None:
+        """Converte forma, descricao_item, nome_unidade_medida, sigla_unidade_medida, criterio_julgamento, ni_fornecedor, nome_fornecedor, codigo_uasg, nome_uasg, municipio, estado, nome_orgao, poder, esfera, objeto_compra e descricao_detalhada_item para maiúsculas; vazio vira None."""
         return upper_optional(value)

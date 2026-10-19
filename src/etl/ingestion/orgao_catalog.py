@@ -1,3 +1,5 @@
+"""Lê códigos de órgão e CNPJs de comprador já gravados em uasg_orgao."""
+
 from pathlib import Path
 from typing import Any
 
@@ -20,9 +22,9 @@ def read_orgao_codes(
     load_secret: LoadSecret = load_secret_key_func,
     connect_fn: ConnectPostgresFn | None = None,
 ) -> list[int]:
-    """Return every `uasg_orgao.codigo_orgao`, or raise when the table is empty.
+    """Retorna cada `uasg_orgao.codigo_orgao`, ou falha se a tabela estiver vazia.
 
-    Example:
+    Exemplo:
         read_orgao_codes() == [36000]
     """
     conn = _open_connection(env_path, load_secret, connect_fn)
@@ -38,9 +40,9 @@ def read_buyer_cnpjs(
     load_secret: LoadSecret = load_secret_key_func,
     connect_fn: ConnectPostgresFn | None = None,
 ) -> list[str]:
-    """Return distinct 14-digit CNPJs from `uasg_orgao`.
+    """Retorna os CNPJs de 14 dígitos distintos de `uasg_orgao`.
 
-    Example:
+    Exemplo:
         read_buyer_cnpjs() == ["00394460000112"]
     """
     conn = _open_connection(env_path, load_secret, connect_fn)
@@ -51,10 +53,12 @@ def read_buyer_cnpjs(
 
 
 def _orgao_sql() -> str:
+    """Monta SELECT codigo_orgao FROM uasg_orgao ORDER BY codigo_orgao."""
     return f"SELECT codigo_orgao FROM {dest_table('uasg_orgao')} ORDER BY codigo_orgao"
 
 
 def _cnpj_sql() -> str:
+    """Monta SELECT DISTINCT cnpj_cpf_orgao de uasg_orgao, ignorando nulos."""
     table = dest_table("uasg_orgao")
     return (
         "SELECT DISTINCT cnpj_cpf_orgao FROM "
@@ -63,12 +67,14 @@ def _cnpj_sql() -> str:
 
 
 def _codes_or_raise(codes: list[int]) -> list[int]:
+    """Devolve os códigos ou recusa a lista vazia de uasg_orgao.codigo_orgao."""
     if codes:
         return codes
     raise ValueError("uasg_orgao.codigo_orgao expected at least one row, got 0")
 
 
 def _cnpjs_or_raise(raw: list[str]) -> list[str]:
+    """Devolve os CNPJs de 14 dígitos ou recusa a lista sem nenhum."""
     buyers = _distinct_cnpjs(raw)
     if buyers:
         return buyers
@@ -79,6 +85,7 @@ def _cnpjs_or_raise(raw: list[str]) -> list[str]:
 
 
 def _distinct_cnpjs(raw: list[str]) -> list[str]:
+    """Mantém os valores distintos cujos dígitos formam um CNPJ de 14 caracteres."""
     found: list[str] = []
     seen: set[str] = set()
     for value in raw:
@@ -91,6 +98,7 @@ def _distinct_cnpjs(raw: list[str]) -> list[str]:
 
 
 def _text_column(conn: Any, sql: str) -> list[str]:
+    """Executa o SELECT e devolve a primeira coluna de cada linha como texto."""
     with conn.cursor() as cur:
         cur.execute(sql)
         rows = cur.fetchall()
@@ -98,6 +106,7 @@ def _text_column(conn: Any, sql: str) -> list[str]:
 
 
 def _require_text(row: object, index: int) -> str:
+    """Devolve o texto da única célula, ou string vazia quando o valor é None."""
     if not isinstance(row, (tuple, list)) or len(row) != 1:
         raise ValueError(f"expected text row[{index}] to be a 1-tuple, got {row!r}")
     value = row[0]

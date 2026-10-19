@@ -6,6 +6,8 @@ from etl.ingestion.precos.code_cursor import (
 
 
 class FakeCursorCursor:
+    """Cursor falso que grava o SQL executado e devolve a linha configurada."""
+
     def __init__(self, fetchone_row: tuple[object, ...] | None = None) -> None:
         self.fetchone_row = fetchone_row
         self.execute_calls: list[tuple[str, object]] = []
@@ -24,6 +26,8 @@ class FakeCursorCursor:
 
 
 class FakeCursorConnection:
+    """Conexão falsa que abre esse cursor e conta os commits."""
+
     def __init__(self, cursor: FakeCursorCursor) -> None:
         self.cursor_obj = cursor
         self.commit_calls = 0

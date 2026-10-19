@@ -1,3 +1,5 @@
+"""Ingere subclasses de serviço na tabela servico_subclasse."""
+
 from typing import Any
 
 from contracts.servico_subclasse import ServicoSubclasseRecord
@@ -27,9 +29,9 @@ data_hora_carga = now();
 
 
 def map_servico_subclasse_row(row: dict[str, Any]) -> ServicoSubclasseRecord:
-    """Map one API resultado object to ServicoSubclasseRecord.
+    """Mapeia um objeto resultado da API para ServicoSubclasseRecord.
 
-    Example:
+    Exemplo:
         record = map_servico_subclasse_row({"codigoSubclasse": 5, ...})
     """
     return ServicoSubclasseRecord(
@@ -43,6 +45,7 @@ def map_servico_subclasse_row(row: dict[str, Any]) -> ServicoSubclasseRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-servico/5_consultarSubClasseServico e grava o resultado na tabela servico_subclasse."""
     run_page_batch_ingestion(
         logger_name="servico_subclasse",
         endpoint_path=ENDPOINT_PATH,

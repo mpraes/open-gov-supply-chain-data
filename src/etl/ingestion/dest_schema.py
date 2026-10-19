@@ -1,3 +1,5 @@
+"""Qualifica tabelas e identificadores SQL do schema staging."""
+
 import re
 
 DEST_SCHEMA = "staging"
@@ -5,9 +7,9 @@ _SQL_IDENT = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
 def require_sql_ident(value: str, label: str) -> str:
-    """Reject identifiers that cannot be interpolated into SQL.
+    """Rejeita identificadores que não podem ser interpolados em SQL.
 
-    Example:
+    Exemplo:
         require_sql_ident("preco_material", "table") == "preco_material"
     """
     if _SQL_IDENT.fullmatch(value) is None:
@@ -16,9 +18,9 @@ def require_sql_ident(value: str, label: str) -> str:
 
 
 def dest_table(table: str) -> str:
-    """Qualify a dest table with the staging schema.
+    """Qualifica uma tabela de destino com o schema staging.
 
-    Example:
+    Exemplo:
         dest_table("preco_material") == "staging.preco_material"
     """
     schema = require_sql_ident(DEST_SCHEMA, "schema")
@@ -27,9 +29,9 @@ def dest_table(table: str) -> str:
 
 
 def search_path_options(schema: str = DEST_SCHEMA) -> str:
-    """libpq options that set search_path for this connection.
+    """Opções do libpq que definem search_path nesta conexão.
 
-    Example:
+    Exemplo:
         search_path_options() == "-c search_path=staging"
     """
     ident = require_sql_ident(schema, "schema")

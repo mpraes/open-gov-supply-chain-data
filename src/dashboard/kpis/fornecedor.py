@@ -1,3 +1,5 @@
+"""KPIs do tema fornecedor a partir dos rollups de analytics."""
+
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import (
     brl_leaderboard,
@@ -32,6 +34,7 @@ _PORTE_SQL = (
 
 
 def load_fornecedor_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis:
+    """Monta cards, séries mensais, rankings de UF e porte e líderes de gasto e CNAE."""
     pred = mes_predicate(timeframe)
     catalog = _catalog_counts(conn)
     spend = scalar_float(conn, sum_both_origens_sql(pred))
@@ -50,6 +53,7 @@ def load_fornecedor_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> The
 
 
 def _catalog_counts(conn: AnalyticsConnection) -> tuple[int, int, int, int]:
+    """Lê total, ativos, habilitados e missing de analytics.kpi_catalog_fornecedor."""
     row = fetch_one_row(
         conn,
         "SELECT total, ativos, habilitados, missing "
@@ -66,6 +70,7 @@ def _fornecedor_cards(
     spend: float,
     distinct_facts: int,
 ) -> tuple[KpiCard, ...]:
+    """Monta os seis cards de cadastro, valor homologado e presença nas fatos."""
     return (
         KpiCard("Fornecedores", format_count(total), "Cadastro"),
         KpiCard("Ativos", format_count(ativos), "Status"),
@@ -79,6 +84,7 @@ def _fornecedor_cards(
 def _monthly(
     conn: AnalyticsConnection, origem: str, pred: str, name: str
 ) -> NamedSeries:
+    """Monta a série mensal de valor_total da origem no predicado pred."""
     rows = fetch_rows(conn, monthly_origem_sql(origem, pred))
     return NamedSeries(
         name, tuple(SeriesPoint(str(period), float(value)) for period, value in rows)
@@ -86,16 +92,19 @@ def _monthly(
 
 
 def _label_amounts(conn: AnalyticsConnection, query: str) -> list[tuple[str, float]]:
+    """Converte as linhas (rótulo, valor) da consulta em pares de texto e float."""
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 
 
 def _spend_leaders(
     conn: AnalyticsConnection, timeframe: Timeframe
 ) -> tuple[LeaderboardRow, ...]:
+    """Lê o top de gasto do fornecedor na janela e formata em BRL."""
     return brl_leaderboard(fetch_rows(conn, top_spend_sql("fornecedor", timeframe)))
 
 
 def _cnae_leaders(conn: AnalyticsConnection) -> tuple[LeaderboardRow, ...]:
+    """Lê os oito CNAEs mais frequentes de analytics.kpi_fornecedor_cnae e numera o ranking."""
     rows = fetch_rows(
         conn,
         "SELECT label, n FROM analytics.kpi_fornecedor_cnae "

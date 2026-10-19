@@ -1,3 +1,5 @@
+"""Percorre lotes de códigos de catálogo, persiste cada lote e avança o cursor."""
+
 from collections.abc import Callable
 from logging import Logger
 from time import perf_counter
@@ -21,9 +23,9 @@ def run_code_batch_loop(
     log: Logger,
     job_name: str,
 ) -> int:
-    """Fetch and persist catalog-code batches, advancing a resume cursor.
+    """Busca e persiste lotes de códigos de catálogo, avançando o cursor de retomada.
 
-    Example:
+    Exemplo:
         total = run_code_batch_loop(
             load_cursor=load, next_codes=next_batch, save_cursor=save,
             ingest_codes=ingest, batch_size=20, log=log, job_name="preco_material",
@@ -52,6 +54,7 @@ def _ingest_and_checkpoint(
     log: Logger,
     job_name: str,
 ) -> int:
+    """Persiste o lote, grava o último código no cursor e retorna as linhas gravadas."""
     started = perf_counter()
     batch_rows = ingest_codes(codes)
     save_cursor(codes[-1])

@@ -1,3 +1,5 @@
+"""Ingere consultarPgcAgregacao na tabela pgc_agregacao."""
+
 from typing import Any
 
 from contracts.pgc_agregacao import PgcAgregacaoRecord
@@ -33,24 +35,27 @@ data_hora_carga = now();
 
 
 def map_pgc_agregacao_row(row: dict[str, Any]) -> PgcAgregacaoRecord:
-    """Map one consultarPgcAgregacao resultado object to PgcAgregacaoRecord.
+    """Mapeia um objeto resultado de consultarPgcAgregacao para PgcAgregacaoRecord.
 
-    Example:
+    Exemplo:
         record = map_pgc_agregacao_row({"orgao": "36000", "ano": 2026})
     """
     return PgcAgregacaoRecord(**pgc_agregacao_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarPgcAgregacao na tabela pgc_agregacao."""
     for code in read_orgao_codes():
         _ingest_orgao(str(code))
 
 
 def _ingest_orgao(orgao: str) -> None:
+    """Ingere consultarPgcAgregacao do órgão em cada ano do dump."""
     for_each_dump_year(lambda ano: _ingest_agregacao(orgao, ano))
 
 
 def _ingest_agregacao(orgao: str, ano: int) -> None:
+    """Ingere consultarPgcAgregacao do órgão e do ano na tabela pgc_agregacao."""
     run_page_batch_ingestion(
         logger_name="pgc_agregacao",
         endpoint_path=ENDPOINT_PATH,

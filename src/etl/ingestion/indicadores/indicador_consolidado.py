@@ -1,8 +1,11 @@
+"""Ingere indicadores consolidados na tabela indicador_consolidado."""
+
 from etl.ingestion.remaining_maps import map_indicador_consolidado_row
 from etl.ingestion.remaining_run import run_remaining_ingestion
 
 
 def main() -> None:
+    """Consulta /modulo-indicadores/1_consultarIndicadoresConsolidados e grava o resultado na tabela indicador_consolidado."""
     run_remaining_ingestion(
         logger_name="indicador_consolidado",
         endpoint_path="/modulo-indicadores/1_consultarIndicadoresConsolidados",

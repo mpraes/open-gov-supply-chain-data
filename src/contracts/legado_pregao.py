@@ -1,3 +1,5 @@
+"""Contrato da linha de pregão de consultarPregoes."""
+
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 
 from contracts.coerce import coerce_id_text, coerce_optional_decimal
@@ -17,9 +19,9 @@ _NAME_FIELDS = (
 
 
 class LegadoPregaoRecord(BaseModel):
-    """Validated pregão row from consultarPregoes.
+    """Linha validada de pregão de consultarPregoes.
 
-    Example:
+    Exemplo:
         LegadoPregaoRecord(id_compra="p1", valor_estimado_total="1.5")
     """
 
@@ -51,14 +53,17 @@ class LegadoPregaoRecord(BaseModel):
     @field_validator("id_compra", mode="before")
     @classmethod
     def identity_text(cls, value: object, info: ValidationInfo) -> str:
+        """Converte id_compra int ou str em texto sem espaços nas bordas."""
         return coerce_id_text(value, info.field_name)
 
     @field_validator(*_FLOAT_FIELDS, mode="before")
     @classmethod
     def optional_amounts(cls, value: object) -> float | None:
+        """Coage valor_estimado_total e valor_homologado_total para float; vazio vira None."""
         return coerce_optional_decimal(value)
 
     @field_validator(*_NAME_FIELDS)
     @classmethod
     def optional_names_upper(cls, value: str | None) -> str | None:
+        """Converte co_processo, co_portaria, no_ausg, no_orgao, ds_situacao_pregao, ds_tipo_pregao, ds_tipo_pregao_compra e tx_objeto para maiúsculas; vazio vira None."""
         return upper_optional(value)

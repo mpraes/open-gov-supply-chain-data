@@ -1,3 +1,5 @@
+"""Ingere unidades de fornecimento de material na tabela material_unidade_fornecimento."""
+
 from typing import Any
 
 from contracts.material_unidade_fornecimento import MaterialUnidadeFornecimentoRecord
@@ -37,9 +39,9 @@ data_hora_carga = now();
 def map_material_unidade_fornecimento_row(
     row: dict[str, Any],
 ) -> MaterialUnidadeFornecimentoRecord:
-    """Map one API resultado object to MaterialUnidadeFornecimentoRecord.
+    """Mapeia um objeto resultado da API para MaterialUnidadeFornecimentoRecord.
 
-    Example:
+    Exemplo:
         record = map_material_unidade_fornecimento_row({"codigoPdm": 1, ...})
     """
     return MaterialUnidadeFornecimentoRecord(
@@ -57,6 +59,7 @@ def map_material_unidade_fornecimento_row(
 
 
 def main() -> None:
+    """Consulta /modulo-material/6_consultarMaterialUnidadeFornecimento e grava o resultado na tabela material_unidade_fornecimento."""
     run_page_batch_ingestion(
         logger_name="material_unidade_fornecimento",
         endpoint_path=ENDPOINT_PATH,

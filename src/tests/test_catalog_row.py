@@ -4,6 +4,8 @@ import pytest
 
 
 class SampleCatalogRow(CatalogRow):
+    """Linha de catálogo de exemplo com campos de valor e de nome."""
+
     id_compra: str
     _float_fields = frozenset({"valor_total"})
     _name_fields = frozenset({"objeto"})

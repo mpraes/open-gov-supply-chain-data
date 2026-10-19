@@ -1,3 +1,5 @@
+"""Grava e lê o cursor de retomada na tabela etl_code_cursor."""
+
 from typing import Any
 
 from etl.ingestion.dest_schema import dest_table
@@ -26,9 +28,9 @@ updated_at = now();
 
 
 def ensure_job_cursor_table(conn: Any) -> None:
-    """Create etl_code_cursor if the watermark table is missing.
+    """Cria etl_code_cursor se a tabela de marca d'água não existir.
 
-    Example:
+    Exemplo:
         ensure_job_cursor_table(conn)
     """
     with conn.cursor() as cur:
@@ -37,9 +39,9 @@ def ensure_job_cursor_table(conn: Any) -> None:
 
 
 def load_job_cursor(conn: Any, job_name: str) -> int:
-    """Return the last processed watermark, or 0 when unset.
+    """Retorna a última marca d'água processada, ou 0 se não houver.
 
-    Example:
+    Exemplo:
         last = load_job_cursor(conn, "material_item")
     """
     with conn.cursor() as cur:
@@ -49,9 +51,9 @@ def load_job_cursor(conn: Any, job_name: str) -> int:
 
 
 def save_job_cursor(conn: Any, job_name: str, last_value: int) -> None:
-    """Persist a job watermark after a successful batch.
+    """Grava a marca d'água do job depois de um lote bem-sucedido.
 
-    Example:
+    Exemplo:
         save_job_cursor(conn, "material_item", 3)
     """
     with conn.cursor() as cur:
@@ -60,6 +62,7 @@ def save_job_cursor(conn: Any, job_name: str, last_value: int) -> None:
 
 
 def _cursor_last_value(row: object) -> int:
+    """Devolve last_code inteiro da linha, ou 0 quando não há cursor."""
     if row is None:
         return 0
     if not isinstance(row, (tuple, list)) or len(row) != 1:

@@ -37,7 +37,7 @@ def test_servico_grupo_uppercases_nomes() -> None:
 
 
 def test_servico_grupo_accepts_null_nome_secao() -> None:
-    # API sometimes returns nomeSecao=null (e.g. codigoGrupo=111).
+    """A API às vezes devolve nomeSecao nulo, como em codigoGrupo=111."""
     record = ServicoGrupoRecord(
         cod_grupo=111,
         cod_divisao=11,
@@ -98,7 +98,7 @@ def test_servico_item_uppercases_nome_servico() -> None:
 
 
 def test_servico_item_accepts_null_subclasse() -> None:
-    # API sometimes omits subclasse (e.g. codigoServico=7250).
+    """A API às vezes omite a subclasse, como em codigoServico=7250."""
     record = ServicoItemRecord(
         cod_servico=7250,
         cod_secao=9,
@@ -122,7 +122,7 @@ def test_servico_item_accepts_null_subclasse() -> None:
 
 
 def test_servico_item_accepts_null_classe() -> None:
-    # API sometimes omits classe+subclasse (e.g. codigoServico=2488).
+    """A API às vezes omite classe e subclasse, como em codigoServico=2488."""
     record = ServicoItemRecord(
         cod_servico=2488,
         cod_secao=8,

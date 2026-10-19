@@ -13,6 +13,8 @@ def _info_events(tmp_path: Path, logger_name: str) -> list[dict[str, object]]:
 
 
 class FakePageStore:
+    """Falso que devolve páginas prontas e grava as linhas ingeridas e o cursor salvo."""
+
     def __init__(
         self,
         start_page: int,

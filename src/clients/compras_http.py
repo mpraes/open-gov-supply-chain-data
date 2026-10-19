@@ -1,3 +1,5 @@
+"""Cliente HTTP com retentativas para as APIs do compras.gov."""
+
 from collections.abc import Mapping
 from logging import Logger
 
@@ -22,9 +24,9 @@ def get_ok_response(
     max_retries: int,
     log: Logger | None = None,
 ) -> HttpResponse:
-    """GET a URL, retrying transient HTTP and transport errors.
+    """Faz GET em uma URL, repetindo erros HTTP e de transporte transitórios.
 
-    Example:
+    Exemplo:
         response = get_ok_response(url, headers, params, 30, http_get, sleep, 5)
     """
     last_response: HttpResponse | None = None
@@ -52,6 +54,7 @@ def _request_or_retry_transport(
     log: Logger | None,
     attempt: int,
 ) -> HttpResponse | None:
+    """Executa o GET e, em falha de conexão ou timeout, agenda outra tentativa ou relança o erro."""
     try:
         return http_get(url, headers=headers, params=params, timeout=timeout)
     except (RequestsConnectionError, RequestsTimeout) as exc:
@@ -66,6 +69,7 @@ def _retry_http_status(
     sleep_fn: SleepFn,
     log: Logger | None,
 ) -> bool:
+    """Espera e devolve True quando o status é retentável e ainda há tentativas."""
     status = getattr(response, "status_code", 200)
     if status not in RETRYABLE_HTTP_STATUSES or attempt >= max_retries:
         return False
@@ -76,6 +80,7 @@ def _retry_http_status(
 
 
 def _raise_if_bad_status(response: HttpResponse) -> None:
+    """Repropaga o erro de status e inclui o corpo quando http_error_body não está vazio."""
     try:
         response.raise_for_status()
     except Exception as exc:
@@ -86,9 +91,9 @@ def _raise_if_bad_status(response: HttpResponse) -> None:
 
 
 def http_error_body(response: HttpResponse) -> str:
-    """Return a short response body snippet for HTTP error messages.
+    """Devolve um trecho curto do corpo da resposta para mensagens de erro HTTP.
 
-    Example:
+    Exemplo:
         http_error_body(response) == "Token malformado"
     """
     raw = getattr(response, "text", "")
@@ -103,6 +108,7 @@ def _log_api_retry(
     wait_s: float,
     **fields: object,
 ) -> None:
+    """Registra o evento api_retry quando um logger foi informado."""
     if log is None:
         return
     log_warning(log, "api_retry", attempt=attempt + 1, wait_s=wait_s, **fields)
@@ -115,6 +121,7 @@ def _retry_transport_error(
     sleep_fn: SleepFn,
     log: Logger | None,
 ) -> None:
+    """Relança o erro de transporte na última tentativa; nas anteriores espera e registra api_retry."""
     if attempt >= max_retries:
         raise exc
     wait_s = float(min(2**attempt, 16))
@@ -123,6 +130,7 @@ def _retry_transport_error(
 
 
 def _retry_wait_seconds(response: HttpResponse, attempt: int) -> float:
+    """Prefere Retry-After e, sem o header, espera 2**attempt segundos até o teto de 16."""
     retry_after = _retry_after_header_seconds(response)
     if retry_after is not None:
         return retry_after
@@ -130,6 +138,7 @@ def _retry_wait_seconds(response: HttpResponse, attempt: int) -> float:
 
 
 def _retry_after_header_seconds(response: HttpResponse) -> float | None:
+    """Lê Retry-After dos headers, ou devolve None quando o header não existe."""
     headers = getattr(response, "headers", None)
     if not isinstance(headers, Mapping):
         return None
@@ -140,6 +149,7 @@ def _retry_after_header_seconds(response: HttpResponse) -> float | None:
 
 
 def _parse_retry_after_seconds(raw: object) -> float:
+    """Converte Retry-After em um número de segundos maior ou igual a zero."""
     if isinstance(raw, bool) or not isinstance(raw, (int, float, str)):
         raise ValueError(
             f"Retry-After expected a number of seconds, got {type(raw).__name__}: {raw!r}"

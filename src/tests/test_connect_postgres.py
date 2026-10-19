@@ -2,7 +2,7 @@ from etl.ingestion.db import connect_postgres
 
 
 class FakePsycopgConnect:
-    """Named fake that records connect kwargs and returns a sentinel connection."""
+    """Falso que grava os kwargs de connect e devolve uma conexão sentinela."""
 
     def __init__(self) -> None:
         self.calls: list[dict[str, str]] = []

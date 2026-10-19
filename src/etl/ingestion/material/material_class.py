@@ -1,3 +1,5 @@
+"""Ingere classes de material na tabela material_class."""
+
 from typing import Any
 
 from contracts.material_class import MaterialClassRecord
@@ -6,7 +8,7 @@ from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/2_consultarClasseMaterial"
 
-# Class endpoint has no tamanhoPagina param in the API docs.
+# O endpoint de classe não documenta o parâmetro tamanhoPagina.
 PAGE_SIZE: int | None = None
 
 UPSERT_SQL = f"""
@@ -28,9 +30,9 @@ data_hora_carga = now();
 
 
 def map_material_class_row(row: dict[str, Any]) -> MaterialClassRecord:
-    """Map one API resultado object to MaterialClassRecord.
+    """Mapeia um objeto resultado da API para MaterialClassRecord.
 
-    Example:
+    Exemplo:
         record = map_material_class_row({"codigoClasse": 1, "codigoGrupo": 2, ...})
     """
     return MaterialClassRecord(
@@ -44,6 +46,7 @@ def map_material_class_row(row: dict[str, Any]) -> MaterialClassRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-material/2_consultarClasseMaterial e grava o resultado na tabela material_class."""
     run_page_batch_ingestion(
         logger_name="material_class",
         endpoint_path=ENDPOINT_PATH,

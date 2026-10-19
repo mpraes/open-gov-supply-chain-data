@@ -13,6 +13,8 @@ from etl.ingestion.dest_watermark import (
 
 
 class FakeWatermarkCursor:
+    """Cursor falso que grava o SQL executado e devolve o valor configurado."""
+
     def __init__(self, value: object) -> None:
         self.value = value
         self.sql: str | None = None
@@ -35,6 +37,8 @@ class FakeWatermarkCursor:
 
 
 class FakeWatermarkConnection:
+    """Conexão falsa que abre esse cursor."""
+
     def __init__(self, cursor: FakeWatermarkCursor) -> None:
         self.cursor_obj = cursor
 

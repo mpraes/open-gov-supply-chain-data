@@ -1,3 +1,5 @@
+"""Busca páginas das APIs paginadas do compras.gov."""
+
 from concurrent.futures import Future, ThreadPoolExecutor
 from logging import Logger
 from time import sleep as time_sleep
@@ -45,9 +47,9 @@ def fetch_all_resultado_pages(
     sleep_fn: SleepFn = time_sleep,
     max_retries: int = DEFAULT_MAX_RETRIES,
 ) -> list[JsonRow]:
-    """Fetch every page of a compras.gov paginated `resultado` endpoint.
+    """Busca todas as páginas de um endpoint paginado `resultado` do compras.gov.
 
-    Example:
+    Exemplo:
         rows = fetch_all_resultado_pages(
             url, headers, page_size=500,
             query_params={"tipo": "codigoItemCatalogo", "codigo": "123"},
@@ -86,9 +88,9 @@ def fetch_one_resultado_page(
     max_retries: int = DEFAULT_MAX_RETRIES,
     log: Logger | None = None,
 ) -> tuple[list[JsonRow], int]:
-    """Fetch one compras.gov `resultado` page and its total page count.
+    """Busca uma página `resultado` do compras.gov e o total de páginas.
 
-    Example:
+    Exemplo:
         rows, total = fetch_one_resultado_page(url, headers, pagina=2, page_size=500)
     """
     return _fetch_one_resultado_page(
@@ -118,9 +120,9 @@ def fetch_one_releases_page(
     max_retries: int = DEFAULT_MAX_RETRIES,
     log: Logger | None = None,
 ) -> tuple[list[JsonRow], int]:
-    """Fetch one OCDS `releases` page using page/offSet.
+    """Busca uma página de `releases` OCDS usando page/offSet.
 
-    Example:
+    Exemplo:
         rows, total = fetch_one_releases_page(url, headers, pagina=1, page_size=10)
     """
     params = dict(query_params) if query_params else {}
@@ -146,9 +148,9 @@ def fetch_one_json_array_page(
     max_retries: int = DEFAULT_MAX_RETRIES,
     log: Logger | None = None,
 ) -> tuple[list[JsonRow], int]:
-    """Fetch a non-paginated JSON array endpoint as a single page.
+    """Busca um endpoint de array JSON sem paginação como uma única página.
 
-    Example:
+    Exemplo:
         rows, total = fetch_one_json_array_page(url, headers, pagina=1)
     """
     if pagina > 1:
@@ -174,9 +176,9 @@ def fetch_resultado_pages_for_codes(
     max_retries: int = DEFAULT_MAX_RETRIES,
     parallel_codes: int = 1,
 ) -> list[JsonRow]:
-    """Fetch paginated `resultado` rows for each catalog code.
+    """Busca linhas paginadas de `resultado` para cada código de catálogo.
 
-    Example:
+    Exemplo:
         rows = fetch_resultado_pages_for_codes(
             url, headers, codes=[10, 20],
             params_for_code=lambda code: {"codigo": str(code)},
@@ -194,6 +196,7 @@ def fetch_resultado_pages_for_codes(
 
 
 def _require_parallel_codes(parallel_codes: int) -> None:
+    """Rejeita parallel_codes menor que 1."""
     if parallel_codes < 1:
         raise ValueError(f"parallel_codes expected int >= 1, got {parallel_codes!r}")
 
@@ -201,6 +204,7 @@ def _require_parallel_codes(parallel_codes: int) -> None:
 def _params_for_each_code(
     codes: list[int], params_for_code: CodeParamsFn
 ) -> list[QueryParams]:
+    """Monta os query params de cada código com params_for_code."""
     return [dict(params_for_code(code)) for code in codes]
 
 
@@ -213,7 +217,10 @@ def _bind_code_pages_fetch(
     sleep_fn: SleepFn,
     max_retries: int,
 ) -> CodePagesFetch:
+    """Fecha url, headers e limites numa função que busca todas as páginas de um código."""
+
     def fetch_one(query_params: QueryParams) -> list[JsonRow]:
+        """Busca todas as páginas `resultado` dos query_params deste código."""
         return fetch_all_resultado_pages(
             url,
             headers,
@@ -234,6 +241,7 @@ def _fetch_code_pages_serial(
     pause_seconds: float,
     sleep_fn: SleepFn,
 ) -> list[JsonRow]:
+    """Busca as páginas de cada código em sequência, pausando entre um código e o próximo."""
     rows: list[JsonRow] = []
     for index, query_params in enumerate(resolved):
         _pause_before_code(index, pause_seconds, sleep_fn)
@@ -246,6 +254,7 @@ def _fetch_code_pages_parallel(
     fetch_one: CodePagesFetch,
     parallel_codes: int,
 ) -> list[JsonRow]:
+    """Busca as páginas dos códigos em paralelo e concatena os lotes na ordem original."""
     with ThreadPoolExecutor(max_workers=parallel_codes) as pool:
         futures = [pool.submit(fetch_one, params) for params in resolved]
         return _rows_from_code_futures(futures)
@@ -254,6 +263,7 @@ def _fetch_code_pages_parallel(
 def _rows_from_code_futures(
     futures: list[Future[list[JsonRow]]],
 ) -> list[JsonRow]:
+    """Espera os futuros e concatena os lotes; cancela os pendentes se algum falhar."""
     try:
         batches = [future.result() for future in futures]
     except BaseException:
@@ -264,6 +274,7 @@ def _rows_from_code_futures(
 
 
 def _concat_row_batches(batches: list[list[JsonRow]]) -> list[JsonRow]:
+    """Concatena os lotes de linhas na ordem recebida."""
     rows: list[JsonRow] = []
     for batch in batches:
         rows.extend(batch)
@@ -283,6 +294,7 @@ def _fetch_one_resultado_page(
     max_retries: int,
     log: Logger | None = None,
 ) -> tuple[list[JsonRow], int]:
+    """Busca uma página `resultado` e devolve as linhas com totalPaginas."""
     params = page_query_params(pagina, page_size, query_params)
     response = get_ok_response(
         url, headers, params, timeout, http_get, sleep_fn, max_retries, log
@@ -291,6 +303,7 @@ def _fetch_one_resultado_page(
 
 
 def _pause_before_code(index: int, pause_seconds: float, sleep_fn: SleepFn) -> None:
+    """Dorme pause_seconds antes de cada código depois do primeiro."""
     if index == 0 or pause_seconds <= 0:
         return
     sleep_fn(pause_seconds)

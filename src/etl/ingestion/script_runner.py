@@ -1,3 +1,5 @@
+"""Liga segredos, conexão e endpoint ao upsert completo de um script de ingestão."""
+
 from collections.abc import Callable
 from logging import Logger
 from pathlib import Path
@@ -32,9 +34,9 @@ def run_script_ingestion(
     fetch_pages: FetchPages | None = None,
     build_fetch_pages: BuildFetchPages | None = None,
 ) -> int:
-    """Wire secrets + DB for one API upsert ETL script entrypoint.
+    """Liga segredos e banco ao ponto de entrada de um script ETL de upsert na API.
 
-    Example:
+    Exemplo:
         run_script_ingestion(
             logger_name="material_item",
             endpoint_path="/modulo-material/4_consultarItemMaterial",
@@ -70,6 +72,7 @@ def _resolve_fetch_pages(
     fetch_pages: FetchPages | None,
     build_fetch_pages: BuildFetchPages | None,
 ) -> FetchPages | None:
+    """Usa build_fetch_pages(conn) quando informado e, no outro caso, devolve fetch_pages."""
     if build_fetch_pages is not None:
         return build_fetch_pages(conn)
     return fetch_pages
@@ -87,6 +90,7 @@ def _invoke_pipeline(
     table_name: str,
     fetch_pages: FetchPages | None,
 ) -> int:
+    """Chama run_api_upsert_ingestion e repassa fetch_pages somente quando ele existe."""
     if fetch_pages is None:
         return run_api_upsert_ingestion(
             url=url,
@@ -116,6 +120,7 @@ def _open_connection(
     load_secret: LoadSecret,
     connect_fn: ConnectPostgresFn | None,
 ) -> Any:
+    """Abre o Postgres com PSQL_HOST, PSQL_PORT, PSQL_USER, PSQL_PASSWORD e PSQL_DB."""
     kwargs = {
         "host": load_secret(env_path, "PSQL_HOST"),
         "port": load_secret(env_path, "PSQL_PORT"),

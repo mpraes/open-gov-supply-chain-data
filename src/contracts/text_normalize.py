@@ -1,10 +1,10 @@
-"""Shared text normalization for catalog Pydantic contracts."""
+"""Normalização de texto compartilhada pelos contratos Pydantic de catálogo."""
 
 
 def upper_non_empty(value: str, field_label: str) -> str:
-    """Strip and uppercase a required text field.
+    """Remove espaços e converte um campo de texto obrigatório para maiúsculas.
 
-    Example:
+    Exemplo:
         upper_non_empty("  abc ", "nome") == "ABC"
     """
     cleaned = value.strip()
@@ -14,9 +14,9 @@ def upper_non_empty(value: str, field_label: str) -> str:
 
 
 def upper_optional(value: str | None) -> str | None:
-    """Strip and uppercase an optional text field; blank becomes None.
+    """Remove espaços e converte um campo de texto opcional para maiúsculas; vazio vira None.
 
-    Example:
+    Exemplo:
         upper_optional("  x ") == "X"
     """
     cleaned = strip_optional(value)
@@ -26,9 +26,9 @@ def upper_optional(value: str | None) -> str | None:
 
 
 def strip_optional(value: str | None) -> str | None:
-    """Strip an optional text field; blank becomes None.
+    """Remove espaços de um campo de texto opcional; vazio vira None.
 
-    Example:
+    Exemplo:
         strip_optional("  12 ") == "12"
     """
     if value is None:

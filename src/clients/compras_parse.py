@@ -1,3 +1,5 @@
+"""Interpreta páginas JSON das APIs do compras.gov em linhas de catálogo."""
+
 from clients.compras_types import JsonRow, QueryParams
 
 
@@ -6,9 +8,9 @@ def page_query_params(
     page_size: int | None,
     query_params: QueryParams | None,
 ) -> dict[str, str | int | bool]:
-    """Build pagina/tamanhoPagina query params for a compras.gov page fetch.
+    """Monta os parâmetros pagina/tamanhoPagina de uma busca de página no compras.gov.
 
-    Example:
+    Exemplo:
         page_query_params(2, 500, {"tipo": "codigoPdm"})["pagina"] == 2
     """
     params: dict[str, str | int | bool] = dict(query_params) if query_params else {}
@@ -19,9 +21,9 @@ def page_query_params(
 
 
 def parse_resultado_page(payload: object) -> tuple[list[JsonRow], int]:
-    """Parse one compras.gov `resultado` page into rows and total pages.
+    """Interpreta uma página `resultado` do compras.gov em linhas e total de páginas.
 
-    Example:
+    Exemplo:
         rows, total = parse_resultado_page({"resultado": [{"id": 1}], "totalPaginas": 1})
     """
     page = _require_json_object(payload, "page payload")
@@ -41,9 +43,9 @@ def parse_resultado_page(payload: object) -> tuple[list[JsonRow], int]:
 
 
 def parse_releases_page(payload: object, pagina: int) -> tuple[list[JsonRow], int]:
-    """Parse one OCDS `releases` page into rows and a next-page sentinel.
+    """Interpreta uma página de `releases` OCDS em linhas e num sentinela de próxima página.
 
-    Example:
+    Exemplo:
         rows, total = parse_releases_page({"releases": [], "links": {}}, pagina=1)
     """
     page = _require_json_object(payload, "OCDS payload")
@@ -57,9 +59,9 @@ def parse_releases_page(payload: object, pagina: int) -> tuple[list[JsonRow], in
 
 
 def parse_json_array(payload: object) -> list[JsonRow]:
-    """Parse a JSON array endpoint into row objects.
+    """Interpreta um endpoint de array JSON em objetos de linha.
 
-    Example:
+    Exemplo:
         parse_json_array([{"id": 1}]) == [{"id": 1}]
     """
     if not isinstance(payload, list):
@@ -70,6 +72,7 @@ def parse_json_array(payload: object) -> list[JsonRow]:
 
 
 def _require_json_object(payload: object, label: str) -> dict[str, object]:
+    """Exige um objeto JSON e devolve o dicionário."""
     if not isinstance(payload, dict):
         raise ValueError(
             f"expected JSON object {label}, got {type(payload).__name__}: {payload!r}"
@@ -80,6 +83,7 @@ def _require_json_object(payload: object, label: str) -> dict[str, object]:
 def _ocds_total_pages(
     payload: dict[str, object], pagina: int, rows: list[JsonRow]
 ) -> int:
+    """Devolve 0 na primeira página vazia, pagina + 1 quando há links.next e pagina no fim."""
     if not rows and pagina == 1:
         return 0
     links = payload.get("links")
@@ -89,6 +93,7 @@ def _ocds_total_pages(
 
 
 def _require_row_dict(row: object, index: int) -> JsonRow:
+    """Exige que a linha seja um objeto e devolve o dicionário."""
     if not isinstance(row, dict):
         raise ValueError(
             f"expected resultado[{index}] to be an object, got {type(row).__name__}: {row!r}"

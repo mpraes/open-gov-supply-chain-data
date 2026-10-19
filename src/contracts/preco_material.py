@@ -1,3 +1,5 @@
+"""Contrato da linha de preço de consultarMaterial com os campos extras do CATMAT."""
+
 from pydantic import field_validator
 
 from contracts.coerce import coerce_optional_float
@@ -17,9 +19,9 @@ _MATERIAL_NAME_FIELDS = (
 
 
 class PrecoMaterialRecord(PrecoServicoRecord):
-    """Validated price row from consultarMaterial, including CATMAT extras.
+    """Linha de preço validada de consultarMaterial, com os campos extras do CATMAT.
 
-    Example:
+    Exemplo:
         PrecoMaterialRecord(
             id_compra=99, id_item_compra=1, codigo_item_catalogo=123,
             descricao_item="notebook", preco_unitario=10,
@@ -39,9 +41,11 @@ class PrecoMaterialRecord(PrecoServicoRecord):
     @field_validator(*_MATERIAL_FLOAT_FIELDS, mode="before")
     @classmethod
     def material_optional_floats(cls, value: object) -> float | None:
+        """Coage capacidade_unidade_fornecimento para float; None permanece None e bool é rejeitado."""
         return coerce_optional_float(value)
 
     @field_validator(*_MATERIAL_NAME_FIELDS)
     @classmethod
     def material_optional_names_upper(cls, value: str | None) -> str | None:
+        """Converte sigla_unidade_fornecimento, nome_unidade_fornecimento, marca, nome_classe, id_compra_item, codigo_pdm e nome_pdm para maiúsculas; vazio vira None."""
         return upper_optional(value)

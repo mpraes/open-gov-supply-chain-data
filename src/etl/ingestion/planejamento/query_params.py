@@ -1,3 +1,5 @@
+"""Monta os parâmetros de consulta de consultarPgcDetalhe, consultarPgcDetalheCatalogo e consultarPgcAgregacao."""
+
 from clients.compras_api import QueryParams
 
 
@@ -6,9 +8,9 @@ def pgc_detalhe_query_params(
     ano: int,
     codigo_uasg: str | None = None,
 ) -> QueryParams:
-    """Query params for consultarPgcDetalhe by órgão and PCA year.
+    """Parâmetros de consulta de consultarPgcDetalhe por órgão e ano do PCA.
 
-    Example:
+    Exemplo:
         pgc_detalhe_query_params("36000", 2026) == {
             "orgao": "36000", "anoPcaProjetoCompra": 2026,
         }
@@ -24,18 +26,18 @@ def pgc_detalhe_query_params(
 
 
 def pgc_catalogo_query_params(code: int, *, tipo: str, ano: int) -> QueryParams:
-    """Query params for consultarPgcDetalheCatalogo by catalog code.
+    """Parâmetros de consulta de consultarPgcDetalheCatalogo pelo código de catálogo.
 
-    Example:
+    Exemplo:
         pgc_catalogo_query_params(101, tipo="Material", ano=2026)
     """
     return {"anoPcaProjetoCompra": ano, "tipo": tipo, "codigo": code}
 
 
 def pgc_agregacao_query_params(orgao: str, ano: int) -> QueryParams:
-    """Query params for consultarPgcAgregacao by órgão and year.
+    """Parâmetros de consulta de consultarPgcAgregacao por órgão e ano.
 
-    Example:
+    Exemplo:
         pgc_agregacao_query_params("36000", 2026) == {"orgao": "36000", "ano": 2026}
     """
     return {"orgao": orgao, "ano": ano}

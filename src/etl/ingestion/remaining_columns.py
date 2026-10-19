@@ -1,4 +1,4 @@
-"""Column lists for remaining compras.gov list endpoints."""
+"""Listas de colunas dos demais endpoints de lista do compras.gov."""
 
 CONTRATACAO_PK = ("id_compra",)
 CONTRATACAO_COLUMNS = (

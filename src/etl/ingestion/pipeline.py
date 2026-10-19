@@ -1,3 +1,5 @@
+"""Busca páginas da API, mapeia as linhas e faz upsert no Postgres."""
+
 from collections.abc import Callable, Mapping
 from logging import Logger
 from time import perf_counter
@@ -12,25 +14,47 @@ from observability.timing import fields_since
 
 
 class SupportsModelDump(Protocol):
-    def model_dump(self) -> dict[str, Any]: ...
+    """Protocolo de registro com model_dump para o upsert."""
+
+    def model_dump(self) -> dict[str, Any]:
+        """Devolve o registro como dicionário de colunas."""
+        ...
 
 
 class SupportsCursorExecute(Protocol):
-    def execute(self, sql: str, params: dict[str, Any]) -> None: ...
+    """Protocolo do cursor que executa o SQL de upsert."""
 
-    def __enter__(self) -> "SupportsCursorExecute": ...
+    def execute(self, sql: str, params: dict[str, Any]) -> None:
+        """Executa o SQL de upsert com os parâmetros da linha."""
+        ...
 
-    def __exit__(self, *args: object) -> None: ...
+    def __enter__(self) -> "SupportsCursorExecute":
+        """Abre o cursor para o bloco de upsert."""
+        ...
+
+    def __exit__(self, *args: object) -> None:
+        """Encerra o cursor ao sair do bloco."""
+        ...
 
 
 class SupportsDbConnection(Protocol):
-    def cursor(self) -> SupportsCursorExecute: ...
+    """Protocolo da conexão que abre cursor e confirma a transação."""
 
-    def close(self) -> None: ...
+    def cursor(self) -> SupportsCursorExecute:
+        """Abre um cursor para o upsert."""
+        ...
 
-    def __enter__(self) -> "SupportsDbConnection": ...
+    def close(self) -> None:
+        """Fecha a conexão Postgres."""
+        ...
 
-    def __exit__(self, *args: object) -> None: ...
+    def __enter__(self) -> "SupportsDbConnection":
+        """Entra na transação da conexão."""
+        ...
+
+    def __exit__(self, *args: object) -> None:
+        """Encerra a transação da conexão."""
+        ...
 
 
 FetchPages = Callable[..., list[dict[str, Any]]]
@@ -38,9 +62,10 @@ MapRow = Callable[[dict[str, Any]], SupportsModelDump]
 
 
 class _UpsertCount:
-    """Mutable row counter so DB errors can log rows_done mid-loop."""
+    """Contador mutável de linhas para o log de rows_done quando um erro de banco interrompe o laço."""
 
     def __init__(self) -> None:
+        """Zera o contador de linhas já gravadas."""
         self.value = 0
 
 
@@ -56,9 +81,9 @@ def run_api_upsert_ingestion(
     table_name: str,
     fetch_pages: FetchPages = fetch_all_resultado_pages,
 ) -> int:
-    """Fetch API pages, map rows, and upsert into Postgres.
+    """Busca páginas da API, mapeia as linhas e faz upsert no Postgres.
 
-    Example:
+    Exemplo:
         n = run_api_upsert_ingestion(
             url=url, headers=headers, page_size=500,
             upsert_sql=SQL, map_row=map_item_row,
@@ -77,9 +102,9 @@ def upsert_mapped_rows(
     log: Logger,
     table_name: str,
 ) -> int:
-    """Map and upsert already-fetched API rows.
+    """Mapeia e faz upsert das linhas da API já buscadas.
 
-    Example:
+    Exemplo:
         n = upsert_mapped_rows(conn, SQL, rows, map_row, log, "material_item")
     """
     return _upsert_mapped_rows(conn, upsert_sql, rows, map_row, log, table_name)
@@ -92,6 +117,7 @@ def _fetch_resultado_rows(
     log: Logger,
     fetch_pages: FetchPages,
 ) -> list[dict[str, Any]]:
+    """Busca as páginas da API, registra api_fetch_ok e relança api_fetch_failed."""
     started = perf_counter()
     try:
         rows = fetch_pages(url, headers, page_size=page_size)
@@ -114,6 +140,7 @@ def _log_api_fetch_ok(
     page_size: int | None,
     timing: Mapping[str, int | float],
 ) -> None:
+    """Registra api_fetch_ok com rows e, quando informado, page_size."""
     if page_size is None:
         log_info(log, "api_fetch_ok", rows=len(rows), **timing)
         return
@@ -128,6 +155,7 @@ def _upsert_mapped_rows(
     log: Logger,
     table_name: str,
 ) -> int:
+    """Faz o upsert na transação, registra upsert_ok e relança upsert_failed."""
     started = perf_counter()
     count = _UpsertCount()
     try:
@@ -161,6 +189,7 @@ def _run_upsert_transaction(
     table_name: str,
     count: _UpsertCount,
 ) -> None:
+    """Executa o upsert no bloco de transação da conexão."""
     with conn:
         _run_upsert_on_connection(
             conn, upsert_sql, rows, map_row, log, table_name, count
@@ -176,6 +205,7 @@ def _run_upsert_on_connection(
     table_name: str,
     count: _UpsertCount,
 ) -> None:
+    """Abre o cursor e grava cada linha mapeada."""
     with conn.cursor() as cur:
         _upsert_each_row(cur, upsert_sql, rows, map_row, log, table_name, count)
 
@@ -189,6 +219,7 @@ def _upsert_each_row(
     table_name: str,
     count: _UpsertCount,
 ) -> None:
+    """Mapeia cada linha, executa o SQL de upsert e incrementa o contador."""
     for row in rows:
         record = _map_row_or_log(row, map_row, log, table_name)
         cur.execute(upsert_sql, record.model_dump())
@@ -201,6 +232,7 @@ def _map_row_or_log(
     log: Logger,
     table_name: str,
 ) -> SupportsModelDump:
+    """Mapeia a linha ou registra row_validation_failed e relança ValidationError ou KeyError."""
     try:
         return map_row(row)
     except (ValidationError, KeyError) as exc:

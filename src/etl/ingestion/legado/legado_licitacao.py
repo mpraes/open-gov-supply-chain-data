@@ -1,3 +1,5 @@
+"""Ingere consultarLicitacao na tabela legado_licitacao."""
+
 from typing import Any
 
 from contracts.legado_licitacao import LegadoLicitacaoRecord
@@ -15,19 +17,21 @@ UPSERT_SQL = legado_upsert_sql(TABLE_NAME)
 
 
 def map_legado_licitacao_row(row: dict[str, Any]) -> LegadoLicitacaoRecord:
-    """Map one consultarLicitacao resultado object.
+    """Mapeia um objeto resultado de consultarLicitacao.
 
-    Example:
+    Exemplo:
         record = map_legado_licitacao_row({"id_compra": "123", "objeto": "x"})
     """
     return LegadoLicitacaoRecord(**legado_licitacao_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarLicitacao na tabela legado_licitacao."""
     for_each_date_slice(_ingest_window)
 
 
 def _ingest_window(inicial: str, final: str) -> None:
+    """Ingere consultarLicitacao da janela de publicação na tabela legado_licitacao."""
     run_page_batch_ingestion(
         logger_name="legado_licitacao",
         endpoint_path=ENDPOINT_PATH,

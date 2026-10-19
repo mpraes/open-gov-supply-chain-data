@@ -1,3 +1,5 @@
+"""Lê códigos inteiros de catálogo no banco, em ordem e ausentes no destino quando pedido."""
+
 from typing import Any
 
 from etl.ingestion.dest_schema import (
@@ -11,9 +13,9 @@ def list_int_column(
     sql: str,
     params: dict[str, str | int] | None = None,
 ) -> list[int]:
-    """Return one integer column from a SQL query.
+    """Retorna uma coluna inteira de uma consulta SQL.
 
-    Example:
+    Exemplo:
         codes = list_int_column(conn, "SELECT cod_item FROM material_item")
     """
     with conn.cursor() as cur:
@@ -33,9 +35,9 @@ def list_codes_after(
     last_code: int,
     limit: int,
 ) -> list[int]:
-    """Return the next catalog codes after a watermark, in order.
+    """Retorna os próximos códigos de catálogo depois de uma marca d'água, em ordem.
 
-    Example:
+    Exemplo:
         codes = list_codes_after(
             conn, table="material_item", column="cod_item", last_code=10, limit=20
         )
@@ -60,9 +62,9 @@ def list_codes_after_absent(
     dest_column: str,
     dest_filters: dict[str, str | int],
 ) -> list[int]:
-    """Return catalog codes after a cursor that are missing from dest.
+    """Retorna códigos de catálogo depois de um cursor que ainda não estão no destino.
 
-    Example:
+    Exemplo:
         list_codes_after_absent(
             conn, table="material_class", column="cod_classe",
             last_code=0, limit=20, dest_table="pgc_detalhe_catalogo",
@@ -84,6 +86,7 @@ def _absent_codes_sql(
     last_code: int,
     limit: int,
 ) -> tuple[str, dict[str, str | int]]:
+    """Monta a SQL dos códigos maiores que o cursor e ausentes na tabela de destino."""
     src_table = qualify_dest_table(table)
     src_col = require_sql_ident(column, "column")
     dst_table = qualify_dest_table(dest_name)
@@ -103,6 +106,7 @@ def _absent_codes_sql(
 def _filter_clauses(
     dest_filters: dict[str, str | int],
 ) -> tuple[str, dict[str, str | int]]:
+    """Monta os AND de igualdade dos filtros do destino e o dicionário de parâmetros."""
     params: dict[str, str | int] = {}
     parts: list[str] = []
     for key, value in dest_filters.items():
@@ -113,6 +117,7 @@ def _filter_clauses(
 
 
 def _require_int_code(row: object, index: int) -> int:
+    """Exige que a linha seja uma tupla de um inteiro e retorna esse código."""
     if not isinstance(row, (tuple, list)) or len(row) != 1:
         raise ValueError(
             f"expected catalog code row[{index}] to be a 1-tuple, got {row!r}"

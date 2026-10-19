@@ -23,12 +23,14 @@ def _assert_timed(event: dict[str, object], rows: int) -> None:
 
 
 class SampleRecord(BaseModel):
+    """Registro de exemplo com código e nome usado no mapeamento do teste."""
+
     cod: int
     nome: str
 
 
 class FakeCursor:
-    """Named fake cursor that records execute calls."""
+    """Cursor falso que grava as chamadas de execute."""
 
     def __init__(self, *, fail_on_call: int | None = None) -> None:
         self.execute_calls: list[tuple[str, dict[str, Any]]] = []
@@ -48,7 +50,7 @@ class FakeCursor:
 
 
 class FakeConnection:
-    """Named fake connection exposing a context-managed cursor."""
+    """Conexão falsa que expõe um cursor usado como contexto."""
 
     def __init__(self, cursor: FakeCursor | None = None) -> None:
         self.cursor_obj = cursor if cursor is not None else FakeCursor()
@@ -67,7 +69,7 @@ class FakeConnection:
 
 
 class FakeFetchPages:
-    """Named fake that returns canned API rows or raises."""
+    """Falso que devolve linhas prontas da API ou levanta o erro configurado."""
 
     def __init__(
         self,

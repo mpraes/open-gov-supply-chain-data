@@ -1,3 +1,5 @@
+"""Percorre a janela completa de carga, de 2000-01-01 até hoje, por ano ou por fatia."""
+
 from collections.abc import Callable
 from datetime import date
 
@@ -9,9 +11,9 @@ YearFn = Callable[[int], None]
 
 
 def full_dump_dates(*, today: date | None = None) -> tuple[str, str]:
-    """ISO window from 2000-01-01 through `today`.
+    """Janela ISO de 2000-01-01 até `today`.
 
-    Example:
+    Exemplo:
         full_dump_dates(today=date(2026, 10, 19)) == ("2000-01-01", "2026-10-19")
     """
     day = _today(today)
@@ -19,9 +21,9 @@ def full_dump_dates(*, today: date | None = None) -> tuple[str, str]:
 
 
 def full_dump_years(*, today: date | None = None) -> tuple[int, ...]:
-    """Every calendar year from 2000 through `today`.
+    """Cada ano-calendário de 2000 até `today`.
 
-    Example:
+    Exemplo:
         full_dump_years(today=date(2001, 6, 1)) == (2000, 2001)
     """
     day = _today(today)
@@ -29,9 +31,9 @@ def full_dump_years(*, today: date | None = None) -> tuple[int, ...]:
 
 
 def for_each_dump_year(visit: YearFn, *, today: date | None = None) -> None:
-    """Call `visit` once per year in the full dump.
+    """Chama `visit` uma vez por ano da carga completa.
 
-    Example:
+    Exemplo:
         for_each_dump_year(load_year, today=date(2001, 6, 1))
     """
     for ano in full_dump_years(today=today):
@@ -39,9 +41,9 @@ def for_each_dump_year(visit: YearFn, *, today: date | None = None) -> None:
 
 
 def for_each_date_slice(visit: DateSliceFn, *, today: date | None = None) -> None:
-    """Call `visit` once per API-sized slice of the full dump window.
+    """Chama `visit` uma vez por fatia, no tamanho da API, da janela de carga completa.
 
-    Example:
+    Exemplo:
         for_each_date_slice(load_window, today=date(2001, 1, 1))
     """
     inicial, final = full_dump_dates(today=today)
@@ -50,6 +52,7 @@ def for_each_date_slice(visit: DateSliceFn, *, today: date | None = None) -> Non
 
 
 def _today(today: date | None) -> date:
+    """Devolve today ou date.today() quando o argumento é None."""
     if today is not None:
         return today
     return date.today()

@@ -1,10 +1,12 @@
+"""Mapeia campos da API de UASG e de órgão para os registros de destino."""
+
 from typing import Any
 
 
 def uasg_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarUasg API keys to UasgRecord fields.
+    """Mapeia as chaves de consultarUasg para os campos de UasgRecord.
 
-    Example:
+    Exemplo:
         uasg_fields({"codigoUasg": "153001", "nomeUasg": "x", "statusUasg": True})
     """
     return {
@@ -15,9 +17,9 @@ def uasg_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def uasg_orgao_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarOrgao API keys to UasgOrgaoRecord fields.
+    """Mapeia as chaves de consultarOrgao para os campos de UasgOrgaoRecord.
 
-    Example:
+    Exemplo:
         uasg_orgao_fields({"codigoOrgao": 36000, "nomeOrgao": "x", "statusOrgao": True})
     """
     return {
@@ -28,6 +30,7 @@ def uasg_orgao_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _uasg_identity_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Extrai identificação, flags SISG e SIASG, SIORG, status e datas da linha de UASG."""
     return {
         "codigo_uasg": row["codigoUasg"],
         "nome_uasg": row["nomeUasg"],
@@ -43,6 +46,7 @@ def _uasg_identity_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _uasg_location_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Extrai UF, município, unidade polo e unidade espelho da linha de UASG."""
     return {
         "sigla_uf": row.get("siglaUf"),
         "codigo_municipio": row.get("codigoMunicipio"),
@@ -56,6 +60,7 @@ def _uasg_location_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _uasg_orgao_link_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Extrai o código do órgão e os CNPJ/CPF do órgão, do vinculado e do superior."""
     return {
         "codigo_orgao": row.get("codigoOrgao"),
         "cnpj_cpf_orgao": row.get("cnpjCpfOrgao"),
@@ -65,6 +70,7 @@ def _uasg_orgao_link_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _orgao_identity_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Extrai código, nome, mnemônico, CNPJ/CPF, status e data de movimento do órgão."""
     return {
         "codigo_orgao": row["codigoOrgao"],
         "nome_orgao": row["nomeOrgao"],
@@ -76,6 +82,7 @@ def _orgao_identity_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _orgao_hierarchy_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Extrai código, CNPJ/CPF e nome do órgão vinculado e do órgão superior."""
     return {
         "codigo_orgao_vinculado": row.get("codigoOrgaoVinculado"),
         "cnpj_cpf_orgao_vinculado": row.get("cnpjCpfOrgaoVinculado"),
@@ -87,6 +94,7 @@ def _orgao_hierarchy_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _orgao_admin_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Extrai tipo de administração, poder, esfera e uso do SISG do órgão."""
     return {
         "codigo_tipo_administracao": row.get("codigoTipoAdministracao"),
         "nome_tipo_administracao": row.get("nomeTipoAdministracao"),

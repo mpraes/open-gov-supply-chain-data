@@ -1,3 +1,5 @@
+"""Agrupa conexão, consulta e catálogo de um lote de ingestão de preços."""
+
 from collections.abc import Mapping
 from dataclasses import dataclass
 from logging import Logger
@@ -9,6 +11,8 @@ from etl.ingestion.precos.code_pages import FetchForCodes
 
 @dataclass(frozen=True)
 class PrecoFetchSpec:
+    """Reúne URL, cabeçalhos, upsert, mapeamento e a busca de páginas por código."""
+
     url: str
     headers: dict[str, str]
     page_size: int | None
@@ -22,6 +26,8 @@ class PrecoFetchSpec:
 
 @dataclass(frozen=True)
 class PrecoCatalogSpec:
+    """Reúne o catálogo de origem, o filtro de ausência no destino e o cursor do lote."""
+
     catalog_table: str
     catalog_column: str
     params_for_code: CodeParamsFn
@@ -37,6 +43,8 @@ class PrecoCatalogSpec:
 
 @dataclass(frozen=True)
 class PrecoBatchJob:
+    """Junta conexão, log, consulta e catálogo de um lote de ingestão de preços."""
+
     conn: SupportsDbConnection
     log: Logger
     fetch: PrecoFetchSpec

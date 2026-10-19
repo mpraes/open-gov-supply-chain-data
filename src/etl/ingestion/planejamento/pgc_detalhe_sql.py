@@ -1,3 +1,5 @@
+"""Monta o upsert das tabelas pgc_detalhe e pgc_detalhe_catalogo."""
+
 from etl.ingestion.dest_schema import dest_table
 
 _ALLOWED_TABLES = frozenset({"pgc_detalhe", "pgc_detalhe_catalogo"})
@@ -68,9 +70,9 @@ _CONFLICT_COLUMNS = (
 
 
 def pgc_detalhe_upsert_sql(table_name: str) -> str:
-    """Build the upsert statement for a PGC detalhe table.
+    """Monta o comando de upsert de uma tabela de detalhe do PGC.
 
-    Example:
+    Exemplo:
         sql = pgc_detalhe_upsert_sql("pgc_detalhe")
     """
     if table_name not in _ALLOWED_TABLES:
@@ -81,6 +83,7 @@ def pgc_detalhe_upsert_sql(table_name: str) -> str:
 
 
 def _build_upsert_sql(table_name: str) -> str:
+    """Monta o INSERT da tabela informada com as colunas de detalhe do PGC e o ON CONFLICT."""
     cols = ", ".join(PGC_DETALHE_COLUMNS)
     values = ", ".join(f"%({name})s" for name in PGC_DETALHE_COLUMNS)
     conflict = ", ".join(_CONFLICT_COLUMNS)
@@ -95,5 +98,6 @@ def _build_upsert_sql(table_name: str) -> str:
 
 
 def _excluded_updates() -> str:
+    """Junta as colunas fora da chave de conflito no formato nome = EXCLUDED.nome."""
     names = [name for name in PGC_DETALHE_COLUMNS if name not in _CONFLICT_COLUMNS]
     return ",\n".join(f"{name} = EXCLUDED.{name}" for name in names)

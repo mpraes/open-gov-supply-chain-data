@@ -4,6 +4,8 @@ from etl.ingestion.precos.code_pages import build_codigo_fetch_pages
 
 
 class FakeCatalogCursor:
+    """Cursor falso que devolve as linhas prontas do catálogo."""
+
     def __init__(self, rows: list[tuple[object, ...]]) -> None:
         self._rows = rows
 
@@ -21,6 +23,8 @@ class FakeCatalogCursor:
 
 
 class FakeCatalogConnection:
+    """Conexão falsa que abre esse cursor."""
+
     def __init__(self, rows: list[tuple[object, ...]]) -> None:
         self.cursor_obj = FakeCatalogCursor(rows)
 
@@ -32,7 +36,7 @@ class FakeCatalogConnection:
 
 
 class RecordingFetchForCodes:
-    """Named fake that records fetch_for_codes kwargs for one catalog code."""
+    """Falso que grava os kwargs de fetch_for_codes de um código de catálogo."""
 
     def __init__(self) -> None:
         self.calls: list[dict[str, object]] = []

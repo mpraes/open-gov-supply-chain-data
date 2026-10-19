@@ -1,3 +1,5 @@
+"""Define os passos das famílias CATMAT, CATSER, preços, UASG, PGC, catálogo PGC, ARP, contratos, contratações, legado, OCDS, indicadores, Alice e fornecedor."""
+
 from dataclasses import dataclass
 
 
@@ -10,6 +12,8 @@ UASG_ORGAO_READY = "open_gov/uasg_orgao"
 
 @dataclass(frozen=True)
 class IngestStep:
+    """Descreve um passo de ingestão com tarefa, módulo, upstream e asset de saída."""
+
     task_id: str
     module_path: str
     upstream: tuple[str, ...] = ()
@@ -17,9 +21,9 @@ class IngestStep:
 
 
 def upstream_of(steps: tuple[IngestStep, ...]) -> dict[str, tuple[str, ...]]:
-    """Map each task id to the tasks that must finish first.
+    """Mapeia cada id de tarefa para as tarefas que precisam terminar antes.
 
-    Example:
+    Exemplo:
         upstream_of(CATMAT_STEPS)["ingest_material_class"]
     """
     return {step.task_id: step.upstream for step in steps}

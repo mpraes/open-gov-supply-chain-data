@@ -1,3 +1,5 @@
+"""Ingere uma tabela restante de catálogo, inteira ou em fatias de data."""
+
 from collections.abc import Callable
 from logging import Logger
 from pathlib import Path
@@ -34,9 +36,9 @@ def run_remaining_ingestion(
     date_watermark: DateWatermark | None = None,
     parallel_pages: int = 1,
 ) -> int:
-    """Page-batch ingest one remaining catalog table.
+    """Ingere em lotes de página uma tabela restante de catálogo.
 
-    Example:
+    Exemplo:
         run_remaining_ingestion(
             logger_name="contratacao",
             endpoint_path="/modulo-contratacoes/1_consultarContratacoes_PNCP_14133",
@@ -79,9 +81,9 @@ def run_sliced_remaining_ingestion(
     run_one: RemainingIngest = run_remaining_ingestion,
     **kwargs: Any,
 ) -> int:
-    """Ingest one table across API date windows of at most `max_days`.
+    """Ingere uma tabela em janelas de data da API de no máximo `max_days`.
 
-    Example:
+    Exemplo:
         run_sliced_remaining_ingestion(
             data_inicial="2000-01-01", data_final="2026-09-22",
             params_for_slice=arp_query_params, job_prefix="arp",
@@ -105,6 +107,7 @@ def _ingest_date_slice(
     final: str,
     kwargs: dict[str, Any],
 ) -> int:
+    """Chama a ingestão da fatia com query_params e job_name de inicial e final."""
     return run_one(
         query_params=params_for_slice(inicial, final),
         job_name=slice_job_name(job_prefix, inicial, final),

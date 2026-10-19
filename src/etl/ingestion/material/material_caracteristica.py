@@ -1,3 +1,5 @@
+"""Ingere características de item de material na tabela material_caracteristica."""
+
 from typing import Any
 
 from contracts.material_caracteristica import MaterialCaracteristicaRecord
@@ -36,9 +38,9 @@ data_hora_carga = now();
 
 
 def map_material_caracteristica_row(row: dict[str, Any]) -> MaterialCaracteristicaRecord:
-    """Map one API resultado object to MaterialCaracteristicaRecord.
+    """Mapeia um objeto resultado da API para MaterialCaracteristicaRecord.
 
-    Example:
+    Exemplo:
         record = map_material_caracteristica_row({"codigoItem": 1, ...})
     """
     return MaterialCaracteristicaRecord(
@@ -58,6 +60,7 @@ def map_material_caracteristica_row(row: dict[str, Any]) -> MaterialCaracteristi
 
 
 def main() -> None:
+    """Consulta /modulo-material/7_consultarMaterialCaracteristicas e grava o resultado na tabela material_caracteristica."""
     run_page_batch_ingestion(
         logger_name="material_caracteristica",
         endpoint_path=ENDPOINT_PATH,

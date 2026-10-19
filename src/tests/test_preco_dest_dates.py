@@ -8,6 +8,8 @@ from observability.logging_json import get_json_logger
 
 
 class FakeCompraCursor:
+    """Cursor falso que grava o SQL executado e devolve o valor configurado."""
+
     def __init__(self, value: object) -> None:
         self.value = value
         self.sql: str | None = None
@@ -30,6 +32,8 @@ class FakeCompraCursor:
 
 
 class FakeCompraConnection:
+    """Conexão falsa que abre esse cursor."""
+
     def __init__(self, cursor: FakeCompraCursor) -> None:
         self.cursor_obj = cursor
 
@@ -66,6 +70,8 @@ def test_with_dest_compra_inicio_omits_date_when_dest_empty() -> None:
 
 
 class FakePrecoCursor:
+    """Cursor falso que grava o SQL, devolve códigos restantes e a data máxima e registra o cursor salvo."""
+
     def __init__(self, codes: list[int], dest_max: str | None) -> None:
         self.codes = codes
         self.dest_max = dest_max
@@ -102,6 +108,8 @@ class FakePrecoCursor:
 
 
 class FakePrecoConnection:
+    """Conexão falsa que abre esse cursor, conta os commits e marca o fechamento."""
+
     def __init__(self, cursor: FakePrecoCursor) -> None:
         self.cursor_obj = cursor
         self.closed = False
@@ -124,6 +132,8 @@ class FakePrecoConnection:
 
 
 class FakePrecoConnect:
+    """Falso que devolve essa conexão."""
+
     def __init__(self, conn: FakePrecoConnection) -> None:
         self._conn = conn
 
@@ -132,12 +142,14 @@ class FakePrecoConnect:
 
 
 class SamplePrecoRecord:
+    """Registro de exemplo usado só para model_dump no teste."""
+
     def model_dump(self) -> dict[str, int]:
         return {"id": 1}
 
 
 class RecordingPrecoFetchForCodes:
-    """Named fake that captures params_for_code for the first catalog code."""
+    """Falso que guarda params_for_code do primeiro código de catálogo."""
 
     def __init__(self) -> None:
         self.calls: list[dict[str, str | int | bool]] = []

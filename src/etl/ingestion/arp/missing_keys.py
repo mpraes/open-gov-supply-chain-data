@@ -1,3 +1,5 @@
+"""Resolve chaves de ata ausentes nas tabelas filhas de ARP."""
+
 from typing import Any
 
 from etl.ingestion.dest_schema import dest_table
@@ -9,9 +11,9 @@ AtaItem = tuple[str, str, str]
 
 
 def missing_ata_headers(conn: Any, child_table: str) -> list[AtaHeader]:
-    """Return dest ARP headers that have no rows in an ARP child table.
+    """Retorna cabeçalhos de ARP no destino que não têm linhas numa tabela filha de ARP.
 
-    Example:
+    Exemplo:
         missing_ata_headers(conn, "arp_empenho")
     """
     child = _require_child(child_table, _HEADER_CHILDREN)
@@ -26,9 +28,9 @@ def missing_ata_headers(conn: Any, child_table: str) -> list[AtaHeader]:
 
 
 def missing_ata_item_triples(conn: Any, child_table: str) -> list[AtaItem]:
-    """Return dest ARP item keys missing from a child table.
+    """Retorna chaves de item de ARP no destino que faltam numa tabela filha.
 
-    Example:
+    Exemplo:
         missing_ata_item_triples(conn, "arp_unidade_item")
     """
     child = _require_child(child_table, _ITEM_CHILDREN)
@@ -37,9 +39,9 @@ def missing_ata_item_triples(conn: Any, child_table: str) -> list[AtaItem]:
 
 
 def table_has_rows(conn: Any, table: str) -> bool:
-    """Return True when dest table has at least one row.
+    """Retorna True quando a tabela de destino tem ao menos uma linha.
 
-    Example:
+    Exemplo:
         table_has_rows(conn, "arp")
     """
     ident = dest_table(table)
@@ -49,9 +51,9 @@ def table_has_rows(conn: Any, table: str) -> bool:
 
 
 def resolve_empenho_keys(conn: Any, fallback: AtaHeader | None) -> list[AtaHeader]:
-    """Use dest ARP headers when present, otherwise the env ATA pair.
+    """Usa os cabeçalhos de ARP do destino quando existem; senão, o par de ATA do ambiente.
 
-    Example:
+    Exemplo:
         resolve_empenho_keys(conn, None)
     """
     if table_has_rows(conn, "arp"):
@@ -64,9 +66,9 @@ def resolve_empenho_keys(conn: Any, fallback: AtaHeader | None) -> list[AtaHeade
 def resolve_item_keys(
     conn: Any, child_table: str, fallback: AtaItem | None
 ) -> list[AtaItem]:
-    """Use dest ARP item keys when present, otherwise the env ATA triple.
+    """Usa as chaves de item de ARP do destino quando existem; senão, a tripla de ATA do ambiente.
 
-    Example:
+    Exemplo:
         resolve_item_keys(conn, "arp_adesao", None)
     """
     if table_has_rows(conn, "arp_item"):
@@ -77,6 +79,7 @@ def resolve_item_keys(
 
 
 def _item_missing_sql(child: str, *, match_item: bool) -> str:
+    """Monta o SELECT de itens de arp_item sem correspondente na tabela filha, confrontando numero_item quando pedido."""
     item_clause = ""
     if match_item:
         item_clause = " AND dest.numero_item = src.numero_item"
@@ -93,6 +96,7 @@ def _item_missing_sql(child: str, *, match_item: bool) -> str:
 
 
 def _require_child(child_table: str, allowed: frozenset[str]) -> str:
+    """Valida a tabela filha contra o conjunto permitido e devolve o nome aceito."""
     if child_table not in allowed:
         raise ValueError(
             f"child_table expected one of {sorted(allowed)}, got {child_table!r}"
@@ -101,6 +105,7 @@ def _require_child(child_table: str, allowed: frozenset[str]) -> str:
 
 
 def _fetch_all(conn: Any, sql: str) -> list[tuple[object, ...]]:
+    """Executa o SQL na conexão e devolve todas as linhas do cursor."""
     with conn.cursor() as cur:
         cur.execute(sql)
         rows = cur.fetchall()
@@ -108,16 +113,19 @@ def _fetch_all(conn: Any, sql: str) -> list[tuple[object, ...]]:
 
 
 def _header_pair(row: object, index: int) -> AtaHeader:
+    """Converte a linha em par de número da ata e código da unidade gerenciadora."""
     values = _text_cells(row, index, 2)
     return values[0], values[1]
 
 
 def _item_triple(row: object, index: int) -> AtaItem:
+    """Converte a linha em tripla de número da ata, unidade gerenciadora e número do item."""
     values = _text_cells(row, index, 3)
     return values[0], values[1], values[2]
 
 
 def _text_cells(row: object, index: int, expected: int) -> list[str]:
+    """Exige uma tupla do tamanho pedido com textos não vazios e devolve essas células."""
     if not isinstance(row, (tuple, list)) or len(row) != expected:
         raise ValueError(
             f"expected ARP key row[{index}] to be a {expected}-tuple, got {row!r}"

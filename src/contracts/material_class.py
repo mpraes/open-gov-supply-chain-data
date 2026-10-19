@@ -1,10 +1,12 @@
+"""Contrato da linha de classe de material de consultarClasseMaterial."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class MaterialClassRecord(BaseModel):
-    """Validated material class row mapped from consultarClasseMaterial.
+    """Linha validada de classe de material mapeada de consultarClasseMaterial.
 
-    Example:
+    Exemplo:
         MaterialClassRecord(
             cod_classe=101,
             cod_grupo=10,
@@ -27,6 +29,7 @@ class MaterialClassRecord(BaseModel):
     @field_validator("nome_grupo", "nome_classe")
     @classmethod
     def nome_must_be_upper(cls, value: str) -> str:
+        """Rejeita nome_grupo e nome_classe vazios e devolve o texto em maiúsculas."""
         cleaned = value.strip()
         if not cleaned:
             raise ValueError("nome fields must be non-empty")

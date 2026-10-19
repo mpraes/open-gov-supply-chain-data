@@ -1,3 +1,5 @@
+"""Ingere classes de serviço na tabela servico_classe."""
+
 from typing import Any
 
 from contracts.servico_classe import ServicoClasseRecord
@@ -26,13 +28,12 @@ data_hora_carga = now();
 
 
 def map_servico_classe_row(row: dict[str, Any]) -> ServicoClasseRecord:
-    """Map one API resultado object to ServicoClasseRecord.
+    """Mapeia um objeto resultado da API para ServicoClasseRecord.
 
-    Example:
+    Exemplo:
         record = map_servico_classe_row({"codigoClasse": 4, "codigoGrupo": 3, ...})
 
-    API docs name the status field `statusGrupo` on this endpoint; we store it as
-    status_classe.
+    A documentação da API nomeia o campo de status como `statusGrupo` neste endpoint; gravamos como status_classe.
     """
     return ServicoClasseRecord(
         cod_classe=row["codigoClasse"],
@@ -45,6 +46,7 @@ def map_servico_classe_row(row: dict[str, Any]) -> ServicoClasseRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-servico/4_consultarClasseServico e grava o resultado na tabela servico_classe."""
     run_page_batch_ingestion(
         logger_name="servico_classe",
         endpoint_path=ENDPOINT_PATH,

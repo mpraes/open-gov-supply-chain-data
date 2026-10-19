@@ -1,3 +1,5 @@
+"""Ingere contratos na tabela contrato por órgão e vigência inicial."""
+
 from etl.ingestion.dest_watermark import DateWatermark
 from etl.ingestion.full_dump import full_dump_dates
 from etl.ingestion.orgao_catalog import read_orgao_codes
@@ -7,12 +9,14 @@ from etl.ingestion.remaining_run import run_sliced_remaining_ingestion
 
 
 def main() -> None:
+    """Percorre os órgãos da carga completa e consulta /modulo-contratos/1_consultarContratos, gravando na tabela contrato."""
     inicial, final = full_dump_dates()
     for code in read_orgao_codes():
         _ingest_orgao(str(code), inicial, final)
 
 
 def _ingest_orgao(orgao: str, inicial: str, final: str) -> None:
+    """Consulta /modulo-contratos/1_consultarContratos do órgão em fatias de vigência inicial e grava na tabela contrato."""
     run_sliced_remaining_ingestion(
         data_inicial=inicial,
         data_final=final,

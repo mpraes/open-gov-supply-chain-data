@@ -1,3 +1,5 @@
+"""Ingere consultarPgcDetalheCatalogo na tabela pgc_detalhe_catalogo."""
+
 from typing import Any
 
 from contracts.pgc_detalhe import PgcDetalheRecord
@@ -15,24 +17,27 @@ UPSERT_SQL = pgc_detalhe_upsert_sql(TABLE_NAME)
 
 
 def map_pgc_detalhe_catalogo_row(row: dict[str, Any]) -> PgcDetalheRecord:
-    """Map one consultarPgcDetalheCatalogo resultado object to PgcDetalheRecord.
+    """Mapeia um objeto resultado de consultarPgcDetalheCatalogo para PgcDetalheRecord.
 
-    Example:
+    Exemplo:
         record = map_pgc_detalhe_catalogo_row({"codigoUasg": "1", ...})
     """
     return PgcDetalheRecord(**pgc_detalhe_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarPgcDetalheCatalogo na tabela pgc_detalhe_catalogo."""
     for_each_dump_year(_ingest_year)
 
 
 def _ingest_year(ano: int) -> None:
+    """Ingere Material a partir de material_class e Servico a partir de servico_grupo no ano."""
     _ingest_catalogo("Material", "material_class", "cod_classe", ano)
     _ingest_catalogo("Servico", "servico_grupo", "cod_grupo", ano)
 
 
 def _ingest_catalogo(tipo: str, catalog_table: str, catalog_column: str, ano: int) -> int:
+    """Ingere consultarPgcDetalheCatalogo do tipo e do ano, pulando códigos já presentes."""
     job = f"pgc_detalhe_catalogo_{tipo.lower()}:{ano}"
     return run_preco_batch_ingestion(
         logger_name=job,
@@ -53,6 +58,7 @@ def _ingest_catalogo(tipo: str, catalog_table: str, catalog_column: str, ano: in
 
 
 def _catalogo_dest_column(tipo: str) -> str:
+    """Retorna codigo_classe_material ou codigo_grupo_servico conforme o tipo."""
     if tipo == "Material":
         return "codigo_classe_material"
     if tipo == "Servico":

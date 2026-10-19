@@ -1,12 +1,14 @@
+"""Carrega PGC_ORGAO, PGC_ANO e PGC_CODIGO_UASG do arquivo de ambiente."""
+
 from pathlib import Path
 
 from etl.ingestion.script_runner import LoadSecret
 
 
 def pgc_orgao_ano(env_path: Path, load_secret: LoadSecret) -> tuple[str, int]:
-    """Load required PGC_ORGAO and PGC_ANO from the env file.
+    """Carrega PGC_ORGAO e PGC_ANO obrigatórios do arquivo de ambiente.
 
-    Example:
+    Exemplo:
         orgao, ano = pgc_orgao_ano(Path(".env"), load_secret)
     """
     orgao = load_secret(env_path, "PGC_ORGAO")
@@ -14,18 +16,18 @@ def pgc_orgao_ano(env_path: Path, load_secret: LoadSecret) -> tuple[str, int]:
 
 
 def pgc_ano(env_path: Path, load_secret: LoadSecret) -> int:
-    """Load required PGC_ANO from the env file.
+    """Carrega PGC_ANO obrigatório do arquivo de ambiente.
 
-    Example:
+    Exemplo:
         ano = pgc_ano(Path(".env"), load_secret)
     """
     return _require_ano(load_secret(env_path, "PGC_ANO"))
 
 
 def pgc_optional_uasg(env_path: Path, load_secret: LoadSecret) -> str | None:
-    """Load optional PGC_CODIGO_UASG; missing or blank becomes None.
+    """Carrega PGC_CODIGO_UASG opcional; ausente ou em branco vira None.
 
-    Example:
+    Exemplo:
         uasg = pgc_optional_uasg(Path(".env"), load_secret)
     """
     try:
@@ -36,6 +38,7 @@ def pgc_optional_uasg(env_path: Path, load_secret: LoadSecret) -> str | None:
 
 
 def _require_ano(raw: str) -> int:
+    """Exige dígitos e um ano entre 2000 e 2100 em PGC_ANO."""
     if not raw.isdigit():
         raise ValueError(f"PGC_ANO expected digits, got {raw!r}")
     ano = int(raw)

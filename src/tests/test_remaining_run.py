@@ -11,6 +11,8 @@ from etl.ingestion.remaining_run import (
 
 
 class FakeRemainingIngest:
+    """Falso que grava os kwargs da ingestão e devolve uma contagem fixa."""
+
     def __init__(self) -> None:
         self.calls: list[dict[str, Any]] = []
 

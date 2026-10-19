@@ -16,7 +16,7 @@ _PSQL_ENV_KEYS = (
 
 @pytest.fixture(autouse=True)
 def isolate_psql_env() -> None:
-    """Prevent process PSQL_* from overriding tmp .env (load_secret_key override=False)."""
+    """Impede que PSQL_* do processo sobrescreva o .env temporário (override=False)."""
     saved = {key: os.environ.pop(key, None) for key in _PSQL_ENV_KEYS}
     yield
     for key, value in saved.items():

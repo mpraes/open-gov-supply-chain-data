@@ -1,3 +1,5 @@
+"""Orquestra a ingestão de preços em lotes de código de catálogo, com cursor de retomada."""
+
 from collections.abc import Mapping
 from logging import Logger
 from pathlib import Path
@@ -64,9 +66,9 @@ def run_preco_batch_ingestion(
     connect_fn: ConnectPostgresFn | None = None,
     fetch_for_codes: FetchForCodes = fetch_resultado_pages_for_codes,
 ) -> int:
-    """Ingest practiced prices in small catalog-code batches with a resume cursor.
+    """Ingere preços praticados em lotes pequenos de código de catálogo, com cursor de retomada.
 
-    Example:
+    Exemplo:
         run_preco_batch_ingestion(
             logger_name="preco_material",
             endpoint_path="/modulo-pesquisa-preco/1_consultarMaterial",
@@ -113,12 +115,14 @@ def run_preco_batch_ingestion(
 
 
 def _loop_preco_batches(job: PrecoBatchJob) -> int:
+    """Executa os lotes do job, zera o cursor e retorna o total de linhas."""
     total = _run_code_batches(job)
     save_code_cursor(job.conn, job.catalog.job_name, 0)
     return total
 
 
 def _run_code_batches(job: PrecoBatchJob) -> int:
+    """Liga o cursor, a leitura de códigos e o upsert ao loop de lotes."""
     catalog = job.catalog
     params_for_code = _resolve_code_params(job)
     return run_code_batch_loop(
@@ -133,6 +137,7 @@ def _run_code_batches(job: PrecoBatchJob) -> int:
 
 
 def _next_catalog_codes(job: PrecoBatchJob, last_code: int, limit: int) -> list[int]:
+    """Retorna os próximos códigos do catálogo, só os ausentes no destino quando o filtro existe."""
     catalog = job.catalog
     if catalog.absent_dest_table is None or catalog.absent_dest_column is None:
         return list_codes_after(
@@ -156,6 +161,7 @@ def _next_catalog_codes(job: PrecoBatchJob, last_code: int, limit: int) -> list[
 
 
 def _resolve_code_params(job: PrecoBatchJob) -> CodeParamsFn:
+    """Retorna os parâmetros por código, com a data inicial da compra quando há coluna de destino."""
     catalog = job.catalog
     if catalog.dest_code_column is None:
         return catalog.params_for_code
@@ -174,6 +180,7 @@ def _ingest_code_batch(
     codes: list[int],
     params_for_code: CodeParamsFn,
 ) -> int:
+    """Busca as páginas dos códigos e grava o upsert na tabela do job."""
     fetch = job.fetch
     fetch_pages = _bind_codigo_fetch_pages(
         codes,
@@ -223,6 +230,7 @@ def _build_preco_batch_job(
     conn: SupportsDbConnection,
     fetch_for_codes: FetchForCodes,
 ) -> PrecoBatchJob:
+    """Monta o PrecoBatchJob com a URL autenticada e o catálogo do lote."""
     job = job_name if job_name is not None else logger_name
     return PrecoBatchJob(
         conn=conn,
@@ -266,6 +274,7 @@ def _preco_fetch_spec(
     parallel_codes: int,
     fetch_for_codes: FetchForCodes,
 ) -> PrecoFetchSpec:
+    """Monta o PrecoFetchSpec da consulta, do upsert e da busca por código."""
     return PrecoFetchSpec(
         url=url,
         headers=headers,
@@ -293,6 +302,7 @@ def _preco_catalog_spec(
     batch_size: int,
     job_name: str,
 ) -> PrecoCatalogSpec:
+    """Monta o PrecoCatalogSpec do catálogo, do filtro de ausência e do nome do job."""
     return PrecoCatalogSpec(
         catalog_table=catalog_table,
         catalog_column=catalog_column,

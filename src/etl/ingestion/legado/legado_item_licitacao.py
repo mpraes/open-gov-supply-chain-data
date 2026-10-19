@@ -1,3 +1,5 @@
+"""Ingere consultarItemLicitacao na tabela legado_item_licitacao."""
+
 from typing import Any
 
 from contracts.legado_item_licitacao import LegadoItemLicitacaoRecord
@@ -17,20 +19,22 @@ UPSERT_SQL = legado_upsert_sql(TABLE_NAME)
 
 
 def map_legado_item_licitacao_row(row: dict[str, Any]) -> LegadoItemLicitacaoRecord:
-    """Map one consultarItemLicitacao resultado object.
+    """Mapeia um objeto resultado de consultarItemLicitacao.
 
-    Example:
+    Exemplo:
         record = map_legado_item_licitacao_row({"id_compra": "c1", "id_compra_item": "i1"})
     """
     return LegadoItemLicitacaoRecord(**legado_item_licitacao_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarItemLicitacao na tabela legado_item_licitacao."""
     for modalidade in LEGADO_ITEM_MODALIDADES:
         _ingest_item_licitacao(modalidade)
 
 
 def _ingest_item_licitacao(modalidade: int) -> None:
+    """Ingere consultarItemLicitacao da modalidade na tabela legado_item_licitacao."""
     run_page_batch_ingestion(
         logger_name="legado_item_licitacao",
         endpoint_path=ENDPOINT_PATH,

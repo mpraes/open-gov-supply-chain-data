@@ -1,3 +1,5 @@
+"""Ingere contratações PNCP na tabela contratacao por modalidade."""
+
 from config.load_secret_key import load_secret_key_func
 from etl.ingestion.dest_watermark import DateWatermark
 from etl.ingestion.remaining_filters import contratacoes_dates, contratacoes_modalidades
@@ -8,6 +10,7 @@ from etl.ingestion.script_runner import DEFAULT_ENV_PATH
 
 
 def main() -> None:
+    """Lê datas e modalidades e consulta /modulo-contratacoes/1_consultarContratacoes_PNCP_14133, gravando na tabela contratacao."""
     inicial, final = contratacoes_dates(DEFAULT_ENV_PATH, load_secret_key_func)
     for modalidade in contratacoes_modalidades(DEFAULT_ENV_PATH, load_secret_key_func):
         _ingest_contratacao_modalidade(inicial, final, modalidade)
@@ -16,6 +19,7 @@ def main() -> None:
 def _ingest_contratacao_modalidade(
     inicial: str, final: str, modalidade: int
 ) -> None:
+    """Consulta /modulo-contratacoes/1_consultarContratacoes_PNCP_14133 da modalidade em fatias de publicação PNCP e grava na tabela contratacao."""
     run_sliced_remaining_ingestion(
         data_inicial=inicial,
         data_final=final,

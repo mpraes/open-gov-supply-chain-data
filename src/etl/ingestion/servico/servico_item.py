@@ -1,3 +1,5 @@
+"""Ingere itens de serviço na tabela servico_item."""
+
 from typing import Any
 
 from contracts.servico_item import ServicoItemRecord
@@ -41,9 +43,9 @@ data_hora_carga = now();
 
 
 def map_servico_item_row(row: dict[str, Any]) -> ServicoItemRecord:
-    """Map one API resultado object to ServicoItemRecord.
+    """Mapeia um objeto resultado da API para ServicoItemRecord.
 
-    Example:
+    Exemplo:
         record = map_servico_item_row({"codigoServico": 100, ...})
     """
     return ServicoItemRecord(
@@ -67,6 +69,7 @@ def map_servico_item_row(row: dict[str, Any]) -> ServicoItemRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-servico/6_consultarItemServico e grava o resultado na tabela servico_item."""
     run_page_batch_ingestion(
         logger_name="servico_item",
         endpoint_path=ENDPOINT_PATH,

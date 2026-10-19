@@ -1,3 +1,5 @@
+"""Monta o fetch_pages que consulta a API uma vez por código de catálogo."""
+
 from collections.abc import Callable
 
 from clients.compras_api import CodeParamsFn, fetch_resultado_pages_for_codes
@@ -17,9 +19,9 @@ def build_codigo_fetch_pages(
     pause_seconds: float = 0,
     parallel_codes: int = 1,
 ) -> FetchPages:
-    """Build a pipeline fetch_pages that queries one catalog code column.
+    """Monta um fetch_pages do pipeline que consulta uma coluna de código de catálogo.
 
-    Example:
+    Exemplo:
         fetch_pages = build_codigo_fetch_pages(
             conn, "SELECT cod_item FROM material_item",
             lambda code: {"codigo": str(code)},
@@ -39,12 +41,15 @@ def _bind_codigo_fetch_pages(
     pause_seconds: float,
     parallel_codes: int = 1,
 ) -> FetchPages:
+    """Devolve um fetch_pages que consulta a API para os códigos recebidos."""
+
     def fetch_pages(
         url: str,
         headers: dict[str, str],
         *,
         page_size: int | None = 500,
     ) -> list[JsonRow]:
+        """Consulta as páginas de resultado dos códigos vinculados a esta função."""
         return fetch_for_codes(
             url,
             headers,

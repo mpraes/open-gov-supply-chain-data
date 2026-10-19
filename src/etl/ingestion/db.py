@@ -1,3 +1,5 @@
+"""Abre a conexão Postgres da ingestão com search_path no schema de destino."""
+
 from collections.abc import Callable
 from typing import Any
 
@@ -18,9 +20,9 @@ def connect_postgres(
     dest_schema: str = DEST_SCHEMA,
     connect_fn: ConnectFn = psycopg2_connect,
 ) -> Any:
-    """Open a Postgres connection via an injectable connect function.
+    """Abre uma conexão Postgres por uma função de conexão injetável.
 
-    Example:
+    Exemplo:
         conn = connect_postgres(
             host=host, port=port, user=user, password=password, dbname=dbname
         )

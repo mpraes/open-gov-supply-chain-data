@@ -1,3 +1,5 @@
+"""Ingere PDM de material na tabela material_pdm."""
+
 from typing import Any
 
 from contracts.material_pdm import MaterialPdmRecord
@@ -29,9 +31,9 @@ data_hora_carga = now();
 
 
 def map_material_pdm_row(row: dict[str, Any]) -> MaterialPdmRecord:
-    """Map one API resultado object to MaterialPdmRecord.
+    """Mapeia um objeto resultado da API para MaterialPdmRecord.
 
-    Example:
+    Exemplo:
         record = map_material_pdm_row({"codigoPdm": 1, "codigoClasse": 2, ...})
     """
     return MaterialPdmRecord(
@@ -47,6 +49,7 @@ def map_material_pdm_row(row: dict[str, Any]) -> MaterialPdmRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-material/3_consultarPdmMaterial e grava o resultado na tabela material_pdm."""
     run_page_batch_ingestion(
         logger_name="material_pdm",
         endpoint_path=ENDPOINT_PATH,

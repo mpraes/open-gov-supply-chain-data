@@ -1,3 +1,5 @@
+"""Ingere grupos de material na tabela material_group."""
+
 from typing import Any
 
 from contracts.material_group import MaterialGroupRecord
@@ -6,7 +8,7 @@ from etl.ingestion.page_runner import run_page_batch_ingestion
 
 ENDPOINT_PATH = "/modulo-material/1_consultarGrupoMaterial"
 
-# Group endpoint has no tamanhoPagina param in the API docs.
+# O endpoint de grupo não documenta o parâmetro tamanhoPagina.
 PAGE_SIZE: int | None = None
 
 UPSERT_SQL = f"""
@@ -21,9 +23,9 @@ data_hora_carga = now();
 
 
 def map_material_group_row(row: dict[str, Any]) -> MaterialGroupRecord:
-    """Map one API resultado object to MaterialGroupRecord.
+    """Mapeia um objeto resultado da API para MaterialGroupRecord.
 
-    Example:
+    Exemplo:
         record = map_material_group_row({"codigoGrupo": 1, "nomeGrupo": "x", ...})
     """
     return MaterialGroupRecord(
@@ -35,6 +37,7 @@ def map_material_group_row(row: dict[str, Any]) -> MaterialGroupRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-material/1_consultarGrupoMaterial e grava o resultado na tabela material_group."""
     run_page_batch_ingestion(
         logger_name="material_group",
         endpoint_path=ENDPOINT_PATH,

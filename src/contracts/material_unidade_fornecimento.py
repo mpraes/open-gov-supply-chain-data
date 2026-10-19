@@ -1,10 +1,12 @@
+"""Contrato da linha de unidade de fornecimento de consultarMaterialUnidadeFornecimento."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class MaterialUnidadeFornecimentoRecord(BaseModel):
-    """Validated supply-unit row from consultarMaterialUnidadeFornecimento.
+    """Linha validada de unidade de fornecimento de consultarMaterialUnidadeFornecimento.
 
-    Example:
+    Exemplo:
         MaterialUnidadeFornecimentoRecord(
             cod_pdm=1001,
             sigla_unidade_fornecimento="un",
@@ -35,6 +37,7 @@ class MaterialUnidadeFornecimentoRecord(BaseModel):
     @field_validator("capacidade_unidade_fornecimento", mode="before")
     @classmethod
     def capacidade_as_float(cls, value: object) -> float | None:
+        """Coage capacidade_unidade_fornecimento para float; None permanece None e bool é rejeitado."""
         if value is None:
             return None
         if isinstance(value, bool) or not isinstance(value, (int, float)):
@@ -46,6 +49,7 @@ class MaterialUnidadeFornecimentoRecord(BaseModel):
     @field_validator("sigla_unidade_fornecimento")
     @classmethod
     def sigla_must_be_upper_non_empty(cls, value: str) -> str:
+        """Rejeita sigla_unidade_fornecimento vazia e devolve o texto em maiúsculas."""
         cleaned = value.strip()
         if not cleaned:
             raise ValueError("sigla_unidade_fornecimento must be non-empty")
@@ -58,6 +62,7 @@ class MaterialUnidadeFornecimentoRecord(BaseModel):
     )
     @classmethod
     def optional_text_upper(cls, value: str | None) -> str | None:
+        """Converte nome_unidade_fornecimento, descricao_unidade_fornecimento e sigla_unidade_medida para maiúsculas; vazio vira None."""
         if value is None:
             return None
         cleaned = value.strip()

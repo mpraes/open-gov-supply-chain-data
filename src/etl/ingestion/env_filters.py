@@ -1,3 +1,5 @@
+"""Lê datas, inteiros e textos obrigatórios ou opcionais do arquivo de ambiente."""
+
 from datetime import date
 from pathlib import Path
 
@@ -10,9 +12,9 @@ def require_iso_date_pair(
     inicial_key: str,
     final_key: str,
 ) -> tuple[str, str]:
-    """Load a required YYYY-MM-DD pair from the env file.
+    """Carrega um par obrigatório YYYY-MM-DD do arquivo de ambiente.
 
-    Example:
+    Exemplo:
         require_iso_date_pair(Path(".env"), load, "A", "B")
     """
     inicial = _require_iso_date(load_secret(env_path, inicial_key), inicial_key)
@@ -21,9 +23,9 @@ def require_iso_date_pair(
 
 
 def require_int_value(env_path: Path, load_secret: LoadSecret, key: str) -> int:
-    """Load a required integer env value.
+    """Carrega um inteiro obrigatório do ambiente.
 
-    Example:
+    Exemplo:
         require_int_value(Path(".env"), load, "MOD")
     """
     raw = load_secret(env_path, key)
@@ -33,9 +35,9 @@ def require_int_value(env_path: Path, load_secret: LoadSecret, key: str) -> int:
 
 
 def require_text(env_path: Path, load_secret: LoadSecret, key: str) -> str:
-    """Load a required non-empty env string.
+    """Carrega um texto obrigatório e não vazio do ambiente.
 
-    Example:
+    Exemplo:
         require_text(Path(".env"), load, "ORGAO")
     """
     value = load_secret(env_path, key).strip()
@@ -45,9 +47,9 @@ def require_text(env_path: Path, load_secret: LoadSecret, key: str) -> str:
 
 
 def optional_text(env_path: Path, load_secret: LoadSecret, key: str) -> str | None:
-    """Load an optional env string; missing or blank becomes None.
+    """Carrega um texto opcional do ambiente; ausente ou em branco vira None.
 
-    Example:
+    Exemplo:
         optional_text(Path(".env"), load, "UASG")
     """
     try:
@@ -66,9 +68,9 @@ def optional_iso_date_pair(
     inicial_key: str,
     final_key: str,
 ) -> tuple[str, str] | None:
-    """Load an optional YYYY-MM-DD pair; both missing becomes None.
+    """Carrega um par opcional YYYY-MM-DD; os dois ausentes viram None.
 
-    Example:
+    Exemplo:
         optional_iso_date_pair(Path(".env"), load, "A", "B")
     """
     inicial = optional_text(env_path, load_secret, inicial_key)
@@ -84,9 +86,9 @@ def optional_iso_date_pair(
 
 
 def default_iso_date_pair(*, today: date | None = None) -> tuple[str, str]:
-    """Full ISO dump window from 2000-01-01 through `today`.
+    """Janela completa de carga ISO, de 2000-01-01 até `today`.
 
-    Example:
+    Exemplo:
         default_iso_date_pair(today=date(2026, 9, 22))
     """
     day = today if today is not None else date.today()
@@ -94,6 +96,7 @@ def default_iso_date_pair(*, today: date | None = None) -> tuple[str, str]:
 
 
 def _require_iso_date(raw: str, label: str) -> str:
+    """Recusa o valor que não for YYYY-MM-DD."""
     try:
         date.fromisoformat(raw)
     except ValueError as exc:

@@ -1,3 +1,5 @@
+"""Ingere consultarPregoes na tabela legado_pregao."""
+
 from typing import Any
 
 from contracts.legado_pregao import LegadoPregaoRecord
@@ -15,19 +17,21 @@ UPSERT_SQL = legado_upsert_sql(TABLE_NAME)
 
 
 def map_legado_pregao_row(row: dict[str, Any]) -> LegadoPregaoRecord:
-    """Map one consultarPregoes resultado object.
+    """Mapeia um objeto resultado de consultarPregoes.
 
-    Example:
+    Exemplo:
         record = map_legado_pregao_row({"id_compra": "p1", "no_ausg": "x"})
     """
     return LegadoPregaoRecord(**legado_pregao_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarPregoes na tabela legado_pregao."""
     for_each_date_slice(_ingest_window)
 
 
 def _ingest_window(inicial: str, final: str) -> None:
+    """Ingere consultarPregoes da janela do edital na tabela legado_pregao."""
     run_page_batch_ingestion(
         logger_name="legado_pregao",
         endpoint_path=ENDPOINT_PATH,

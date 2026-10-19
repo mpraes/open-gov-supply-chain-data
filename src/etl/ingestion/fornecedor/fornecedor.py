@@ -1,3 +1,5 @@
+"""Ingere fornecedores ativos e inativos na tabela fornecedor."""
+
 from etl.ingestion.remaining_maps import map_fornecedor_row
 from etl.ingestion.remaining_query_params import fornecedor_query_params, slice_job_name
 from etl.ingestion.remaining_run import run_remaining_ingestion
@@ -7,6 +9,7 @@ PARALLEL_PAGES = 1
 
 
 def main() -> None:
+    """Consulta /modulo-fornecedor/1_consultarFornecedor para cadastros ativos e inativos e grava na tabela fornecedor."""
     for ativo in (True, False):
         run_remaining_ingestion(
             logger_name="fornecedor",

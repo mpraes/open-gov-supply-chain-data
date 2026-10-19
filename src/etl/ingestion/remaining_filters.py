@@ -1,3 +1,5 @@
+"""Monta as janelas e chaves de filtro das cargas de contratação, ARP e Alice."""
+
 from datetime import date
 from pathlib import Path
 
@@ -11,9 +13,9 @@ PNCP_CONTRATACAO_MODALIDADES: tuple[int, ...] = tuple(range(1, 14))
 def contratacoes_dates(
     env_path: Path, load_secret: LoadSecret, *, today: date | None = None
 ) -> tuple[str, str]:
-    """Full contratação window. Date keys in the env file are not applied.
+    """Janela completa de contratação. As chaves de data no arquivo de ambiente não são aplicadas.
 
-    Example:
+    Exemplo:
         contratacoes_dates(Path(".env"), load, today=date(2026, 9, 22))
     """
     del env_path, load_secret
@@ -23,9 +25,9 @@ def contratacoes_dates(
 def contratacoes_modalidades(
     env_path: Path, load_secret: LoadSecret
 ) -> tuple[int, ...]:
-    """Every PNCP modalidade. A single CONTRATACOES_MODALIDADE key is not applied.
+    """Todas as modalidades do PNCP. A chave CONTRATACOES_MODALIDADE no arquivo de ambiente não é aplicada.
 
-    Example:
+    Exemplo:
         contratacoes_modalidades(Path(".env"), load) == tuple(range(1, 14))
     """
     del env_path, load_secret
@@ -35,9 +37,9 @@ def contratacoes_modalidades(
 def arp_dates(
     env_path: Path, load_secret: LoadSecret, *, today: date | None = None
 ) -> tuple[str, str]:
-    """Full ARP window. Date keys in the env file are not applied.
+    """Janela completa de ARP. As chaves de data no arquivo de ambiente não são aplicadas.
 
-    Example:
+    Exemplo:
         arp_dates(Path(".env"), load, today=date(2026, 9, 22))
     """
     del env_path, load_secret
@@ -45,9 +47,9 @@ def arp_dates(
 
 
 def arp_ata_header(env_path: Path, load_secret: LoadSecret) -> tuple[str, str] | None:
-    """Load ARP ATA header keys, or None when both are missing.
+    """Carrega as chaves de cabeçalho da ATA da ARP, ou None quando as duas estão ausentes.
 
-    Example:
+    Exemplo:
         arp_ata_header(Path(".env"), load)
     """
     ata = optional_text(env_path, load_secret, "ARP_NUMERO_ATA")
@@ -58,9 +60,9 @@ def arp_ata_header(env_path: Path, load_secret: LoadSecret) -> tuple[str, str] |
 def arp_ata_keys(
     env_path: Path, load_secret: LoadSecret
 ) -> tuple[str, str, str] | None:
-    """Load ARP ATA item keys, or None when all three are missing.
+    """Carrega as chaves de item da ATA da ARP, ou None quando as três estão ausentes.
 
-    Example:
+    Exemplo:
         arp_ata_keys(Path(".env"), load)
     """
     header = arp_ata_header(env_path, load_secret)
@@ -77,9 +79,9 @@ def arp_ata_keys(
 def alice_datetimes(
     env_path: Path, load_secret: LoadSecret, *, today: date | None = None
 ) -> tuple[str, str]:
-    """Full Alice window. Datetime keys in the env file are not applied.
+    """Janela completa do Alice. As chaves de data e hora no arquivo de ambiente não são aplicadas.
 
-    Example:
+    Exemplo:
         alice_datetimes(Path(".env"), load, today=date(2026, 9, 22))
     """
     del env_path, load_secret
@@ -89,6 +91,7 @@ def alice_datetimes(
 def _optional_pair(
     left: str | None, right: str | None, left_key: str, right_key: str
 ) -> tuple[str, str] | None:
+    """Devolve o par quando os dois valores existem, None quando os dois faltam, e recusa só um lado."""
     if left is None and right is None:
         return None
     if left is None or right is None:
@@ -99,5 +102,6 @@ def _optional_pair(
 
 
 def _alice_full_window(today: date | None) -> tuple[str, str]:
+    """Monta a janela de 01/01/2000 00:00:00 até 23:59:59 de today."""
     day = today if today is not None else date.today()
     return "01/01/2000 00:00:00", f"{day.strftime('%d/%m/%Y')} 23:59:59"

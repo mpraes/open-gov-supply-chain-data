@@ -1,3 +1,5 @@
+"""Ingere unidades de medida de serviço na tabela servico_unidade_medida."""
+
 from typing import Any
 
 from contracts.servico_unidade_medida import ServicoUnidadeMedidaRecord
@@ -23,9 +25,9 @@ data_hora_carga = now();
 
 
 def map_servico_unidade_medida_row(row: dict[str, Any]) -> ServicoUnidadeMedidaRecord:
-    """Map one API resultado object to ServicoUnidadeMedidaRecord.
+    """Mapeia um objeto resultado da API para ServicoUnidadeMedidaRecord.
 
-    Example:
+    Exemplo:
         record = map_servico_unidade_medida_row({"codigoServico": 100, ...})
     """
     return ServicoUnidadeMedidaRecord(
@@ -37,6 +39,7 @@ def map_servico_unidade_medida_row(row: dict[str, Any]) -> ServicoUnidadeMedidaR
 
 
 def main() -> None:
+    """Consulta /modulo-servico/7_consultarUndMedidaServico e grava o resultado na tabela servico_unidade_medida."""
     run_page_batch_ingestion(
         logger_name="servico_unidade_medida",
         endpoint_path=ENDPOINT_PATH,

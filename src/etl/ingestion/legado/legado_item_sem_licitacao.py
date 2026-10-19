@@ -1,3 +1,5 @@
+"""Ingere consultarCompraItensSemLicitacao na tabela legado_item_sem_licitacao."""
+
 from typing import Any
 
 from contracts.legado_item_sem_licitacao import LegadoItemSemLicitacaoRecord
@@ -17,19 +19,21 @@ UPSERT_SQL = legado_upsert_sql(TABLE_NAME)
 
 
 def map_legado_item_sem_licitacao_row(row: dict[str, Any]) -> LegadoItemSemLicitacaoRecord:
-    """Map one consultarCompraItensSemLicitacao resultado object.
+    """Mapeia um objeto resultado de consultarCompraItensSemLicitacao.
 
-    Example:
+    Exemplo:
         record = map_legado_item_sem_licitacao_row({"id_compra": "d1", "id_compra_item": "i2"})
     """
     return LegadoItemSemLicitacaoRecord(**legado_item_sem_licitacao_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarCompraItensSemLicitacao na tabela legado_item_sem_licitacao."""
     for_each_dump_year(_ingest_year)
 
 
 def _ingest_year(ano: int) -> None:
+    """Ingere consultarCompraItensSemLicitacao do ano na tabela legado_item_sem_licitacao."""
     run_page_batch_ingestion(
         logger_name="legado_item_sem_licitacao",
         endpoint_path=ENDPOINT_PATH,

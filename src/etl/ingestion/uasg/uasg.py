@@ -1,3 +1,5 @@
+"""Ingere o cadastro de UASG na tabela uasg."""
+
 from typing import Any
 
 from contracts.uasg import UasgRecord
@@ -55,15 +57,16 @@ data_hora_carga = now();
 
 
 def map_uasg_row(row: dict[str, Any]) -> UasgRecord:
-    """Map one consultarUasg resultado object to UasgRecord.
+    """Mapeia um objeto resultado de consultarUasg para UasgRecord.
 
-    Example:
+    Exemplo:
         record = map_uasg_row({"codigoUasg": "153001", "nomeUasg": "x", ...})
     """
     return UasgRecord(**uasg_fields(row))
 
 
 def main() -> None:
+    """Consulta /modulo-uasg/1_consultarUasg para UASGs ativas e inativas e grava o resultado na tabela uasg."""
     for status in (True, False):
         run_page_batch_ingestion(
             logger_name="uasg",

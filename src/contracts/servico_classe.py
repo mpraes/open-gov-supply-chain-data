@@ -1,12 +1,14 @@
+"""Contrato da linha de classe de consultarClasseServico."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from contracts.text_normalize import upper_non_empty
 
 
 class ServicoClasseRecord(BaseModel):
-    """Validated classe row from consultarClasseServico.
+    """Linha validada de classe de consultarClasseServico.
 
-    Example:
+    Exemplo:
         ServicoClasseRecord(
             cod_classe=4, cod_grupo=3, nome_grupo="g", nome_classe="c",
             status_classe=True, data_hora_atualizacao="2024-01-15T10:30:00",
@@ -25,4 +27,5 @@ class ServicoClasseRecord(BaseModel):
     @field_validator("nome_grupo", "nome_classe")
     @classmethod
     def nomes_upper(cls, value: str) -> str:
+        """Rejeita nome_grupo e nome_classe vazios e devolve o texto em maiúsculas."""
         return upper_non_empty(value, "nome")

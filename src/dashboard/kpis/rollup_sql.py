@@ -1,3 +1,5 @@
+"""Monta o SQL dos rollups mensais e snapshots de KPI."""
+
 from etl.ingestion.dest_schema import require_sql_ident
 
 from dashboard.kpis.types import Timeframe
@@ -10,9 +12,9 @@ _JANELAS = frozenset({"all", "12m"})
 
 
 def require_origem(origem: str) -> str:
-    """Accept only the two fact origins used by dashboard rollups.
+    """Aceita só as duas origens de fato usadas nos rollups do dashboard.
 
-    Example:
+    Exemplo:
         require_origem("material") == "material"
     """
     if origem not in _ORIGENS:
@@ -23,6 +25,14 @@ def require_origem(origem: str) -> str:
 
 
 def sum_origem_sql(origem: str, pred: str) -> str:
+    """Soma valor_total em analytics.kpi_mes_origem para a origem e o predicado pred.
+
+    Exemplo:
+        sum_origem_sql("material", "TRUE") == (
+            "SELECT COALESCE(SUM(valor_total), 0) "
+            "FROM analytics.kpi_mes_origem WHERE origem = 'material' AND TRUE"
+        )
+    """
     origin = require_origem(origem)
     return (
         "SELECT COALESCE(SUM(valor_total), 0) "
@@ -31,6 +41,13 @@ def sum_origem_sql(origem: str, pred: str) -> str:
 
 
 def sum_both_origens_sql(pred: str) -> str:
+    """Soma valor_total em analytics.kpi_mes_origem para material e servico no predicado pred.
+
+    Exemplo:
+        sum_both_origens_sql("TRUE") == (
+            "SELECT COALESCE(SUM(valor_total), 0) FROM analytics.kpi_mes_origem WHERE TRUE"
+        )
+    """
     return (
         "SELECT COALESCE(SUM(valor_total), 0) "
         f"FROM analytics.kpi_mes_origem WHERE {pred}"
@@ -38,6 +55,15 @@ def sum_both_origens_sql(pred: str) -> str:
 
 
 def monthly_origem_sql(origem: str, pred: str) -> str:
+    """Agrupa valor_total de kpi_mes_origem por mês para a origem e o predicado pred.
+
+    Exemplo:
+        monthly_origem_sql("material", "TRUE") == (
+            "SELECT to_char(mes, 'YYYY-MM'), COALESCE(SUM(valor_total), 0) "
+            "FROM analytics.kpi_mes_origem WHERE origem = 'material' AND TRUE "
+            "AND mes IS NOT NULL GROUP BY 1 ORDER BY 1"
+        )
+    """
     origin = require_origem(origem)
     return (
         "SELECT to_char(mes, 'YYYY-MM'), COALESCE(SUM(valor_total), 0) "
@@ -47,6 +73,15 @@ def monthly_origem_sql(origem: str, pred: str) -> str:
 
 
 def monthly_both_origens_sql(pred: str) -> str:
+    """Agrupa valor_total de kpi_mes_origem por mês para material e servico no predicado pred.
+
+    Exemplo:
+        monthly_both_origens_sql("TRUE") == (
+            "SELECT to_char(mes, 'YYYY-MM'), COALESCE(SUM(valor_total), 0) "
+            "FROM analytics.kpi_mes_origem WHERE TRUE AND mes IS NOT NULL "
+            "GROUP BY 1 ORDER BY 1"
+        )
+    """
     return (
         "SELECT to_char(mes, 'YYYY-MM'), COALESCE(SUM(valor_total), 0) "
         f"FROM analytics.kpi_mes_origem WHERE {pred} AND mes IS NOT NULL "
@@ -55,6 +90,13 @@ def monthly_both_origens_sql(pred: str) -> str:
 
 
 def distinct_key_sql(table: str, key: str, pred: str) -> str:
+    """Conta chaves distintas de uma tabela de analytics filtrada por pred.
+
+    Exemplo:
+        distinct_key_sql("kpi_mes_origem", "origem", "TRUE") == (
+            "SELECT COUNT(DISTINCT origem) FROM analytics.kpi_mes_origem WHERE TRUE"
+        )
+    """
     ident_table = require_sql_ident(table, "table")
     ident_key = require_sql_ident(key, "column")
     return (
@@ -64,9 +106,9 @@ def distinct_key_sql(table: str, key: str, pred: str) -> str:
 
 
 def spend_source(timeframe: Timeframe, monthly: str, total: str) -> str:
-    """Use pre-summed totals for all-time; monthly grain for the 12m window.
+    """Usa totais pré-somados no período completo; granularidade mensal na janela de 12 meses.
 
-    Example:
+    Exemplo:
         spend_source("all", "kpi_mes_fornecedor", "kpi_fornecedor_total")
     """
     chosen = total if timeframe == "all" else monthly
@@ -74,8 +116,16 @@ def spend_source(timeframe: Timeframe, monthly: str, total: str) -> str:
 
 
 def distinct_total_sql(
-    table: str, key: str, timeframe: Timeframe, *, origem: str | None = None
+    table: str, key: str, timeframe: Timeframe,     *, origem: str | None = None
 ) -> str:
+    """Conta chaves distintas na janela, filtrando origem quando ela é informada.
+
+    Exemplo:
+        distinct_total_sql("kpi_fornecedor_janela", "n_fornecedor", "all") == (
+            "SELECT COUNT(DISTINCT n_fornecedor) "
+            "FROM analytics.kpi_fornecedor_janela WHERE TRUE"
+        )
+    """
     ident = require_sql_ident(table, "table")
     ident_key = require_sql_ident(key, "column")
     pred = (
@@ -93,6 +143,11 @@ def distinct_total_sql(
 
 
 def require_qualified_table(value: str) -> str:
+    """Exige schema.ident e devolve os dois identificadores validados.
+
+    Exemplo:
+        require_qualified_table("analytics.dim_fornecedor") == "analytics.dim_fornecedor"
+    """
     schema, sep, table = value.partition(".")
     if sep != ".":
         raise ValueError(
@@ -110,6 +165,19 @@ def spend_leader_sql(
     *,
     extra_pred: str = "",
 ) -> str:
+    """Monta o top 8 de gasto com rótulo vindo do LEFT JOIN na dimensão.
+
+    Exemplo:
+        spend_leader_sql(
+            "kpi_mes_fornecedor", "codigo", "d.nome", "analytics.dim_fornecedor", "TRUE"
+        ) == (
+            "SELECT COALESCE(d.nome, CAST(s.codigo AS text)), s.codigo, s.valor_total "
+            "FROM (SELECT codigo, SUM(valor_total) AS valor_total "
+            "FROM analytics.kpi_mes_fornecedor WHERE TRUE "
+            "GROUP BY 1 ORDER BY 2 DESC LIMIT 8) s "
+            "LEFT JOIN analytics.dim_fornecedor d ON d.codigo = s.codigo"
+        )
+    """
     ident_table = require_sql_ident(table, "table")
     ident_key = require_sql_ident(key, "column")
     dim = require_qualified_table(dim_table)
@@ -125,9 +193,9 @@ def spend_leader_sql(
 
 
 def require_janela(timeframe: Timeframe) -> str:
-    """Accept only the two dashboard windows stored on snapshot tables.
+    """Aceita só as duas janelas do dashboard gravadas nas tabelas de snapshot.
 
-    Example:
+    Exemplo:
         require_janela("12m") == "12m"
     """
     if timeframe not in _JANELAS:
@@ -138,6 +206,11 @@ def require_janela(timeframe: Timeframe) -> str:
 
 
 def require_top_tabela(tabela: str) -> str:
+    """Aceita só as tabelas de snapshot do ranking de gasto.
+
+    Exemplo:
+        require_top_tabela("fornecedor") == "fornecedor"
+    """
     if tabela not in _TOP_TABELAS:
         raise ValueError(
             f"tabela expected one of {set(_TOP_TABELAS)}, got {tabela!r}"
@@ -146,9 +219,9 @@ def require_top_tabela(tabela: str) -> str:
 
 
 def priced_count_sql(column: str, timeframe: Timeframe) -> str:
-    """Read a precomputed distinct-count column for the selected window.
+    """Lê a coluna de contagem distinta pré-calculada da janela selecionada.
 
-    Example:
+    Exemplo:
         priced_count_sql("n_fornecedor", "12m")
     """
     ident = require_sql_ident(column, "column")
@@ -162,9 +235,9 @@ def priced_count_sql(column: str, timeframe: Timeframe) -> str:
 def top_spend_sql(
     tabela: str, timeframe: Timeframe, *, origem: str = "all"
 ) -> str:
-    """Read precomputed top-8 spend rows; no GROUP BY at request time.
+    """Lê as 8 linhas de gasto pré-calculadas; sem GROUP BY na hora da requisição.
 
-    Example:
+    Exemplo:
         top_spend_sql("item_material", "12m")
     """
     name = require_top_tabela(tabela)

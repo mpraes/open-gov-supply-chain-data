@@ -1,3 +1,5 @@
+"""Lista as colunas e as chaves obrigatórias das tabelas do módulo legado."""
+
 LICITACAO_REQUIRED = ("id_compra",)
 LICITACAO_COLUMNS = (
     "id_compra",

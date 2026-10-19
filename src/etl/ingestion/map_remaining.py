@@ -1,3 +1,5 @@
+"""Converte linhas dos demais endpoints de lista para as colunas snake_case do destino."""
+
 import json
 from typing import Any
 
@@ -43,9 +45,9 @@ def mapped_columns(
     columns: tuple[str, ...],
     extra: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Snake-case an API row and keep only declared columns.
+    """Converte a linha da API para snake_case e mantém só as colunas declaradas.
 
-    Example:
+    Exemplo:
         mapped_columns({"idCompra": "1"}, ("id_compra",), ("id_compra", "objeto"))
     """
     fields = snake_row(row)
@@ -60,36 +62,36 @@ def mapped_columns(
 
 
 def contratacao_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarContratacoes_PNCP_14133 to contratacao columns."""
+    """Mapeia consultarContratacoes_PNCP_14133 para as colunas de contratacao."""
     return mapped_columns(row, CONTRATACAO_PK, CONTRATACAO_COLUMNS)
 
 
 def contratacao_item_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarItensContratacoes_PNCP_14133 to contratacao_item columns."""
+    """Mapeia consultarItensContratacoes_PNCP_14133 para as colunas de contratacao_item."""
     return mapped_columns(row, CONTRATACAO_ITEM_PK, CONTRATACAO_ITEM_COLUMNS)
 
 
 def contratacao_resultado_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarResultadoItensContratacoes to contratacao_resultado columns."""
+    """Mapeia consultarResultadoItensContratacoes para as colunas de contratacao_resultado."""
     return mapped_columns(row, CONTRATACAO_RESULTADO_PK, CONTRATACAO_RESULTADO_COLUMNS)
 
 
 def arp_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarARP to arp columns."""
+    """Mapeia consultarARP para as colunas de arp."""
     return mapped_columns(row, ARP_PK, ARP_COLUMNS, extra=arp_pncp_ata_when_missing(row))
 
 
 def arp_item_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarARPItem to arp_item columns."""
+    """Mapeia consultarARPItem para as colunas de arp_item."""
     return mapped_columns(
         row, ARP_ITEM_PK, ARP_ITEM_COLUMNS, extra=arp_pncp_ata_when_missing(row)
     )
 
 
 def arp_pncp_ata_when_missing(row: dict[str, Any]) -> dict[str, Any]:
-    """Derive PK from unidade+ata when consultarARP omits numeroControlePncpAta.
+    """Deriva a chave primária de unidade+ata quando consultarARP omite numeroControlePncpAta.
 
-    Example:
+    Exemplo:
         arp_pncp_ata_when_missing(
             {"codigoUnidadeGerenciadora": "120636",
              "numeroAtaRegistroPreco": "00265/2026"}
@@ -111,7 +113,7 @@ def arp_pncp_ata_when_missing(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def arp_unidade_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarUnidadesItem to arp_unidade_item columns."""
+    """Mapeia consultarUnidadesItem para as colunas de arp_unidade_item."""
     return mapped_columns(row, ARP_UNIDADE_PK, ARP_UNIDADE_COLUMNS)
 
 
@@ -121,7 +123,7 @@ def arp_empenho_fields(
     numero_ata: str,
     unidade_gerenciadora: str,
 ) -> dict[str, Any]:
-    """Map consultarEmpenhosSaldoItem and attach the ATA filter keys."""
+    """Mapeia consultarEmpenhosSaldoItem e anexa as chaves de filtro da ATA."""
     return mapped_columns(
         row,
         ARP_EMPENHO_PK,
@@ -131,39 +133,39 @@ def arp_empenho_fields(
 
 
 def arp_adesao_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarAdesoesItem to arp_adesao columns."""
+    """Mapeia consultarAdesoesItem para as colunas de arp_adesao."""
     return mapped_columns(row, ARP_ADESAO_PK, ARP_ADESAO_COLUMNS)
 
 
 def contrato_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarContratos to contrato columns."""
+    """Mapeia consultarContratos para as colunas de contrato."""
     return mapped_columns(row, CONTRATO_PK, CONTRATO_COLUMNS)
 
 
 def contrato_item_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarContratosItem to contrato_item columns."""
+    """Mapeia consultarContratosItem para as colunas de contrato_item."""
     return mapped_columns(row, CONTRATO_ITEM_PK, CONTRATO_ITEM_COLUMNS)
 
 
 def fornecedor_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarFornecedor and derive ni_fornecedor from CNPJ or CPF."""
+    """Mapeia consultarFornecedor e deriva ni_fornecedor do CNPJ ou do CPF."""
     snake = snake_row(row)
     ni = snake.get("cnpj") or snake.get("cpf")
     return mapped_columns(row, FORNECEDOR_PK, FORNECEDOR_COLUMNS, extra={"ni_fornecedor": ni})
 
 
 def indicador_consolidado_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarIndicadoresConsolidados, ignoring date-named keys."""
+    """Mapeia consultarIndicadoresConsolidados, ignorando chaves com nome de data."""
     return mapped_columns(row, INDICADOR_CONSOLIDADO_PK, INDICADOR_CONSOLIDADO_COLUMNS)
 
 
 def indicador_periodo_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarIndicadoresPorPeriodo to indicador_periodo columns."""
+    """Mapeia consultarIndicadoresPorPeriodo para as colunas de indicador_periodo."""
     return mapped_columns(row, INDICADOR_PERIODO_PK, INDICADOR_PERIODO_COLUMNS)
 
 
 def ocds_release_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Flatten one OCDS release into tabular columns plus JSON payload."""
+    """Achata um release OCDS em colunas tabulares e no payload JSON."""
     buyer = row.get("buyer") if isinstance(row.get("buyer"), dict) else {}
     tender = row.get("tender") if isinstance(row.get("tender"), dict) else {}
     extra = {
@@ -177,5 +179,5 @@ def ocds_release_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def alice_aviso_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map /alice/avisos-restritos objects to alice_aviso columns."""
+    """Mapeia objetos de /alice/avisos-restritos para as colunas de alice_aviso."""
     return mapped_columns(row, ALICE_AVISO_PK, ALICE_AVISO_COLUMNS)

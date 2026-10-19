@@ -1,3 +1,5 @@
+"""Ingere consultarRdc na tabela legado_rdc."""
+
 from typing import Any
 
 from contracts.legado_rdc import LegadoRdcRecord
@@ -15,19 +17,21 @@ UPSERT_SQL = legado_upsert_sql(TABLE_NAME)
 
 
 def map_legado_rdc_row(row: dict[str, Any]) -> LegadoRdcRecord:
-    """Map one consultarRdc resultado object.
+    """Mapeia um objeto resultado de consultarRdc.
 
-    Example:
+    Exemplo:
         record = map_legado_rdc_row({"identificador": "rdc-1", "objeto": "x"})
     """
     return LegadoRdcRecord(**legado_rdc_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarRdc na tabela legado_rdc."""
     for_each_date_slice(_ingest_window)
 
 
 def _ingest_window(inicial: str, final: str) -> None:
+    """Ingere consultarRdc da janela de publicação na tabela legado_rdc."""
     run_page_batch_ingestion(
         logger_name="legado_rdc",
         endpoint_path=ENDPOINT_PATH,

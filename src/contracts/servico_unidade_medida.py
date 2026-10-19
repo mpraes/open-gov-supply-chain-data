@@ -1,12 +1,14 @@
+"""Contrato da linha de unidade de medida de consultarUndMedidaServico."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from contracts.text_normalize import upper_non_empty, upper_optional
 
 
 class ServicoUnidadeMedidaRecord(BaseModel):
-    """Validated unidade-medida row from consultarUndMedidaServico.
+    """Linha validada de unidade de medida de consultarUndMedidaServico.
 
-    Example:
+    Exemplo:
         ServicoUnidadeMedidaRecord(
             cod_servico=100, sigla_unidade_medida="un",
             nome_unidade_medida="unidade", status_unidade_medida=True,
@@ -23,9 +25,11 @@ class ServicoUnidadeMedidaRecord(BaseModel):
     @field_validator("sigla_unidade_medida")
     @classmethod
     def sigla_upper(cls, value: str) -> str:
+        """Rejeita sigla_unidade_medida vazia e devolve o texto em maiúsculas."""
         return upper_non_empty(value, "sigla_unidade_medida")
 
     @field_validator("nome_unidade_medida")
     @classmethod
     def nome_upper(cls, value: str | None) -> str | None:
+        """Converte nome_unidade_medida para maiúsculas; vazio vira None."""
         return upper_optional(value)

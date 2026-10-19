@@ -10,6 +10,8 @@ from etl.ingestion.arp.missing_keys import (
 
 
 class FakeKeyCursor:
+    """Cursor falso que grava o SQL executado e devolve linhas prontas."""
+
     def __init__(self, rows: list[tuple[object, ...]]) -> None:
         self.rows = rows
         self.sql: str | None = None
@@ -35,6 +37,8 @@ class FakeKeyCursor:
 
 
 class FakeKeyConnection:
+    """Conexão falsa que abre esse cursor."""
+
     def __init__(self, cursor: FakeKeyCursor) -> None:
         self.cursor_obj = cursor
 

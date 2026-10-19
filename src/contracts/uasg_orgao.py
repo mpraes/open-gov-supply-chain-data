@@ -1,3 +1,5 @@
+"""Contrato da linha de órgão de consultarOrgao."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from contracts.text_normalize import strip_optional, upper_non_empty, upper_optional
@@ -19,9 +21,9 @@ _CODE_FIELDS = (
 
 
 class UasgOrgaoRecord(BaseModel):
-    """Validated órgão row from consultarOrgao.
+    """Linha validada de órgão de consultarOrgao.
 
-    Example:
+    Exemplo:
         UasgOrgaoRecord(codigo_orgao=36000, nome_orgao="mp", status_orgao=True)
     """
 
@@ -48,14 +50,17 @@ class UasgOrgaoRecord(BaseModel):
     @field_validator("nome_orgao")
     @classmethod
     def nome_upper(cls, value: str) -> str:
+        """Rejeita nome_orgao vazio e devolve o texto em maiúsculas."""
         return upper_non_empty(value, "nome_orgao")
 
     @field_validator(*_NAME_FIELDS)
     @classmethod
     def optional_names_upper(cls, value: str | None) -> str | None:
+        """Converte nome_mnemonico_orgao, nome_orgao_vinculado, nome_orgao_superior, nome_tipo_administracao, poder e esfera para maiúsculas; vazio vira None."""
         return upper_optional(value)
 
     @field_validator(*_CODE_FIELDS)
     @classmethod
     def optional_codes_strip(cls, value: str | None) -> str | None:
+        """Remove espaços de cnpj_cpf_orgao, cnpj_cpf_orgao_vinculado e cnpj_cpf_orgao_superior; vazio vira None."""
         return strip_optional(value)

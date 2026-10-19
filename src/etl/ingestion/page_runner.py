@@ -1,3 +1,5 @@
+"""Liga segredos, cursor e watermark ao laço de uma página da API por vez."""
+
 from collections.abc import Callable
 from logging import Logger
 from pathlib import Path
@@ -48,9 +50,9 @@ def run_page_batch_ingestion(
     date_watermark: DateWatermark | None = None,
     parallel_pages: int = 1,
 ) -> int:
-    """Ingest one API page at a time and persist a resume cursor.
+    """Ingere uma página da API por vez e persiste um cursor de retomada.
 
-    Example:
+    Exemplo:
         run_page_batch_ingestion(
             logger_name="material_item",
             endpoint_path="/modulo-material/4_consultarItemMaterial",
@@ -99,6 +101,7 @@ def _run_connected_pages(
     date_watermark: DateWatermark | None,
     parallel_pages: int,
 ) -> int:
+    """Garante etl_code_cursor, aplica o watermark e percorre as páginas, ou devolve 0 se a carga já alcançou o fim."""
     ensure_job_cursor_table(conn)
     resolved = _resolve_watermark(conn, query_params, job_name, date_watermark, log)
     if resolved is None:
@@ -127,6 +130,7 @@ def _resolve_watermark(
     date_watermark: DateWatermark | None,
     log: Logger,
 ) -> tuple[QueryParams | None, str] | None:
+    """Eleva a data inicial pelo máximo do destino e reescreve o nome do job, ou devolve None se a carga já alcançou o fim."""
     if date_watermark is None:
         return query_params, job_name
     if query_params is None:
@@ -158,6 +162,7 @@ def _loop_api_pages(
     fetch_page_fn: FetchOnePage,
     parallel_pages: int,
 ) -> int:
+    """Encadeia load_job_cursor, a busca da página, upsert_mapped_rows e save_job_cursor."""
     return run_page_batch_loop(
         load_cursor=lambda: load_job_cursor(conn, job_name),
         fetch_page=lambda pagina: fetch_page_fn(

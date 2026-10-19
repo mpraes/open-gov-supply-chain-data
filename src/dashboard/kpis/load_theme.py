@@ -1,3 +1,5 @@
+"""Despacha o carregamento de KPIs pelo tema do dashboard."""
+
 from collections.abc import Callable
 from dataclasses import asdict
 
@@ -23,6 +25,7 @@ _LOADERS: dict[str, Callable[[AnalyticsConnection, Timeframe], ThemeKpis]] = {
 def load_theme_kpis(
     theme: str, conn: AnalyticsConnection, timeframe: Timeframe
 ) -> ThemeKpis:
+    """Despacha o tema para o loader correspondente e devolve os ThemeKpis."""
     loader = _LOADERS.get(theme)
     if loader is None:
         raise ValueError(f"theme expected one of {set(THEMES)}, got {theme!r}")
@@ -30,6 +33,11 @@ def load_theme_kpis(
 
 
 def theme_kpis_json(payload: ThemeKpis) -> dict[str, object]:
+    """Converte ThemeKpis em um dicionário com cards, séries, rankings e leaderboards.
+
+    Exemplo:
+        theme_kpis_json(ThemeKpis((), (), (), (), (), ()))["cards"] == []
+    """
     return {
         "cards": [asdict(card) for card in payload.cards],
         "series": [asdict(series) for series in payload.series],

@@ -1,3 +1,5 @@
+"""Contrato da linha de RDC de consultarRdc."""
+
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 
 from contracts.coerce import coerce_id_text, coerce_optional_id_text
@@ -17,9 +19,9 @@ _NAME_FIELDS = (
 
 
 class LegadoRdcRecord(BaseModel):
-    """Validated RDC row from consultarRdc.
+    """Linha validada de RDC de consultarRdc.
 
-    Example:
+    Exemplo:
         LegadoRdcRecord(identificador="rdc-1", objeto="obra")
     """
 
@@ -49,14 +51,17 @@ class LegadoRdcRecord(BaseModel):
     @field_validator("identificador", mode="before")
     @classmethod
     def identity_text(cls, value: object, info: ValidationInfo) -> str:
+        """Converte identificador int ou str em texto sem espaços nas bordas."""
         return coerce_id_text(value, info.field_name)
 
     @field_validator("nome_responsavel", mode="before")
     @classmethod
     def optional_nome_responsavel(cls, value: object) -> str | None:
+        """Converte nome_responsavel int ou str em texto; vazio vira None."""
         return coerce_optional_id_text(value, "nome_responsavel")
 
     @field_validator(*_NAME_FIELDS)
     @classmethod
     def optional_names_upper(cls, value: str | None) -> str | None:
+        """Converte endereco_entrega_edital, forma_de_realizacao_licitacao, funcao_responsavel, informacoes_gerais, numero_processo, objeto, situacao_aviso, tipo_recurso e uf_uasg para maiúsculas; vazio vira None."""
         return upper_optional(value)

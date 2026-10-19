@@ -1,10 +1,12 @@
+"""Mapeia consultarMaterial, consultarServico e os detalhes para os campos dos registros de preço."""
+
 from typing import Any
 
 
 def preco_detalhe_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultar*Detalhe API keys to PrecoDetalheRecord fields.
+    """Mapeia as chaves das APIs consultar*Detalhe para os campos de PrecoDetalheRecord.
 
-    Example:
+    Exemplo:
         preco_detalhe_fields({"idCompra": 1, "idItemCompra": 2, ...})
     """
     return {
@@ -16,9 +18,9 @@ def preco_detalhe_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def preco_servico_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarServico API keys to PrecoServicoRecord fields.
+    """Mapeia as chaves de consultarServico para os campos de PrecoServicoRecord.
 
-    Example:
+    Exemplo:
         preco_servico_fields({"idCompra": "c1", "idItemCompra": 1, ...})
     """
     return {
@@ -30,9 +32,9 @@ def preco_servico_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def preco_material_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarMaterial API keys to PrecoMaterialRecord fields.
+    """Mapeia as chaves de consultarMaterial para os campos de PrecoMaterialRecord.
 
-    Example:
+    Exemplo:
         preco_material_fields({"idCompra": 1, "marca": "x", ...})
     """
     return {
@@ -42,6 +44,7 @@ def preco_material_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _preco_identity_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia idCompra, idItemCompra, numeroItemCompra e codigoItemCatalogo."""
     return {
         "id_compra": row["idCompra"],
         "id_item_compra": row["idItemCompra"],
@@ -51,6 +54,7 @@ def _preco_identity_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _preco_item_value_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia forma, julgamento, descrição, unidade, quantidade, preço e fornecedor do item."""
     return {
         "forma": row.get("forma"),
         "modalidade": row.get("modalidade"),
@@ -67,6 +71,7 @@ def _preco_item_value_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _preco_uasg_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia UASG, município, órgão, poder, esfera e as datas da compra."""
     return {
         "codigo_uasg": row.get("codigoUasg"),
         "nome_uasg": row.get("nomeUasg"),
@@ -86,6 +91,7 @@ def _preco_uasg_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _preco_servico_detalhe_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia objetoCompra, descricaoDetalhadaItem e dataAtualizacaoFato."""
     return {
         "objeto_compra": row.get("objetoCompra"),
         "descricao_detalhada_item": row.get("descricaoDetalhadaItem"),
@@ -94,6 +100,7 @@ def _preco_servico_detalhe_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _preco_material_extra_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia unidade de fornecimento, marca, classe, idCompraItem e PDM do material."""
     return {
         "sigla_unidade_fornecimento": row.get("siglaUnidadeFornecimento"),
         "nome_unidade_fornecimento": row.get("nomeUnidadeFornecimento"),

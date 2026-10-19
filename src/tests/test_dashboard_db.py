@@ -3,6 +3,8 @@ from dashboard.settings import DashboardSettings
 
 
 class FakeAnalyticsConnect:
+    """Falso que grava os kwargs de connect e devolve uma conexão sentinela."""
+
     def __init__(self) -> None:
         self.calls: list[dict[str, str]] = []
         self.connection = object()

@@ -1,3 +1,5 @@
+"""Logger JSON em stdout e em arquivos separados por nível."""
+
 import json
 import logging
 import sys
@@ -8,9 +10,10 @@ DEFAULT_LOG_DIR = Path(__file__).resolve().parent / "logs"
 
 
 class JsonFormatter(logging.Formatter):
-    """Format log records as one JSON object per line."""
+    """Formata registros de log como um objeto JSON por linha."""
 
     def format(self, record: logging.LogRecord) -> str:
+        """Serializa timestamp, level, message, logger e extra_fields em uma linha JSON."""
         payload: dict[str, object] = {
             "timestamp": datetime.fromtimestamp(
                 record.created, tz=timezone.utc
@@ -26,13 +29,15 @@ class JsonFormatter(logging.Formatter):
 
 
 class ExactLevelFilter(logging.Filter):
-    """Allow only records with an exact levelno."""
+    """Permite apenas registros com o levelno exato."""
 
     def __init__(self, level: int) -> None:
+        """Guarda o levelno que o filtro aceita."""
         super().__init__()
         self._level = level
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Aceita o registro somente quando levelno é igual ao nível guardado."""
         return record.levelno == self._level
 
 
@@ -41,9 +46,9 @@ def get_json_logger(
     level: int = logging.INFO,
     log_dir: Path | None = None,
 ) -> logging.Logger:
-    """Return a JSON logger writing to stdout and per-level files.
+    """Retorna um logger JSON que escreve no stdout e em arquivos por nível.
 
-    Example:
+    Exemplo:
         log = get_json_logger("material_group")
         log_info(log, "api_fetch_ok", status_code=200)
     """
@@ -65,6 +70,7 @@ def _add_writable_file_logs(
     name: str,
     formatter: logging.Formatter,
 ) -> None:
+    """Cria o diretório e anexa os arquivos info, warning e error quando a escrita é possível."""
     try:
         target_dir.mkdir(parents=True, exist_ok=True)
     except OSError:
@@ -82,6 +88,7 @@ def _add_writable_file_logs(
 
 
 def _build_stdout_log(formatter: logging.Formatter) -> logging.Handler:
+    """Monta o handler de stdout com o formatter JSON."""
     stdout_log = logging.StreamHandler(sys.stdout)
     stdout_log.setFormatter(formatter)
     return stdout_log
@@ -94,6 +101,7 @@ def _try_level_file_log(
     level_no: int,
     formatter: logging.Formatter,
 ) -> logging.Handler | None:
+    """Abre o arquivo do nível filtrado em levelno, ou devolve None se não puder criá-lo."""
     path = log_dir / f"{logger_name}_{level_name}.log"
     try:
         file_log = logging.FileHandler(path, encoding="utf-8")
@@ -106,15 +114,15 @@ def _try_level_file_log(
 
 
 def log_info(logger: logging.Logger, message: str, **fields: object) -> None:
-    """Log an INFO event with structured fields."""
+    """Registra um evento INFO com campos estruturados."""
     logger.info(message, extra={"extra_fields": fields})
 
 
 def log_warning(logger: logging.Logger, message: str, **fields: object) -> None:
-    """Log a WARNING event with structured fields."""
+    """Registra um evento WARNING com campos estruturados."""
     logger.warning(message, extra={"extra_fields": fields})
 
 
 def log_error(logger: logging.Logger, message: str, **fields: object) -> None:
-    """Log an ERROR event with structured fields."""
+    """Registra um evento ERROR com campos estruturados."""
     logger.error(message, extra={"extra_fields": fields})

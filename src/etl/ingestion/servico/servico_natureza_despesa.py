@@ -1,3 +1,5 @@
+"""Ingere naturezas de despesa de serviço na tabela servico_natureza_despesa."""
+
 from typing import Any
 
 from contracts.servico_natureza_despesa import ServicoNaturezaDespesaRecord
@@ -23,9 +25,9 @@ data_hora_carga = now();
 
 
 def map_servico_natureza_despesa_row(row: dict[str, Any]) -> ServicoNaturezaDespesaRecord:
-    """Map one API resultado object to ServicoNaturezaDespesaRecord.
+    """Mapeia um objeto resultado da API para ServicoNaturezaDespesaRecord.
 
-    Example:
+    Exemplo:
         record = map_servico_natureza_despesa_row({"codigoServico": 100, ...})
     """
     return ServicoNaturezaDespesaRecord(
@@ -37,6 +39,7 @@ def map_servico_natureza_despesa_row(row: dict[str, Any]) -> ServicoNaturezaDesp
 
 
 def main() -> None:
+    """Consulta /modulo-servico/8_consultarNaturezaDespesaServico e grava o resultado na tabela servico_natureza_despesa."""
     run_page_batch_ingestion(
         logger_name="servico_natureza_despesa",
         endpoint_path=ENDPOINT_PATH,

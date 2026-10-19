@@ -1,12 +1,14 @@
+"""Contrato da linha de natureza de despesa de consultarNaturezaDespesaServico."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from contracts.text_normalize import upper_optional
 
 
 class ServicoNaturezaDespesaRecord(BaseModel):
-    """Validated natureza-despesa row from consultarNaturezaDespesaServico.
+    """Linha validada de natureza de despesa de consultarNaturezaDespesaServico.
 
-    Example:
+    Exemplo:
         ServicoNaturezaDespesaRecord(
             cod_servico=100, cod_natureza_despesa="339039",
             nome_natureza_despesa="servicos", status_natureza_despesa=True,
@@ -23,6 +25,7 @@ class ServicoNaturezaDespesaRecord(BaseModel):
     @field_validator("cod_natureza_despesa")
     @classmethod
     def codigo_non_empty(cls, value: str) -> str:
+        """Rejeita cod_natureza_despesa vazio e devolve o texto sem espaços nas bordas."""
         cleaned = value.strip()
         if not cleaned:
             raise ValueError("cod_natureza_despesa must be non-empty")
@@ -31,4 +34,5 @@ class ServicoNaturezaDespesaRecord(BaseModel):
     @field_validator("nome_natureza_despesa")
     @classmethod
     def nome_upper(cls, value: str | None) -> str | None:
+        """Converte nome_natureza_despesa para maiúsculas; vazio vira None."""
         return upper_optional(value)

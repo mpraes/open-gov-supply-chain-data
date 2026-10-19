@@ -1,3 +1,5 @@
+"""Ingere seções de serviço na tabela servico_secao."""
+
 from typing import Any
 
 from contracts.servico_secao import ServicoSecaoRecord
@@ -19,9 +21,9 @@ data_hora_carga = now();
 
 
 def map_servico_secao_row(row: dict[str, Any]) -> ServicoSecaoRecord:
-    """Map one API resultado object to ServicoSecaoRecord.
+    """Mapeia um objeto resultado da API para ServicoSecaoRecord.
 
-    Example:
+    Exemplo:
         record = map_servico_secao_row({"codigoSecao": 1, "nomeSecao": "x", ...})
     """
     return ServicoSecaoRecord(
@@ -33,6 +35,7 @@ def map_servico_secao_row(row: dict[str, Any]) -> ServicoSecaoRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-servico/1_consultarSecaoServico e grava o resultado na tabela servico_secao."""
     run_page_batch_ingestion(
         logger_name="servico_secao",
         endpoint_path=ENDPOINT_PATH,

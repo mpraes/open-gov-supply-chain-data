@@ -2,6 +2,8 @@ from clients.compras_http import http_error_body
 
 
 class FakeHttpBody:
+    """Resposta falsa que expõe o texto configurado e devolve JSON vazio."""
+
     def __init__(self, text: object) -> None:
         self.text = text
         self.status_code = 200

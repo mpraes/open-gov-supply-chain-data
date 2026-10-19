@@ -1,3 +1,5 @@
+"""Monta os parâmetros de consulta dos demais endpoints de lista do compras.gov."""
+
 from clients.compras_api import QueryParams
 
 
@@ -6,7 +8,7 @@ def contratacao_query_params(
     data_final: str,
     modalidade: int,
 ) -> QueryParams:
-    """Required filters for consultarContratacoes_PNCP_14133."""
+    """Filtros obrigatórios de consultarContratacoes_PNCP_14133."""
     return {
         "dataPublicacaoPncpInicial": data_inicial,
         "dataPublicacaoPncpFinal": data_final,
@@ -15,7 +17,7 @@ def contratacao_query_params(
 
 
 def contratacao_item_query_params(data_inicial: str, data_final: str) -> QueryParams:
-    """Required filters for consultarItensContratacoes_PNCP_14133."""
+    """Filtros obrigatórios de consultarItensContratacoes_PNCP_14133."""
     return {
         "dataInclusaoPncpInicial": data_inicial,
         "dataInclusaoPncpFinal": data_final,
@@ -23,7 +25,7 @@ def contratacao_item_query_params(data_inicial: str, data_final: str) -> QueryPa
 
 
 def contratacao_resultado_query_params(data_inicial: str, data_final: str) -> QueryParams:
-    """Required filters for consultarResultadoItensContratacoes_PNCP_14133."""
+    """Filtros obrigatórios de consultarResultadoItensContratacoes_PNCP_14133."""
     return {
         "dataResultadoPncpInicial": data_inicial,
         "dataResultadoPncpFinal": data_final,
@@ -31,7 +33,7 @@ def contratacao_resultado_query_params(data_inicial: str, data_final: str) -> Qu
 
 
 def arp_query_params(data_inicial: str, data_final: str) -> QueryParams:
-    """Required filters for consultarARP by initial validity."""
+    """Filtros obrigatórios de consultarARP pela vigência inicial."""
     return {
         "dataVigenciaInicialMin": data_inicial,
         "dataVigenciaInicialMax": data_final,
@@ -39,7 +41,7 @@ def arp_query_params(data_inicial: str, data_final: str) -> QueryParams:
 
 
 def arp_fim_vigencia_query_params(data_inicial: str, data_final: str) -> QueryParams:
-    """Required filters for consultarARP_FimVigencia."""
+    """Filtros obrigatórios de consultarARP_FimVigencia."""
     return {
         "dataVigenciaFinalMin": data_inicial,
         "dataVigenciaFinalMax": data_final,
@@ -51,7 +53,7 @@ def arp_ata_query_params(
     unidade_gerenciadora: str,
     numero_item: str | None = None,
 ) -> QueryParams:
-    """Required ATA keys for ARP child endpoints 3/4/5."""
+    """Chaves obrigatórias da ATA nos endpoints filhos 3/4/5 da ARP."""
     params: dict[str, str | int | bool] = {
         "numeroAta": numero_ata,
         "unidadeGerenciadora": unidade_gerenciadora,
@@ -66,7 +68,7 @@ def contrato_query_params(
     data_inicial: str,
     data_final: str,
 ) -> QueryParams:
-    """Required filters for consultarContratos."""
+    """Filtros obrigatórios de consultarContratos."""
     return {
         "codigoOrgao": orgao,
         "dataVigenciaInicialMin": data_inicial,
@@ -79,7 +81,7 @@ def contrato_fim_vigencia_query_params(
     data_inicial: str,
     data_final: str,
 ) -> QueryParams:
-    """Required filters for consultarContratos_FimVigencia."""
+    """Filtros obrigatórios de consultarContratos_FimVigencia."""
     return {
         "codigoOrgao": orgao,
         "dataVigenciaFinalMin": data_inicial,
@@ -88,17 +90,17 @@ def contrato_fim_vigencia_query_params(
 
 
 def fornecedor_query_params(ativo: bool) -> QueryParams:
-    """Required status filter for consultarFornecedor."""
+    """Filtro de status obrigatório de consultarFornecedor."""
     return {"ativo": ativo}
 
 
 def indicador_periodo_query_params(ano: int) -> QueryParams:
-    """Required year for consultarIndicadoresPorPeriodo."""
+    """Ano obrigatório de consultarIndicadoresPorPeriodo."""
     return {"ano": ano}
 
 
 def ocds_query_params(buyer_id: str, data_inicial: str, data_final: str) -> QueryParams:
-    """Required filters for /modulo-ocds/1_releases."""
+    """Filtros obrigatórios de /modulo-ocds/1_releases."""
     return {
         "buyerID": buyer_id,
         "releaseStartDate": data_inicial,
@@ -107,7 +109,7 @@ def ocds_query_params(buyer_id: str, data_inicial: str, data_final: str) -> Quer
 
 
 def alice_aviso_query_params(data_inicial: str, data_final: str) -> QueryParams:
-    """Required Alice interval in DD/MM/YYYY HH:MM:SS."""
+    """Intervalo obrigatório do Alice no formato DD/MM/YYYY HH:MM:SS."""
     return {
         "dataInicioIntervalo": data_inicial,
         "dataFimIntervalo": data_final,
@@ -115,6 +117,6 @@ def alice_aviso_query_params(data_inicial: str, data_final: str) -> QueryParams:
 
 
 def slice_job_name(script: str, *parts: object) -> str:
-    """Resume-cursor name including the active filter slice."""
+    """Nome do cursor de retomada, incluindo a fatia ativa do filtro."""
     tokens = [script, *[str(part) for part in parts if part is not None]]
     return ":".join(tokens)

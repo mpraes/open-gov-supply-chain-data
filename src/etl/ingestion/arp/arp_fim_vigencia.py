@@ -1,3 +1,5 @@
+"""Ingere atas de registro de preço na tabela arp por vigência final."""
+
 from config.load_secret_key import load_secret_key_func
 from etl.ingestion.dest_watermark import DateWatermark
 from etl.ingestion.remaining_filters import arp_dates
@@ -8,6 +10,7 @@ from etl.ingestion.script_runner import DEFAULT_ENV_PATH
 
 
 def main() -> None:
+    """Lê o intervalo de datas e consulta /modulo-arp/1.2_consultarARP_FimVigencia em fatias de vigência final, gravando na tabela arp."""
     inicial, final = arp_dates(DEFAULT_ENV_PATH, load_secret_key_func)
     run_sliced_remaining_ingestion(
         data_inicial=inicial,

@@ -7,6 +7,8 @@ from clients.compras_api import fetch_resultado_pages_for_codes
 
 
 class FakeResponse:
+    """Resposta falsa que devolve o JSON configurado e levanta erro quando o status é 400 ou mais."""
+
     def __init__(self, payload: dict[str, Any], status_code: int = 200) -> None:
         self._payload = payload
         self.status_code = status_code
@@ -20,7 +22,7 @@ class FakeResponse:
 
 
 class FakeHttpGetByCodigo:
-    """Named fake that returns one page keyed by the `codigo` query param."""
+    """Falso que devolve uma página conforme o parâmetro `codigo`."""
 
     def __init__(self, pages_by_codigo: dict[str, dict[str, Any]]) -> None:
         self._pages_by_codigo = pages_by_codigo
@@ -40,7 +42,7 @@ class FakeHttpGetByCodigo:
 
 
 class OverlapHttpGetByCodigo:
-    """Named fake that blocks until two codes are in flight."""
+    """Falso que bloqueia até dois códigos estarem em voo ao mesmo tempo."""
 
     def __init__(self, pages_by_codigo: dict[str, dict[str, Any]]) -> None:
         self._pages_by_codigo = pages_by_codigo
@@ -66,7 +68,7 @@ class OverlapHttpGetByCodigo:
 
 
 class SlowFirstCodeHttpGet:
-    """Named fake that finishes the first code last after both have started."""
+    """Falso que termina o primeiro código por último, depois que os dois começaram."""
 
     def __init__(self, pages_by_codigo: dict[str, dict[str, Any]]) -> None:
         self._pages_by_codigo = pages_by_codigo
@@ -171,6 +173,8 @@ def test_fetch_resultado_pages_for_codes_returns_empty_when_no_codes() -> None:
 
 def test_fetch_resultado_pages_for_codes_pauses_between_codes() -> None:
     class FakeSleep:
+        """Falso que grava os segundos pedidos para dormir."""
+
         def __init__(self) -> None:
             self.calls: list[float] = []
 
@@ -245,6 +249,8 @@ def test_fetch_resultado_pages_for_codes_keeps_code_order_when_parallel() -> Non
 
 def test_fetch_resultado_pages_for_codes_skips_pause_when_parallel() -> None:
     class FakeSleep:
+        """Falso que grava os segundos pedidos para dormir."""
+
         def __init__(self) -> None:
             self.calls: list[float] = []
 
@@ -288,6 +294,8 @@ def test_fetch_resultado_pages_for_codes_resolves_params_on_caller_thread() -> N
 
 def test_fetch_resultado_pages_for_codes_raises_when_one_parallel_code_fails() -> None:
     class BoomOnSecondCodigo:
+        """Falso que levanta erro no código 20 e devolve a página do primeiro."""
+
         def __call__(
             self,
             url: str,

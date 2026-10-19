@@ -1,3 +1,5 @@
+"""Ingere o cadastro de órgãos na tabela uasg_orgao."""
+
 from typing import Any
 
 from contracts.uasg_orgao import UasgOrgaoRecord
@@ -48,15 +50,16 @@ data_hora_carga = now();
 
 
 def map_uasg_orgao_row(row: dict[str, Any]) -> UasgOrgaoRecord:
-    """Map one consultarOrgao resultado object to UasgOrgaoRecord.
+    """Mapeia um objeto resultado de consultarOrgao para UasgOrgaoRecord.
 
-    Example:
+    Exemplo:
         record = map_uasg_orgao_row({"codigoOrgao": 36000, "nomeOrgao": "x", ...})
     """
     return UasgOrgaoRecord(**uasg_orgao_fields(row))
 
 
 def main() -> None:
+    """Consulta /modulo-uasg/2_consultarOrgao para órgãos ativos e inativos e grava o resultado na tabela uasg_orgao."""
     for status in (True, False):
         run_page_batch_ingestion(
             logger_name="uasg_orgao",

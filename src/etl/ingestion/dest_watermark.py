@@ -1,3 +1,5 @@
+"""Eleva a data inicial da API até o máximo já gravado no destino."""
+
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -15,7 +17,7 @@ WhereClause = Mapping[str, str | int]
 
 @dataclass(frozen=True)
 class DateWatermark:
-    """Dest MAX(date) used to raise an API start-date query param."""
+    """Máximo de data no destino, usado para elevar o parâmetro de data inicial da API."""
 
     table: str
     column: str
@@ -28,9 +30,9 @@ class DateWatermark:
 def raise_date_window(
     env_inicial: str, env_final: str, dest_max: str | None
 ) -> tuple[str, str] | None:
-    """Raise the API start date to dest max, overlapping the last loaded day.
+    """Eleva a data inicial da API até o máximo do destino, com sobreposição do último dia carregado.
 
-    Example:
+    Exemplo:
         raise_date_window("2024-01-01", "2024-12-31", "2024-06-15")
     """
     if dest_max is None:
@@ -43,9 +45,9 @@ def raise_date_window(
 
 
 def iso_date_prefix(value: object) -> str | None:
-    """Normalize a dest MAX value to YYYY-MM-DD.
+    """Normaliza um valor MAX do destino para YYYY-MM-DD.
 
-    Example:
+    Exemplo:
         iso_date_prefix("2024-06-15T10:30:00") == "2024-06-15"
     """
     if value is None:
@@ -67,9 +69,9 @@ def max_dest_iso_date(
     column: str,
     where: WhereClause | None = None,
 ) -> str | None:
-    """Return MAX(column) from dest as YYYY-MM-DD, or None when empty.
+    """Retorna MAX(coluna) do destino como YYYY-MM-DD, ou None se estiver vazio.
 
-    Example:
+    Exemplo:
         max_dest_iso_date(conn, "contratacao", "data_publicacao_pncp")
     """
     sql, params = _max_sql(table, column, where)
@@ -87,9 +89,9 @@ def apply_date_watermark(
     query_params: QueryParams,
     watermark: DateWatermark,
 ) -> dict[str, str | int | bool] | None:
-    """Copy query params with a dest-raised start date, or None if caught up.
+    """Copia os parâmetros de consulta com a data inicial elevada pelo máximo do destino, ou None se a carga já alcançou o fim.
 
-    Example:
+    Exemplo:
         apply_date_watermark(conn, params, DateWatermark(...))
     """
     params = dict(query_params)
@@ -111,13 +113,14 @@ def with_dest_compra_inicio(
     stringify_code: bool = False,
     date_column: str = "data_compra",
 ) -> CodeParamsFn:
-    """Add dataCompraInicio from dest MAX(date_column) for one catalog code.
+    """Acrescenta dataCompraInicio a partir do MAX(date_column) do destino para um código de catálogo.
 
-    Example:
+    Exemplo:
         with_dest_compra_inicio(params_fn, conn, "preco_material", "codigo_pdm")
     """
 
     def wrapped(code: int) -> dict[str, str | int | bool]:
+        """Acrescenta dataCompraInicio com o MAX de date_column do código no destino."""
         params = dict(params_for_code(code))
         dest_max = max_dest_iso_date(
             conn,
@@ -133,15 +136,16 @@ def with_dest_compra_inicio(
 
 
 def _code_where_value(code: int, stringify_code: bool) -> str | int:
+    """Devolve o código como str quando stringify_code é verdadeiro e como int no outro caso."""
     if stringify_code:
         return str(code)
     return code
 
 
 def rewrite_job_slice(job_name: str, old_start: str, new_start: str) -> str:
-    """Swap the original window start inside a slice job name.
+    """Troca o início original da janela dentro do nome do job da fatia.
 
-    Example:
+    Exemplo:
         rewrite_job_slice("contratacao:2024-01-01:2024-12-31", "2024-01-01", "2024-06-15")
     """
     return job_name.replace(old_start, new_start, 1)
@@ -153,6 +157,7 @@ def _raised_param_window(
     inicial: str,
     final: str,
 ) -> tuple[str, str] | None:
+    """Eleva a janela pelo MAX do destino no formato iso ou alice."""
     dest_iso = max_dest_iso_date(conn, watermark.table, watermark.column, watermark.where)
     if watermark.kind == "alice":
         return _raise_alice_window(inicial, final, dest_iso)
@@ -162,6 +167,7 @@ def _raised_param_window(
 def _raise_alice_window(
     inicial: str, final: str, dest_iso: str | None
 ) -> tuple[str, str] | None:
+    """Eleva o início Alice até o MAX do destino e preserva o fim original."""
     raised = raise_date_window(_alice_to_iso(inicial), _alice_to_iso(final), dest_iso)
     if raised is None:
         return None
@@ -169,6 +175,7 @@ def _raise_alice_window(
 
 
 def _iso_from_text(raw: str) -> str | None:
+    """Extrai YYYY-MM-DD do prefixo ISO ou converte o formato Alice."""
     match = _ISO_PREFIX.match(raw)
     if match is not None:
         return _require_iso_date(match.group(1), raw)
@@ -176,6 +183,7 @@ def _iso_from_text(raw: str) -> str | None:
 
 
 def _alice_to_iso(raw: str) -> str:
+    """Converte DD/MM/YYYY HH:MM:SS para YYYY-MM-DD."""
     try:
         return datetime.strptime(raw, _ALICE_DT).date().isoformat()
     except ValueError as exc:
@@ -185,11 +193,13 @@ def _alice_to_iso(raw: str) -> str:
 
 
 def _iso_to_alice_start(iso: str) -> str:
+    """Converte YYYY-MM-DD para DD/MM/YYYY 00:00:00."""
     parsed = date.fromisoformat(iso)
     return parsed.strftime("%d/%m/%Y") + " 00:00:00"
 
 
 def _require_iso_date(iso: str, raw: str) -> str:
+    """Recusa o prefixo que não for YYYY-MM-DD."""
     try:
         date.fromisoformat(iso)
     except ValueError as exc:
@@ -200,6 +210,7 @@ def _require_iso_date(iso: str, raw: str) -> str:
 def _max_sql(
     table: str, column: str, where: WhereClause | None
 ) -> tuple[str, dict[str, str | int] | None]:
+    """Monta SELECT MAX(coluna) FROM a tabela de destino, com WHERE opcional."""
     safe_column = require_sql_ident(column, "column")
     sql = f"SELECT MAX({safe_column}) FROM {dest_table(table)}"
     if where is None:
@@ -208,6 +219,7 @@ def _max_sql(
 
 
 def _sql_with_where(sql: str, where: WhereClause) -> tuple[str, dict[str, str | int]]:
+    """Anexa WHERE coluna = %(coluna)s para cada chave do filtro."""
     clauses: list[str] = []
     params: dict[str, str | int] = {}
     for key, value in where.items():
@@ -218,6 +230,7 @@ def _sql_with_where(sql: str, where: WhereClause) -> tuple[str, dict[str, str | 
 
 
 def _max_cell(row: object) -> object:
+    """Devolve a célula de MAX ou None quando a consulta não traz linha."""
     if row is None:
         return None
     if not isinstance(row, (tuple, list)) or len(row) != 1:
@@ -226,6 +239,7 @@ def _max_cell(row: object) -> object:
 
 
 def _require_param_text(params: dict[str, str | int | bool], key: str) -> str:
+    """Recusa o parâmetro ausente ou que não seja str."""
     if key not in params:
         raise ValueError(f"query_params missing {key!r}, got {sorted(params)!r}")
     value = params[key]

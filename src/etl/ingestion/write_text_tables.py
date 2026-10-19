@@ -1,3 +1,5 @@
+"""Grava os CREATE TABLE de colunas TEXT das tabelas restantes de catálogo."""
+
 from pathlib import Path
 
 from etl.ingestion.dest_schema import dest_table
@@ -5,9 +7,9 @@ from etl.ingestion.remaining_columns import TABLE_SPECS
 
 
 def text_table_sql(table_name: str, columns: tuple[str, ...], conflict: tuple[str, ...]) -> str:
-    """Build a TEXT-column CREATE TABLE for mixed API payloads.
+    """Monta um CREATE TABLE de colunas TEXT para payloads mistos da API.
 
-    Example:
+    Exemplo:
         text_table_sql("arp", ("id",), ("id",))
     """
     lines = [
@@ -23,9 +25,9 @@ def text_table_sql(table_name: str, columns: tuple[str, ...], conflict: tuple[st
 
 
 def write_remaining_table_sql(sql_dir: Path) -> list[Path]:
-    """Write CREATE TABLE files for every remaining catalog spec.
+    """Grava os arquivos CREATE TABLE de cada especificação restante de catálogo.
 
-    Example:
+    Exemplo:
         write_remaining_table_sql(Path("src/sql"))
     """
     written: list[Path] = []

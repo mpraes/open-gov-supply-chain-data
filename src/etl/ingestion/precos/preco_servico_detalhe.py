@@ -1,3 +1,5 @@
+"""Ingere consultarServicoDetalhe na tabela preco_servico_detalhe."""
+
 from typing import Any
 
 from contracts.preco_servico_detalhe import PrecoServicoDetalheRecord
@@ -32,15 +34,16 @@ data_hora_carga = now();
 
 
 def map_preco_servico_detalhe_row(row: dict[str, Any]) -> PrecoServicoDetalheRecord:
-    """Map one consultarServicoDetalhe resultado object.
+    """Mapeia um objeto resultado de consultarServicoDetalhe.
 
-    Example:
+    Exemplo:
         record = map_preco_servico_detalhe_row({"idCompra": 44, ...})
     """
     return PrecoServicoDetalheRecord(**preco_detalhe_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarServicoDetalhe na tabela preco_servico_detalhe."""
     run_preco_batch_ingestion(
         logger_name="preco_servico_detalhe",
         endpoint_path=ENDPOINT_PATH,

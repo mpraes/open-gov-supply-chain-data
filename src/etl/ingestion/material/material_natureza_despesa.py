@@ -1,3 +1,5 @@
+"""Ingere naturezas de despesa de material na tabela material_natureza_despesa."""
+
 from typing import Any
 
 from contracts.material_natureza_despesa import MaterialNaturezaDespesaRecord
@@ -23,9 +25,9 @@ data_hora_carga = now();
 
 
 def map_material_natureza_despesa_row(row: dict[str, Any]) -> MaterialNaturezaDespesaRecord:
-    """Map one API resultado object to MaterialNaturezaDespesaRecord.
+    """Mapeia um objeto resultado da API para MaterialNaturezaDespesaRecord.
 
-    Example:
+    Exemplo:
         record = map_material_natureza_despesa_row({"codigoPdm": 1, ...})
     """
     return MaterialNaturezaDespesaRecord(
@@ -37,6 +39,7 @@ def map_material_natureza_despesa_row(row: dict[str, Any]) -> MaterialNaturezaDe
 
 
 def main() -> None:
+    """Consulta /modulo-material/5_consultarMaterialNaturezaDespesa e grava o resultado na tabela material_natureza_despesa."""
     run_page_batch_ingestion(
         logger_name="material_natureza_despesa",
         endpoint_path=ENDPOINT_PATH,

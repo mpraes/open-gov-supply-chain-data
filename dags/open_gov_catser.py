@@ -1,4 +1,5 @@
 # airflow — dag_discovery_safe_mode only parses files containing this string
+"""Registra a DAG de ingestão do CATSER na ordem documentada."""
 from pathlib import Path
 import sys
 

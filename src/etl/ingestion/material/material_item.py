@@ -1,3 +1,5 @@
+"""Ingere itens de material na tabela material_item."""
+
 from typing import Any
 
 from contracts.material_item import MaterialItemRecord
@@ -38,9 +40,9 @@ data_hora_carga = now();
 
 
 def map_material_item_row(row: dict[str, Any]) -> MaterialItemRecord:
-    """Map one API resultado object to MaterialItemRecord.
+    """Mapeia um objeto resultado da API para MaterialItemRecord.
 
-    Example:
+    Exemplo:
         record = map_material_item_row({"codigoItem": 1, "codigoGrupo": 2, ...})
     """
     return MaterialItemRecord(
@@ -62,6 +64,7 @@ def map_material_item_row(row: dict[str, Any]) -> MaterialItemRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-material/4_consultarItemMaterial e grava o resultado na tabela material_item."""
     run_page_batch_ingestion(
         logger_name="material_item",
         endpoint_path=ENDPOINT_PATH,

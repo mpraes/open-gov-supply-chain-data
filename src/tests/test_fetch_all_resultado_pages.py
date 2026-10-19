@@ -9,6 +9,8 @@ from observability.logging_json import get_json_logger
 
 
 class FakeResponse:
+    """Resposta falsa que devolve o JSON e o texto configurados e levanta erro quando o status é 400 ou mais."""
+
     def __init__(
         self,
         payload: dict[str, Any],
@@ -30,7 +32,7 @@ class FakeResponse:
 
 
 class FakeHttpGet:
-    """Named fake that returns canned pages by `pagina` query param."""
+    """Falso que devolve páginas prontas conforme o parâmetro `pagina`."""
 
     def __init__(self, pages: dict[int, dict[str, Any]]) -> None:
         self._pages = pages
@@ -186,6 +188,8 @@ def test_fetch_all_resultado_pages_treats_zero_total_paginas_as_empty() -> None:
 
 
 class FakeSleep:
+    """Falso que grava os segundos pedidos para dormir."""
+
     def __init__(self) -> None:
         self.calls: list[float] = []
 
@@ -194,7 +198,7 @@ class FakeSleep:
 
 
 class FakeHttpGetSequence:
-    """Named fake that returns canned responses in call order."""
+    """Falso que devolve respostas prontas na ordem das chamadas."""
 
     def __init__(self, responses: list[FakeResponse]) -> None:
         self._responses = list(responses)
@@ -349,6 +353,8 @@ def test_fetch_one_resultado_page_logs_timeout_retry(tmp_path: Path) -> None:
     ok = FakeResponse(_ok_page())
 
     class FakeHttpGetTimeoutThenOk:
+        """Falso que levanta timeout na primeira chamada e devolve a página na seguinte."""
+
         def __init__(self) -> None:
             self.calls = 0
 
@@ -418,6 +424,8 @@ def test_fetch_all_resultado_pages_retries_connection_error() -> None:
     ok = FakeResponse(_ok_page())
 
     class FakeHttpGetConnectionThenOk:
+        """Falso que levanta erro de conexão na primeira chamada e devolve a página na seguinte."""
+
         def __init__(self) -> None:
             self.calls = 0
 

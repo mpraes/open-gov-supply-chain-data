@@ -1,3 +1,5 @@
+"""KPIs do tema UASG a partir dos rollups de analytics."""
+
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import (
     brl_leaderboard,
@@ -25,6 +27,7 @@ _UF_SQL = "SELECT label, n FROM analytics.kpi_uasg_uf ORDER BY 2 DESC LIMIT 8"
 
 
 def load_uasg_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis:
+    """Monta cards, série mensal, rankings de UF e SISG e líderes de gasto de UASG e órgão."""
     pred = mes_predicate(timeframe)
     uasgs, ativas, sisg, siasg, orgaos = _catalog_counts(conn)
     spend = scalar_float(conn, sum_both_origens_sql(pred))
@@ -39,6 +42,7 @@ def load_uasg_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis
 
 
 def _catalog_counts(conn: AnalyticsConnection) -> tuple[int, int, int, int, int]:
+    """Lê total, ativas, sisg, siasg e orgaos de analytics.kpi_catalog_uasg, ou zeros sem linha."""
     row = fetch_one_row(
         conn,
         "SELECT total, ativas, sisg, siasg, orgaos "
@@ -57,6 +61,7 @@ def _uasg_cards(
     orgaos: int,
     spend: float,
 ) -> tuple[KpiCard, ...]:
+    """Monta os seis cards de cadastro SISG/SIASG e valor homologado."""
     return (
         KpiCard("UASGs", format_count(uasgs), "Cadastro"),
         KpiCard("Ativas", format_count(ativas), "Status"),
@@ -68,10 +73,12 @@ def _uasg_cards(
 
 
 def _sisg_rank_rows(sisg: int, uasgs: int) -> list[tuple[str, float]]:
+    """Monta as barras SISG e Fora do SISG a partir das contagens do catálogo."""
     return [("SISG", float(sisg)), ("Fora do SISG", float(uasgs - sisg))]
 
 
 def _monthly(conn: AnalyticsConnection, pred: str) -> NamedSeries:
+    """Monta a série mensal de valor_total das duas origens no predicado pred."""
     rows = fetch_rows(conn, monthly_both_origens_sql(pred))
     return NamedSeries(
         "Compras", tuple(SeriesPoint(str(p), float(v)) for p, v in rows)
@@ -81,6 +88,7 @@ def _monthly(conn: AnalyticsConnection, pred: str) -> NamedSeries:
 def _label_amounts(
     conn: AnalyticsConnection, query: str
 ) -> list[tuple[str, float]]:
+    """Converte as linhas (rótulo, valor) da consulta em pares de texto e float."""
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 
 

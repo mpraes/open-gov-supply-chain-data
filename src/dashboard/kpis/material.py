@@ -1,3 +1,5 @@
+"""KPIs do tema material a partir dos rollups de analytics."""
+
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import (
     brl_leaderboard,
@@ -24,6 +26,7 @@ from dashboard.kpis.types import (
 
 
 def load_material_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis:
+    """Monta cards, série mensal, rankings de grupo e líderes de gasto da origem material."""
     pred = mes_predicate(timeframe)
     itens, ativos, sustentaveis, margem = _catalog_counts(conn)
     spend = scalar_float(conn, sum_origem_sql("material", pred))
@@ -41,6 +44,7 @@ def load_material_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> Theme
 
 
 def _catalog_counts(conn: AnalyticsConnection) -> tuple[int, int, int, int]:
+    """Lê total, ativos, sustentaveis e margem de analytics.kpi_catalog_material."""
     row = fetch_one_row(
         conn,
         "SELECT total, ativos, sustentaveis, margem "
@@ -57,6 +61,7 @@ def _material_cards(
     spend: float,
     priced: int,
 ) -> tuple[KpiCard, ...]:
+    """Monta os seis cards de CATMAT, sustentabilidade e valor homologado."""
     return (
         KpiCard("Itens", format_count(itens), "CATMAT"),
         KpiCard("Ativos", format_count(ativos), "Status"),
@@ -68,6 +73,7 @@ def _material_cards(
 
 
 def _monthly(conn: AnalyticsConnection, pred: str) -> NamedSeries:
+    """Monta a série mensal de valor_total da origem material no predicado pred."""
     rows = fetch_rows(conn, monthly_origem_sql("material", pred))
     return NamedSeries(
         "Material", tuple(SeriesPoint(str(p), float(v)) for p, v in rows)
@@ -81,6 +87,7 @@ _GRUPO_COUNT_SQL = (
 
 
 def _grupo_spend_sql(pred: str) -> str:
+    """Monta o SQL dos oito grupos com maior SUM(valor_total) em kpi_mes_grupo_material."""
     return (
         "SELECT nome_grupo, SUM(valor_total) "
         "FROM analytics.kpi_mes_grupo_material "
@@ -89,6 +96,7 @@ def _grupo_spend_sql(pred: str) -> str:
 
 
 def _label_amounts(conn: AnalyticsConnection, query: str) -> list[tuple[str, float]]:
+    """Converte as linhas (rótulo, valor) da consulta em pares de texto e float."""
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 
 

@@ -1,3 +1,5 @@
+"""Reexporta o cursor de etl_code_cursor para os lotes de preço."""
+
 from etl.ingestion.job_cursor import (
     ensure_job_cursor_table as ensure_code_cursor_table,
     load_job_cursor as load_code_cursor,

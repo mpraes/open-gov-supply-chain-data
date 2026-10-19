@@ -1,10 +1,12 @@
+"""Campos de duração e throughput para eventos de log JSON."""
+
 from time import perf_counter
 
 
 def timing_fields(*, duration_s: float, rows: int) -> dict[str, int | float]:
-    """Build duration_ms and optional rows_per_sec for a JSON log event.
+    """Monta duration_ms e, quando há linhas, rows_per_sec para um evento de log JSON.
 
-    Example:
+    Exemplo:
         timing_fields(duration_s=2.5, rows=100)
         == {"duration_ms": 2500, "rows_per_sec": 40.0}
     """
@@ -20,9 +22,9 @@ def fields_since(
     rows: int,
     now: float | None = None,
 ) -> dict[str, int | float]:
-    """Time a span from `started` (perf_counter) to now.
+    """Mede o intervalo de `started` (perf_counter) até agora.
 
-    Example:
+    Exemplo:
         started = perf_counter()
         ...
         log_info(log, "upsert_ok", rows=n, **fields_since(started, n))

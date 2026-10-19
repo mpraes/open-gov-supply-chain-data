@@ -1,3 +1,5 @@
+"""Busca páginas da API em paralelo e persiste cada uma antes de avançar o cursor."""
+
 from collections.abc import Callable
 from concurrent.futures import Future, ThreadPoolExecutor
 from logging import Logger
@@ -15,7 +17,10 @@ PageFuture = Future[tuple[list[dict[str, Any]], int]]
 
 
 class _FetchWindow:
+    """Guarda as páginas submetidas, a próxima a buscar e o total já conhecido."""
+
     def __init__(self, next_fetch: int) -> None:
+        """Inicia a janela vazia na página next_fetch."""
         self.pending: dict[int, PageFuture] = {}
         self.next_fetch = next_fetch
         self.total_pages: int | None = None
@@ -31,9 +36,9 @@ def run_page_batch_loop(
     job_name: str,
     parallel_pages: int = 1,
 ) -> int:
-    """Fetch and persist one API page at a time, advancing a resume cursor.
+    """Busca e persiste uma página da API por vez, avançando o cursor de retomada.
 
-    Example:
+    Exemplo:
         total = run_page_batch_loop(
             load_cursor=load, fetch_page=fetch, ingest_rows=upsert,
             save_cursor=save, log=log, job_name="material_item",
@@ -60,6 +65,7 @@ def run_page_batch_loop(
 
 
 def _require_parallel_pages(parallel_pages: int) -> None:
+    """Recusa parallel_pages menor que 1."""
     if parallel_pages < 1:
         raise ValueError(f"parallel_pages expected int >= 1, got {parallel_pages!r}")
 
@@ -76,6 +82,7 @@ def _loop_pending_pages(
     pool: ThreadPoolExecutor,
     started: float,
 ) -> int:
+    """Ingere cada página pronta em ordem, grava o cursor e encerra ao atingir total_pages."""
     total = 0
     while True:
         _fill_fetch_window(window, pool, fetch_page, parallel_pages)
@@ -99,6 +106,7 @@ def _fill_fetch_window(
     fetch_page: FetchPage,
     parallel_pages: int,
 ) -> None:
+    """Submete fetch_page até encher a janela ou passar de total_pages."""
     while len(window.pending) < parallel_pages:
         if window.total_pages is not None and window.next_fetch > window.total_pages:
             return
@@ -111,6 +119,7 @@ def _fill_fetch_window(
 def _take_ready_page(
     window: _FetchWindow,
 ) -> tuple[int, list[dict[str, Any]], int, float] | None:
+    """Aguarda a menor página pendente e devolve linhas, total_pages e o instante."""
     if not window.pending:
         return None
     pagina = min(window.pending)
@@ -123,12 +132,14 @@ def _take_ready_page(
 
 
 def _cancel_pending(window: _FetchWindow) -> None:
+    """Cancela e esvazia as páginas ainda pendentes."""
     for future in window.pending.values():
         future.cancel()
     window.pending.clear()
 
 
 def _log_page_batches_done(log: Logger, job_name: str, total: int, started: float) -> None:
+    """Registra page_batches_done com job, rows e o tempo decorrido."""
     log_info(
         log,
         "page_batches_done",
@@ -148,6 +159,7 @@ def _ingest_page_and_checkpoint(
     job_name: str,
     started: float,
 ) -> int:
+    """Persiste a página, grava o cursor em pagina e registra page_batch_ok."""
     batch_rows = ingest_rows(rows)
     save_cursor(pagina)
     log_info(

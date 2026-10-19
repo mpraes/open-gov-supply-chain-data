@@ -1,12 +1,14 @@
+"""Contrato da linha de item de consultarItemServico."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from contracts.text_normalize import upper_non_empty, upper_optional
 
 
 class ServicoItemRecord(BaseModel):
-    """Validated item row from consultarItemServico.
+    """Linha validada de item de consultarItemServico.
 
-    Example:
+    Exemplo:
         ServicoItemRecord(
             cod_servico=100, cod_secao=1, nome_secao="s", cod_divisao=2,
             nome_divisao="d", cod_grupo=3, nome_grupo="g", cod_classe=4,
@@ -19,7 +21,7 @@ class ServicoItemRecord(BaseModel):
     model_config = ConfigDict(strict=True)
 
     cod_servico: int
-    # Hierarchy fields are often partially null in real API payloads.
+    # Campos da hierarquia frequentemente vêm parcialmente nulos nos payloads reais.
     cod_secao: int | None
     nome_secao: str | None
     cod_divisao: int | None
@@ -39,6 +41,7 @@ class ServicoItemRecord(BaseModel):
     @field_validator("nome_servico")
     @classmethod
     def nome_servico_upper(cls, value: str) -> str:
+        """Rejeita nome_servico vazio e devolve o texto em maiúsculas."""
         return upper_non_empty(value, "nome_servico")
 
     @field_validator(
@@ -50,4 +53,5 @@ class ServicoItemRecord(BaseModel):
     )
     @classmethod
     def optional_nomes_upper(cls, value: str | None) -> str | None:
+        """Converte nome_secao, nome_divisao, nome_grupo, nome_classe e nome_subclasse para maiúsculas; vazio vira None."""
         return upper_optional(value)

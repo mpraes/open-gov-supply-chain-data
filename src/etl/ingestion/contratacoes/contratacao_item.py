@@ -1,3 +1,5 @@
+"""Ingere itens de contratação PNCP na tabela contratacao_item."""
+
 from config.load_secret_key import load_secret_key_func
 from etl.ingestion.dest_watermark import DateWatermark
 from etl.ingestion.remaining_filters import contratacoes_dates
@@ -8,6 +10,7 @@ from etl.ingestion.script_runner import DEFAULT_ENV_PATH
 
 
 def main() -> None:
+    """Lê o intervalo de datas e consulta /modulo-contratacoes/2_consultarItensContratacoes_PNCP_14133 em fatias de inclusão PNCP, gravando na tabela contratacao_item."""
     inicial, final = contratacoes_dates(DEFAULT_ENV_PATH, load_secret_key_func)
     run_sliced_remaining_ingestion(
         data_inicial=inicial,

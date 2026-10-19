@@ -1,3 +1,5 @@
+"""Ingere avisos restritos da Alice na tabela alice_aviso."""
+
 from clients.compras_api import fetch_one_json_array_page
 from config.load_secret_key import load_secret_key_func
 from etl.ingestion.dest_watermark import DateWatermark
@@ -9,6 +11,7 @@ from etl.ingestion.script_runner import DEFAULT_ENV_PATH
 
 
 def main() -> None:
+    """Lê o intervalo de solicitação de análise e consulta /alice/avisos-restritos, gravando na tabela alice_aviso."""
     inicial, final = alice_datetimes(DEFAULT_ENV_PATH, load_secret_key_func)
     run_remaining_ingestion(
         logger_name="alice_aviso",

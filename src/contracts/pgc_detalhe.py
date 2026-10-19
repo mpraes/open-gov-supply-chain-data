@@ -1,3 +1,5 @@
+"""Contrato da linha de detalhe do PGC de consultarPgcDetalhe."""
+
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 
 from contracts.coerce import coerce_id_text, coerce_optional_float
@@ -34,9 +36,9 @@ _NAME_FIELDS = (
 
 
 class PgcDetalheRecord(BaseModel):
-    """Validated PGC detalhe row from consultarPgcDetalhe.
+    """Linha validada de detalhe do PGC de consultarPgcDetalhe.
 
-    Example:
+    Exemplo:
         PgcDetalheRecord(
             codigo_uasg="153001", orgao="36000", numero_artefato=1,
             ano_artefato=2026, ordem_dfd=0, codigo_item_catalogo="449156",
@@ -102,14 +104,17 @@ class PgcDetalheRecord(BaseModel):
     @field_validator(*_ID_FIELDS, mode="before")
     @classmethod
     def identity_text(cls, value: object, info: ValidationInfo) -> str:
+        """Converte codigo_uasg, orgao e codigo_item_catalogo int ou str em texto sem espaços nas bordas."""
         return coerce_id_text(value, info.field_name)
 
     @field_validator(*_FLOAT_FIELDS, mode="before")
     @classmethod
     def optional_floats(cls, value: object) -> float | None:
+        """Coage quantidade_item, valor_unitario_item e valor_total_item para float; None permanece None e bool é rejeitado."""
         return coerce_optional_float(value)
 
     @field_validator(*_NAME_FIELDS)
     @classmethod
     def optional_names_upper(cls, value: str | None) -> str | None:
+        """Converte nome_uasg, descricao_artefato, descricao_objeto_dfd, codigo_area_dfd, tipo_item, nome_grupo_material, nome_classe_material, nome_pdm_material, nome_secao_servico, nome_divisao_servico, nome_grupo_servico, nome_classe_servico, nome_subclasse_servico, descricao_item_catalogo, sigla_unidade_fornecimento, nome_unidade_fornecimento, titulo_projeto_compra e descricao_projeto_compra para maiúsculas; vazio vira None."""
         return upper_optional(value)

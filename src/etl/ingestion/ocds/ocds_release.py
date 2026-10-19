@@ -1,3 +1,5 @@
+"""Ingere releases OCDS na tabela ocds_release por comprador."""
+
 from clients.compras_api import fetch_one_releases_page
 from etl.ingestion.dest_watermark import DateWatermark
 from etl.ingestion.full_dump import full_dump_dates
@@ -8,12 +10,14 @@ from etl.ingestion.remaining_run import run_sliced_remaining_ingestion
 
 
 def main() -> None:
+    """Percorre os CNPJs compradores da carga completa e consulta /modulo-ocds/1_releases, gravando na tabela ocds_release."""
     inicial, final = full_dump_dates()
     for buyer in read_buyer_cnpjs():
         _ingest_buyer(buyer, inicial, final)
 
 
 def _ingest_buyer(buyer: str, inicial: str, final: str) -> None:
+    """Consulta /modulo-ocds/1_releases do comprador em fatias da data de release e grava na tabela ocds_release."""
     run_sliced_remaining_ingestion(
         data_inicial=inicial,
         data_final=final,

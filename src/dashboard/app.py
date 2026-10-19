@@ -1,3 +1,5 @@
+"""Aplicação FastAPI do dashboard de KPIs de compras públicas."""
+
 import os
 from collections.abc import Callable
 from pathlib import Path
@@ -28,9 +30,9 @@ _PAGE_TITLES = {
 
 
 def default_connect_factory() -> AnalyticsConnection:
-    """Open analytics using DASHBOARD_ENV_FILE or `.env`.
+    """Abre o analytics usando DASHBOARD_ENV_FILE ou `.env`.
 
-    Example:
+    Exemplo:
         conn = default_connect_factory()
     """
     raw = os.environ.get("DASHBOARD_ENV_FILE", ".env")
@@ -38,9 +40,9 @@ def default_connect_factory() -> AnalyticsConnection:
 
 
 def create_app(*, connect_factory: ConnectFactory) -> FastAPI:
-    """Build the dashboard app without opening Postgres until a request.
+    """Monta a aplicação do dashboard sem abrir o Postgres até uma requisição.
 
-    Example:
+    Exemplo:
         app = create_app(connect_factory=default_connect_factory)
     """
     app = FastAPI(title="Open Gov Analytics")
@@ -52,34 +54,43 @@ def create_app(*, connect_factory: ConnectFactory) -> FastAPI:
 
 
 def _mount_static(app: FastAPI) -> None:
+    """Monta /static a partir do diretório static, criando-o se não existir."""
     static_dir = _APP_DIR / "static"
     static_dir.mkdir(exist_ok=True)
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 
 def _register_pages(app: FastAPI) -> None:
+    """Registra as rotas HTML de overview, fornecedor, material, servico e uasg."""
+
     @app.get("/")
     def overview_page(request: Request) -> object:
+        """Renderiza a página do tema overview."""
         return _render_page(request, "overview")
 
     @app.get("/fornecedor")
     def fornecedor_page(request: Request) -> object:
+        """Renderiza a página do tema fornecedor."""
         return _render_page(request, "fornecedor")
 
     @app.get("/material")
     def material_page(request: Request) -> object:
+        """Renderiza a página do tema material."""
         return _render_page(request, "material")
 
     @app.get("/servico")
     def servico_page(request: Request) -> object:
+        """Renderiza a página do tema servico."""
         return _render_page(request, "servico")
 
     @app.get("/uasg")
     def uasg_page(request: Request) -> object:
+        """Renderiza a página do tema uasg."""
         return _render_page(request, "uasg")
 
 
 def _render_page(request: Request, theme: str) -> object:
+    """Renderiza page.html com o título e a URL de KPIs do tema."""
     return _TEMPLATES.TemplateResponse(
         request,
         "page.html",
@@ -92,8 +103,11 @@ def _render_page(request: Request, theme: str) -> object:
 
 
 def _register_kpis(app: FastAPI, connect_factory: ConnectFactory) -> None:
+    """Registra GET /api/kpis/{theme} com o query param timeframe."""
+
     @app.get("/api/kpis/{theme}")
     def kpis(theme: str, timeframe: str = "all") -> object:
+        """Rejeita theme ou timeframe inválidos com HTTP 400 e devolve o JSON dos KPIs."""
         if theme not in THEMES:
             raise HTTPException(
                 status_code=400,
@@ -109,6 +123,7 @@ def _register_kpis(app: FastAPI, connect_factory: ConnectFactory) -> None:
 def _load_or_503(
     connect_factory: ConnectFactory, theme: str, timeframe: str
 ) -> object:
+    """Abre a conexão, carrega os KPIs do tema e responde 503 quando o analytics falha."""
     try:
         conn = connect_factory()
         try:

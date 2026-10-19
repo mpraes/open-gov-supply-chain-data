@@ -1,3 +1,5 @@
+"""Executa um main de ingestão a partir do Airflow, apontando o Postgres de loopback para o host Docker."""
+
 from collections.abc import Callable
 import importlib
 import os
@@ -11,9 +13,9 @@ IngestMain = Callable[[], None]
 
 
 def run_ingest_main(main: IngestMain) -> None:
-    """Run one ingest `main()`, rewriting loopback Postgres for Docker.
+    """Executa um `main()` de ingestão, reescrevendo o Postgres de loopback para o Docker.
 
-    Example:
+    Exemplo:
         run_ingest_main(material_group.main)
     """
     load_dotenv(DEFAULT_ENV_PATH, override=False)
@@ -24,9 +26,9 @@ def run_ingest_main(main: IngestMain) -> None:
 
 
 def run_named_ingest(module_path: str) -> None:
-    """Import `module_path.main` and run it via `run_ingest_main`.
+    """Importa `module_path.main` e executa via `run_ingest_main`.
 
-    Example:
+    Exemplo:
         run_named_ingest("etl.ingestion.material.material_group")
     """
     module = importlib.import_module(module_path)

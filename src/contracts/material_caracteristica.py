@@ -1,10 +1,12 @@
+"""Contrato da linha de característica de item de consultarMaterialCaracteristicas."""
+
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 
 class MaterialCaracteristicaRecord(BaseModel):
-    """Validated item characteristic row from consultarMaterialCaracteristicas.
+    """Linha validada de característica de item de consultarMaterialCaracteristicas.
 
-    Example:
+    Exemplo:
         MaterialCaracteristicaRecord(
             cod_item=9001,
             item_sustentavel=True,
@@ -39,6 +41,7 @@ class MaterialCaracteristicaRecord(BaseModel):
     @field_validator("codigo_caracteristica")
     @classmethod
     def codigo_must_be_upper_non_empty(cls, value: str) -> str:
+        """Rejeita codigo_caracteristica vazio e devolve o texto em maiúsculas."""
         cleaned = value.strip()
         if not cleaned:
             raise ValueError("codigo fields must be non-empty")
@@ -47,6 +50,7 @@ class MaterialCaracteristicaRecord(BaseModel):
     @field_validator("codigo_valor_caracteristica", mode="before")
     @classmethod
     def codigo_valor_null_to_empty(cls, value: object) -> str:
+        """Converte codigo_valor_caracteristica None em texto vazio, rejeita valor que não seja str e devolve o texto em maiúsculas."""
         if value is None:
             return ""
         if not isinstance(value, str):
@@ -58,7 +62,8 @@ class MaterialCaracteristicaRecord(BaseModel):
 
     @model_validator(mode="after")
     def fill_missing_codigo_valor_from_nome(self) -> "MaterialCaracteristicaRecord":
-        # PK is NOT NULL; API sends null codes for name-only values.
+        """Preenche codigo_valor_caracteristica vazio com até 100 caracteres de nome_valor_caracteristica."""
+        # A PK não aceita NULL; a API manda código nulo quando só há o nome.
         if self.codigo_valor_caracteristica:
             return self
         nome = self.nome_valor_caracteristica
@@ -70,6 +75,7 @@ class MaterialCaracteristicaRecord(BaseModel):
     @field_validator("nome_caracteristica", "nome_valor_caracteristica", "sigla_unidade_medida")
     @classmethod
     def optional_text_upper(cls, value: str | None) -> str | None:
+        """Rejeita nome_caracteristica, nome_valor_caracteristica e sigla_unidade_medida vazios e devolve o texto em maiúsculas; None permanece None."""
         if value is None:
             return None
         cleaned = value.strip()

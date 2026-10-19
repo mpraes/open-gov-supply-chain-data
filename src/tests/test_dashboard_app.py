@@ -5,6 +5,8 @@ from fastapi.testclient import TestClient
 
 
 class FakeConnectFactory:
+    """Falso que devolve a conexão analítica e conta as chamadas."""
+
     def __init__(self, conn: FakeAnalyticsConnection) -> None:
         self.conn = conn
         self.calls = 0
@@ -15,6 +17,8 @@ class FakeConnectFactory:
 
 
 class BoomConnectFactory:
+    """Falso que levanta erro ao abrir a conexão."""
+
     def __call__(self) -> FakeAnalyticsConnection:
         raise RuntimeError("postgres down")
 

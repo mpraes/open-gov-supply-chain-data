@@ -6,6 +6,8 @@ from etl.ingestion.airflow_job import run_ingest_main, run_named_ingest
 
 
 class FakeIngestMain:
+    """Falso que conta quantas vezes o main foi chamado."""
+
     def __init__(self) -> None:
         self.calls = 0
 
@@ -14,6 +16,8 @@ class FakeIngestMain:
 
 
 class FakeIngestModule:
+    """Módulo falso que expõe esse main."""
+
     def __init__(self) -> None:
         self.main = FakeIngestMain()
 

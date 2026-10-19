@@ -1,3 +1,5 @@
+"""Base das linhas de catálogo que normaliza nomes e decimais opcionais."""
+
 from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, model_validator
@@ -12,9 +14,9 @@ def normalize_catalog_row(
     float_fields: frozenset[str],
     name_fields: frozenset[str],
 ) -> dict[str, Any]:
-    """Uppercase name fields and coerce optional decimal amounts.
+    """Converte campos de nome para maiúsculas e coage valores decimais opcionais.
 
-    Example:
+    Exemplo:
         normalize_catalog_row({"objeto": " x "}, float_fields=frozenset(), name_fields=frozenset({"objeto"}))
     """
     out: dict[str, Any] = {}
@@ -30,9 +32,9 @@ def normalize_catalog_row(
 
 
 class CatalogRow(BaseModel):
-    """Base row that keeps extra API columns after snake_case mapping.
+    """Linha base que preserva colunas extras da API depois do mapeamento para snake_case.
 
-    Example:
+    Exemplo:
         class Item(CatalogRow):
             id_compra: str
     """
@@ -45,6 +47,7 @@ class CatalogRow(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def normalize_known_fields(cls, data: object) -> object:
+        """Normaliza um dict com os campos de nome e decimal da classe; outro tipo passa intacto."""
         if not isinstance(data, dict):
             return data
         return normalize_catalog_row(

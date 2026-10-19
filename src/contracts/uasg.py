@@ -1,3 +1,5 @@
+"""Contrato da linha de UASG de consultarUasg."""
+
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 
 from contracts.coerce import coerce_id_text
@@ -20,9 +22,9 @@ _CODE_FIELDS = (
 
 
 class UasgRecord(BaseModel):
-    """Validated UASG row from consultarUasg.
+    """Linha validada de UASG de consultarUasg.
 
-    Example:
+    Exemplo:
         UasgRecord(codigo_uasg="153001", nome_uasg="uasg", status_uasg=True)
     """
 
@@ -54,19 +56,23 @@ class UasgRecord(BaseModel):
     @field_validator("codigo_uasg", mode="before")
     @classmethod
     def identity_text(cls, value: object, info: ValidationInfo) -> str:
+        """Converte codigo_uasg int ou str em texto sem espaços nas bordas."""
         return coerce_id_text(value, info.field_name)
 
     @field_validator("nome_uasg")
     @classmethod
     def nome_upper(cls, value: str) -> str:
+        """Rejeita nome_uasg vazio e devolve o texto em maiúsculas."""
         return upper_non_empty(value, "nome_uasg")
 
     @field_validator(*_NAME_FIELDS)
     @classmethod
     def optional_names_upper(cls, value: str | None) -> str | None:
+        """Converte sigla_uf, nome_municipio_ibge, nome_unidade_polo e nome_unidade_espelho para maiúsculas; vazio vira None."""
         return upper_optional(value)
 
     @field_validator(*_CODE_FIELDS)
     @classmethod
     def optional_codes_strip(cls, value: str | None) -> str | None:
+        """Remove espaços de cnpj_cpf_uasg, cnpj_cpf_orgao, cnpj_cpf_orgao_vinculado, cnpj_cpf_orgao_superior e codigo_siorg; vazio vira None."""
         return strip_optional(value)

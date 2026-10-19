@@ -1,10 +1,10 @@
-"""Coercion helpers for API values that mix ints, strings, and numbers."""
+"""Coerções para valores da API que misturam inteiros, textos e números."""
 
 
 def coerce_id_text(value: object, field_label: str) -> str:
-    """Turn an int or str identifier into a stripped string.
+    """Converte um identificador int ou str em texto sem espaços nas bordas.
 
-    Example:
+    Exemplo:
         coerce_id_text(12, "id_compra") == "12"
     """
     if isinstance(value, bool) or not isinstance(value, (int, str)):
@@ -18,9 +18,9 @@ def coerce_id_text(value: object, field_label: str) -> str:
 
 
 def coerce_optional_id_text(value: object, field_label: str) -> str | None:
-    """Optional identity text; blank becomes None.
+    """Texto de identidade opcional; vazio vira None.
 
-    Example:
+    Exemplo:
         coerce_optional_id_text("  ", "nome") is None
     """
     if value is None:
@@ -31,9 +31,9 @@ def coerce_optional_id_text(value: object, field_label: str) -> str | None:
 
 
 def coerce_optional_float(value: object) -> float | None:
-    """Coerce optional numeric API fields; bools are rejected.
+    """Coage campos numéricos opcionais da API; bool é rejeitado.
 
-    Example:
+    Exemplo:
         coerce_optional_float(3) == 3.0
     """
     if value is None:
@@ -46,9 +46,9 @@ def coerce_optional_float(value: object) -> float | None:
 
 
 def coerce_optional_decimal(value: object) -> float | None:
-    """Coerce optional amounts that mix numbers and numeric strings.
+    """Coage valores opcionais que misturam números e textos numéricos.
 
-    Example:
+    Exemplo:
         coerce_optional_decimal("1,25") == 1.25
     """
     if value is None:
@@ -59,6 +59,7 @@ def coerce_optional_decimal(value: object) -> float | None:
 
 
 def _decimal_from_text(value: str) -> float | None:
+    """Converte texto numérico opcional para float; vazio vira None e vírgula vira ponto."""
     cleaned = value.strip().replace(",", ".")
     if not cleaned:
         return None

@@ -1,10 +1,12 @@
+"""Contrato da linha de natureza de despesa do PDM de consultarMaterialNaturezaDespesa."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class MaterialNaturezaDespesaRecord(BaseModel):
-    """Validated PDM expense-nature row from consultarMaterialNaturezaDespesa.
+    """Linha validada de natureza de despesa do PDM de consultarMaterialNaturezaDespesa.
 
-    Example:
+    Exemplo:
         MaterialNaturezaDespesaRecord(
             cod_pdm=1001,
             cod_natureza_despesa="339030",
@@ -23,6 +25,7 @@ class MaterialNaturezaDespesaRecord(BaseModel):
     @field_validator("cod_natureza_despesa")
     @classmethod
     def codigo_must_be_non_empty(cls, value: str) -> str:
+        """Rejeita cod_natureza_despesa vazio e devolve o texto sem espaços nas bordas."""
         cleaned = value.strip()
         if not cleaned:
             raise ValueError("cod_natureza_despesa must be non-empty")
@@ -31,6 +34,7 @@ class MaterialNaturezaDespesaRecord(BaseModel):
     @field_validator("nome_natureza_despesa")
     @classmethod
     def nome_upper_optional(cls, value: str | None) -> str | None:
+        """Rejeita nome_natureza_despesa vazio e devolve o texto em maiúsculas; None permanece None."""
         if value is None:
             return None
         cleaned = value.strip()
@@ -41,6 +45,7 @@ class MaterialNaturezaDespesaRecord(BaseModel):
     @field_validator("status_natureza_despesa")
     @classmethod
     def status_upper_optional(cls, value: str | None) -> str | None:
+        """Converte status_natureza_despesa para maiúsculas; None permanece None."""
         if value is None:
             return None
         return value.strip().upper()

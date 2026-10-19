@@ -8,6 +8,8 @@ from observability.logging_json import get_json_logger
 
 
 class FakeCursor:
+    """Cursor falso que grava as chamadas de execute."""
+
     def __init__(self) -> None:
         self.execute_calls: list[tuple[str, dict[str, Any]]] = []
 
@@ -22,6 +24,8 @@ class FakeCursor:
 
 
 class FakeConnection:
+    """Conexão falsa que abre esse cursor e marca o fechamento."""
+
     def __init__(self) -> None:
         self.cursor_obj = FakeCursor()
         self.closed = False
@@ -40,6 +44,8 @@ class FakeConnection:
 
 
 class FakeConnectPostgres:
+    """Falso que grava os kwargs de connect e devolve essa conexão."""
+
     def __init__(self, conn: FakeConnection) -> None:
         self._conn = conn
         self.calls: list[dict[str, str]] = []
@@ -50,6 +56,8 @@ class FakeConnectPostgres:
 
 
 class FakeFetchPages:
+    """Falso que devolve as linhas prontas da API."""
+
     def __init__(self, rows: list[dict[str, Any]]) -> None:
         self._rows = rows
 
@@ -64,6 +72,8 @@ class FakeFetchPages:
 
 
 class SampleRecord:
+    """Registro de exemplo usado só para model_dump no teste."""
+
     def __init__(self, cod: int) -> None:
         self._cod = cod
 

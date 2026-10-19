@@ -1,3 +1,5 @@
+"""Monta o INSERT ... ON CONFLICT DO UPDATE das tabelas de staging."""
+
 from etl.ingestion.dest_schema import dest_table
 
 
@@ -6,9 +8,9 @@ def build_upsert_sql(
     columns: tuple[str, ...],
     conflict: tuple[str, ...],
 ) -> str:
-    """Build INSERT ... ON CONFLICT DO UPDATE with data_hora_carga.
+    """Monta INSERT ... ON CONFLICT DO UPDATE com data_hora_carga.
 
-    Example:
+    Exemplo:
         build_upsert_sql("t", ("id", "nome"), ("id",))
     """
     qualified = dest_table(table_name)

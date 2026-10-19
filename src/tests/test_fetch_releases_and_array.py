@@ -4,6 +4,8 @@ from clients.compras_api import fetch_one_json_array_page, fetch_one_releases_pa
 
 
 class FakeJsonResponse:
+    """Resposta falsa que devolve o JSON configurado."""
+
     def __init__(self, payload: object) -> None:
         self._payload = payload
         self.status_code = 200

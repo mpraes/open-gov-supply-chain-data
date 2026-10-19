@@ -1,3 +1,5 @@
+"""KPIs da visão geral de catálogo e valores homologados."""
+
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import format_brl, format_count
 from dashboard.kpis.sql_fetch import fetch_one_row, fetch_rows
@@ -14,6 +16,7 @@ from dashboard.kpis.types import (
 
 
 def load_overview_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis:
+    """Monta cards de catálogo e séries mensais de valor de material e servico."""
     pred = mes_predicate(timeframe)
     counts = _catalog_counts(conn)
     material_sum = scalar_float(conn, sum_origem_sql("material", pred))
@@ -34,6 +37,7 @@ def load_overview_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> Theme
 
 
 def _catalog_counts(conn: AnalyticsConnection) -> tuple[int, int, int, int]:
+    """Lê fornecedores, materiais, servicos e uasgs de analytics.kpi_catalog_overview."""
     return four_ints(
         fetch_one_row(
             conn,
@@ -46,6 +50,7 @@ def _catalog_counts(conn: AnalyticsConnection) -> tuple[int, int, int, int]:
 def _monthly_series(
     conn: AnalyticsConnection, origem: str, pred: str, name: str
 ) -> NamedSeries:
+    """Monta a série mensal de valor_total da origem no predicado pred."""
     rows = fetch_rows(conn, monthly_origem_sql(origem, pred))
     points = tuple(SeriesPoint(str(period), float(value)) for period, value in rows)
     return NamedSeries(name, points)

@@ -1,3 +1,5 @@
+"""Ingere consultarPgcDetalhe na tabela pgc_detalhe."""
+
 from typing import Any
 
 from contracts.pgc_detalhe import PgcDetalheRecord
@@ -15,24 +17,27 @@ UPSERT_SQL = pgc_detalhe_upsert_sql(TABLE_NAME)
 
 
 def map_pgc_detalhe_row(row: dict[str, Any]) -> PgcDetalheRecord:
-    """Map one consultarPgcDetalhe resultado object to PgcDetalheRecord.
+    """Mapeia um objeto resultado de consultarPgcDetalhe para PgcDetalheRecord.
 
-    Example:
+    Exemplo:
         record = map_pgc_detalhe_row({"codigoUasg": "1", "orgao": "36000", ...})
     """
     return PgcDetalheRecord(**pgc_detalhe_fields(row))
 
 
 def main() -> None:
+    """Ingere consultarPgcDetalhe na tabela pgc_detalhe."""
     for code in read_orgao_codes():
         _ingest_orgao(str(code))
 
 
 def _ingest_orgao(orgao: str) -> None:
+    """Ingere consultarPgcDetalhe do órgão em cada ano do dump."""
     for_each_dump_year(lambda ano: _ingest_detalhe(orgao, ano))
 
 
 def _ingest_detalhe(orgao: str, ano: int) -> None:
+    """Ingere consultarPgcDetalhe do órgão e do ano na tabela pgc_detalhe."""
     run_page_batch_ingestion(
         logger_name="pgc_detalhe",
         endpoint_path=ENDPOINT_PATH,

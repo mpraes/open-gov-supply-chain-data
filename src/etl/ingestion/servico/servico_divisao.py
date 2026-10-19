@@ -1,3 +1,5 @@
+"""Ingere divisões de serviço na tabela servico_divisao."""
+
 from typing import Any
 
 from contracts.servico_divisao import ServicoDivisaoRecord
@@ -26,9 +28,9 @@ data_hora_carga = now();
 
 
 def map_servico_divisao_row(row: dict[str, Any]) -> ServicoDivisaoRecord:
-    """Map one API resultado object to ServicoDivisaoRecord.
+    """Mapeia um objeto resultado da API para ServicoDivisaoRecord.
 
-    Example:
+    Exemplo:
         record = map_servico_divisao_row({"codigoDivisao": 2, "codigoSecao": 1, ...})
     """
     return ServicoDivisaoRecord(
@@ -42,6 +44,7 @@ def map_servico_divisao_row(row: dict[str, Any]) -> ServicoDivisaoRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-servico/2_consultarDivisaoServico e grava o resultado na tabela servico_divisao."""
     run_page_batch_ingestion(
         logger_name="servico_divisao",
         endpoint_path=ENDPOINT_PATH,

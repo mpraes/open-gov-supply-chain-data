@@ -1,3 +1,5 @@
+"""Ingere grupos de serviço na tabela servico_grupo."""
+
 from typing import Any
 
 from contracts.servico_grupo import ServicoGrupoRecord
@@ -28,9 +30,9 @@ data_hora_carga = now();
 
 
 def map_servico_grupo_row(row: dict[str, Any]) -> ServicoGrupoRecord:
-    """Map one API resultado object to ServicoGrupoRecord.
+    """Mapeia um objeto resultado da API para ServicoGrupoRecord.
 
-    Example:
+    Exemplo:
         record = map_servico_grupo_row({"codigoGrupo": 3, "codigoDivisao": 2, ...})
     """
     return ServicoGrupoRecord(
@@ -45,6 +47,7 @@ def map_servico_grupo_row(row: dict[str, Any]) -> ServicoGrupoRecord:
 
 
 def main() -> None:
+    """Consulta /modulo-servico/3_consultarGrupoServico e grava o resultado na tabela servico_grupo."""
     run_page_batch_ingestion(
         logger_name="servico_grupo",
         endpoint_path=ENDPOINT_PATH,

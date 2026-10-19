@@ -1,3 +1,5 @@
+"""Monta o upsert das tabelas do módulo legado."""
+
 from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.legado.legado_columns import (
     COMPRA_SEM_COLUMNS,
@@ -21,9 +23,9 @@ _TABLES: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
 
 
 def legado_upsert_sql(table_name: str) -> str:
-    """Build the upsert statement for a LEGADO table.
+    """Monta o comando de upsert de uma tabela LEGADO.
 
-    Example:
+    Exemplo:
         sql = legado_upsert_sql("legado_licitacao")
     """
     spec = _TABLES.get(table_name)
@@ -39,6 +41,7 @@ def _build_upsert_sql(
     columns: tuple[str, ...],
     conflict: tuple[str, ...],
 ) -> str:
+    """Monta o INSERT da tabela informada com as colunas, a chave de conflito e o ON CONFLICT."""
     cols = ", ".join(columns)
     values = ", ".join(f"%({name})s" for name in columns)
     keys = ", ".join(conflict)
@@ -53,5 +56,6 @@ def _build_upsert_sql(
 
 
 def _excluded_updates(columns: tuple[str, ...], conflict: tuple[str, ...]) -> str:
+    """Junta as colunas fora da chave de conflito no formato nome = EXCLUDED.nome."""
     names = [name for name in columns if name not in conflict]
     return ",\n".join(f"{name} = EXCLUDED.{name}" for name in names)

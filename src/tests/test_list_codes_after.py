@@ -4,6 +4,8 @@ from etl.ingestion.precos.catalog_codes import list_codes_after
 
 
 class FakeCatalogCursor:
+    """Cursor falso que grava o SQL executado e devolve linhas prontas."""
+
     def __init__(self, rows: list[tuple[object, ...]]) -> None:
         self._rows = rows
         self.sql: str | None = None
@@ -24,6 +26,8 @@ class FakeCatalogCursor:
 
 
 class FakeCatalogConnection:
+    """Conexão falsa que abre esse cursor."""
+
     def __init__(self, cursor: FakeCatalogCursor) -> None:
         self.cursor_obj = cursor
 

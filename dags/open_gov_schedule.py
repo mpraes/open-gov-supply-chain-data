@@ -1,3 +1,5 @@
+"""Monta cron e data inicial para ingestões a cada dois dias em São Paulo."""
+
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -8,9 +10,9 @@ _START_DAY = datetime(2026, 9, 27, tzinfo=_SAO_PAULO)
 def every_two_days_at(
     hour: int, minute: int, *, days: str = "odd"
 ) -> tuple[str, datetime]:
-    """Cron + start for 08:00-style slots every two calendar days in São Paulo.
+    """Cron e data inicial para horários no estilo 08:00, a cada dois dias corridos, em São Paulo.
 
-    Example:
+    Exemplo:
         every_two_days_at(8, 15)[0] == "15 8 */2 * *"
     """
     if hour not in range(24) or minute not in range(60):

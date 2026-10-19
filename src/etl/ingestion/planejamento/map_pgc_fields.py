@@ -1,10 +1,12 @@
+"""Mapeia consultarPgcDetalhe e consultarPgcAgregacao para os campos dos registros de destino."""
+
 from typing import Any
 
 
 def pgc_detalhe_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarPgcDetalhe API keys to PgcDetalheRecord fields.
+    """Mapeia as chaves de consultarPgcDetalhe para os campos de PgcDetalheRecord.
 
-    Example:
+    Exemplo:
         pgc_detalhe_fields({"codigoUasg": "1", "orgao": "36000", ...})
     """
     return {
@@ -19,9 +21,9 @@ def pgc_detalhe_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def pgc_agregacao_fields(row: dict[str, Any]) -> dict[str, Any]:
-    """Map consultarPgcAgregacao API keys to PgcAgregacaoRecord fields.
+    """Mapeia as chaves de consultarPgcAgregacao para os campos de PgcAgregacaoRecord.
 
-    Example:
+    Exemplo:
         pgc_agregacao_fields({"orgao": "36000", "ano": 2026})
     """
     return {
@@ -37,6 +39,7 @@ def pgc_agregacao_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _pgc_detalhe_identity_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia UASG, órgão, artefato, ordem do DFD, código de catálogo e ano do PCA."""
     return {
         "codigo_uasg": row["codigoUasg"],
         "nome_uasg": row.get("nomeUasg"),
@@ -50,6 +53,7 @@ def _pgc_detalhe_identity_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _pgc_detalhe_artefato_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia estado, categoria, descrição e tipo do artefato."""
     return {
         "codigo_estado_artefato": row.get("codigoEstadoArtefato"),
         "codigo_categoria_artefato": row.get("codigoCategoriaArtefato"),
@@ -59,6 +63,7 @@ def _pgc_detalhe_artefato_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _pgc_detalhe_dfd_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia objeto, prioridade, previsão, área, tipo e sustentabilidade do DFD."""
     return {
         "descricao_objeto_dfd": row.get("descricaoObjetoDfd"),
         "nivel_prioridade_dfd": row.get("nivelPrioridadeDfd"),
@@ -70,6 +75,7 @@ def _pgc_detalhe_dfd_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _pgc_detalhe_material_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia grupo, classe e PDM do material."""
     return {
         "codigo_grupo_material": row.get("codigoGrupoMaterial"),
         "nome_grupo_material": row.get("nomeGrupoMaterial"),
@@ -81,6 +87,7 @@ def _pgc_detalhe_material_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _pgc_detalhe_servico_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia seção, divisão, grupo, classe e subclasse do serviço."""
     return {
         "codigo_secao_servico": row.get("codigoSecaoServico"),
         "nome_secao_servico": row.get("nomeSecaoServico"),
@@ -96,6 +103,7 @@ def _pgc_detalhe_servico_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _pgc_detalhe_item_value_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia descrição, unidade, quantidade e valores do item de catálogo."""
     return {
         "descricao_item_catalogo": row.get("descricaoItemCatalogo"),
         "sigla_unidade_fornecimento": row.get("siglaUnidadeFornecimento"),
@@ -107,6 +115,7 @@ def _pgc_detalhe_item_value_fields(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _pgc_detalhe_projeto_fields(row: dict[str, Any]) -> dict[str, Any]:
+    """Copia projeto de compra, processo, PNCP, status e as datas de atualização."""
     return {
         "titulo_projeto_compra": row.get("tituloProjetoCompra"),
         "descricao_projeto_compra": row.get("descricaoProjetoCompra"),

@@ -13,6 +13,8 @@ def _info_events(tmp_path: Path, logger_name: str) -> list[dict[str, object]]:
 
 
 class FakeCursorStore:
+    """Falso que devolve lotes de códigos e grava os ingeridos e o cursor salvo."""
+
     def __init__(self, start: int, batches: list[list[int]]) -> None:
         self.last = start
         self._batches = list(batches)

@@ -1,12 +1,14 @@
+"""Contrato da linha de subclasse de consultarSubClasseServico."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from contracts.text_normalize import upper_non_empty
 
 
 class ServicoSubclasseRecord(BaseModel):
-    """Validated subclasse row from consultarSubClasseServico.
+    """Linha validada de subclasse de consultarSubClasseServico.
 
-    Example:
+    Exemplo:
         ServicoSubclasseRecord(
             cod_subclasse=5, cod_classe=4, nome_classe="c", nome_subclasse="sc",
             status_subclasse=True, data_hora_atualizacao="2024-01-15T10:30:00",
@@ -25,4 +27,5 @@ class ServicoSubclasseRecord(BaseModel):
     @field_validator("nome_classe", "nome_subclasse")
     @classmethod
     def nomes_upper(cls, value: str) -> str:
+        """Rejeita nome_classe e nome_subclasse vazios e devolve o texto em maiúsculas."""
         return upper_non_empty(value, "nome")

@@ -1,8 +1,10 @@
+"""Linhas de catálogo de contratação, ARP, contrato, fornecedor, indicadores, OCDS e Alice."""
+
 from contracts.catalog_row import CatalogRow
 
 
 class ContratacaoRecord(CatalogRow):
-    """Lei 14.133 contracting header from consultarContratacoes_PNCP_14133."""
+    """Cabeçalho de contratação da Lei 14.133 de consultarContratacoes_PNCP_14133."""
 
     id_compra: str
     _float_fields = frozenset({"valor_total_estimado", "valor_total_homologado"})
@@ -17,7 +19,7 @@ class ContratacaoRecord(CatalogRow):
 
 
 class ContratacaoItemRecord(CatalogRow):
-    """Lei 14.133 contracting item from consultarItensContratacoes_PNCP_14133."""
+    """Item de contratação da Lei 14.133 de consultarItensContratacoes_PNCP_14133."""
 
     id_compra: str
     id_compra_item: str
@@ -35,7 +37,7 @@ class ContratacaoItemRecord(CatalogRow):
 
 
 class ContratacaoResultadoRecord(CatalogRow):
-    """Lei 14.133 item result from consultarResultadoItensContratacoes."""
+    """Resultado de item da Lei 14.133 de consultarResultadoItensContratacoes."""
 
     id_compra: str
     id_compra_item: str
@@ -52,7 +54,7 @@ class ContratacaoResultadoRecord(CatalogRow):
 
 
 class ArpRecord(CatalogRow):
-    """Price-registration header from consultarARP."""
+    """Cabeçalho de ata de registro de preço de consultarARP."""
 
     numero_controle_pncp_ata: str
     _float_fields = frozenset({"valor_total"})
@@ -60,7 +62,7 @@ class ArpRecord(CatalogRow):
 
 
 class ArpItemRecord(CatalogRow):
-    """Price-registration item from consultarARPItem."""
+    """Item de ata de registro de preço de consultarARPItem."""
 
     numero_controle_pncp_ata: str
     numero_item: str
@@ -71,7 +73,7 @@ class ArpItemRecord(CatalogRow):
 
 
 class ArpUnidadeItemRecord(CatalogRow):
-    """Participating unit of an ARP item."""
+    """Unidade participante de um item de ARP."""
 
     numero_ata: str
     unidade_gerenciadora: str
@@ -81,7 +83,7 @@ class ArpUnidadeItemRecord(CatalogRow):
 
 
 class ArpEmpenhoRecord(CatalogRow):
-    """ARP item commitment balance."""
+    """Saldo de empenho de um item de ARP."""
 
     numero_ata: str
     unidade_gerenciadora: str
@@ -90,7 +92,7 @@ class ArpEmpenhoRecord(CatalogRow):
 
 
 class ArpAdesaoRecord(CatalogRow):
-    """ARP item accession."""
+    """Adesão de um item de ARP."""
 
     numero_ata: str
     unidade_gerenciadora: str
@@ -98,7 +100,7 @@ class ArpAdesaoRecord(CatalogRow):
 
 
 class ContratoRecord(CatalogRow):
-    """Contract header from consultarContratos."""
+    """Cabeçalho de contrato de consultarContratos."""
 
     numero_controle_pncp_contrato: str
     _float_fields = frozenset({"valor_global", "valor_parcela", "valor_acumulado"})
@@ -106,7 +108,7 @@ class ContratoRecord(CatalogRow):
 
 
 class ContratoItemRecord(CatalogRow):
-    """Contract item from consultarContratosItem."""
+    """Item de contrato de consultarContratosItem."""
 
     numero_controle_pncp_contrato: str
     numero_item: str
@@ -115,27 +117,27 @@ class ContratoItemRecord(CatalogRow):
 
 
 class FornecedorRecord(CatalogRow):
-    """Supplier from consultarFornecedor."""
+    """Fornecedor de consultarFornecedor."""
 
     ni_fornecedor: str
     _name_fields = frozenset({"nome_razao_social_fornecedor", "nome_municipio", "uf_sigla"})
 
 
 class IndicadorConsolidadoRecord(CatalogRow):
-    """API usage totals from consultarIndicadoresConsolidados."""
+    """Totais de uso da API de consultarIndicadoresConsolidados."""
 
     ano_mes_inicio: str
     ano_mes_fim: str
 
 
 class IndicadorPeriodoRecord(CatalogRow):
-    """API usage by period from consultarIndicadoresPorPeriodo."""
+    """Uso da API por período de consultarIndicadoresPorPeriodo."""
 
     ano_mes: str
 
 
 class OcdsReleaseRecord(CatalogRow):
-    """Flattened OCDS release from /modulo-ocds/1_releases."""
+    """Release OCDS achatado de /modulo-ocds/1_releases."""
 
     ocid: str
     id: str
@@ -143,7 +145,7 @@ class OcdsReleaseRecord(CatalogRow):
 
 
 class AliceAvisoRecord(CatalogRow):
-    """Alice restricted-notice analysis from /alice/avisos-restritos."""
+    """Análise de aviso restrito do Alice em /alice/avisos-restritos."""
 
     ticket_analise: str
     _name_fields = frozenset({"descricao_status_analise", "chave_compra"})

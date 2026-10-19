@@ -1,3 +1,5 @@
+"""Contrato da linha de item de dispensa de consultarCompraItensSemLicitacao."""
+
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 
 from contracts.coerce import coerce_id_text, coerce_optional_decimal, coerce_optional_id_text
@@ -36,9 +38,9 @@ _CODE_FIELDS = (
 
 
 class LegadoItemSemLicitacaoRecord(BaseModel):
-    """Validated dispensa item row from consultarCompraItensSemLicitacao.
+    """Linha validada de item de dispensa de consultarCompraItensSemLicitacao.
 
-    Example:
+    Exemplo:
         LegadoItemSemLicitacaoRecord(id_compra="d1", id_compra_item="i2")
     """
 
@@ -88,24 +90,29 @@ class LegadoItemSemLicitacaoRecord(BaseModel):
     @field_validator(*_ID_FIELDS, mode="before")
     @classmethod
     def identity_text(cls, value: object, info: ValidationInfo) -> str:
+        """Converte id_compra e id_compra_item int ou str em texto sem espaços nas bordas."""
         return coerce_id_text(value, info.field_name)
 
     @field_validator("co_orgao", mode="before")
     @classmethod
     def optional_orgao(cls, value: object) -> str | None:
+        """Converte co_orgao int ou str em texto; vazio vira None."""
         return coerce_optional_id_text(value, "co_orgao")
 
     @field_validator(*_FLOAT_FIELDS, mode="before")
     @classmethod
     def optional_amounts(cls, value: object) -> float | None:
+        """Coage qt_material_alt, vr_estimado e vr_estimado_item para float; vazio vira None."""
         return coerce_optional_decimal(value)
 
     @field_validator(*_NAME_FIELDS)
     @classmethod
     def optional_names_upper(cls, value: str | None) -> str | None:
+        """Converte ds_detalhada, in_tipo_fornecedor_vencedor, no_fornecedor_vencedor, no_conjunto_materiais, no_marca_material, no_servico, no_unidade_medida, in_material_servico, no_modalidade_licitacao, nu_inciso, nu_processo, ds_objeto_licitacao, ds_fundamento_legal, ds_justificativa, no_responsavel_decl_disp, no_cargo_resp_decl_disp, no_responsavel_ratificacao, no_cargo_resp_ratificacao e ds_fabricante para maiúsculas; vazio vira None."""
         return upper_optional(value)
 
     @field_validator(*_CODE_FIELDS)
     @classmethod
     def optional_codes_strip(cls, value: str | None) -> str | None:
+        """Remove espaços de nu_cnpj_vencedor, nu_cpf_vencedor, nu_cpf_resp_decl_disp, nu_cpf_resp_ratificacao e nu_cpf_resp_publicacao; vazio vira None."""
         return strip_optional(value)

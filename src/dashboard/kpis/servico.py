@@ -1,3 +1,5 @@
+"""KPIs do tema serviço a partir dos rollups de analytics."""
+
 from dashboard.db import AnalyticsConnection
 from dashboard.kpis.format_values import (
     brl_leaderboard,
@@ -25,6 +27,7 @@ from dashboard.kpis.types import (
 
 
 def load_servico_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeKpis:
+    """Monta cards, série mensal, rankings de seção e grupo e líderes de gasto da origem servico."""
     pred = mes_predicate(timeframe)
     servicos, ativos, exclusivo, ratio = _catalog_counts(conn)
     spend = scalar_float(conn, sum_origem_sql("servico", pred))
@@ -42,6 +45,7 @@ def load_servico_kpis(conn: AnalyticsConnection, timeframe: Timeframe) -> ThemeK
 
 
 def _catalog_counts(conn: AnalyticsConnection) -> tuple[int, int, int, float]:
+    """Lê total, ativos, exclusivo e cobertura de analytics.kpi_catalog_servico, ou zeros sem linha."""
     row = fetch_one_row(
         conn,
         "SELECT total, ativos, exclusivo, cobertura "
@@ -60,6 +64,7 @@ def _servico_cards(
     spend: float,
     priced: int,
 ) -> tuple[KpiCard, ...]:
+    """Monta os seis cards de CATSER, cobertura de hierarquia e valor homologado."""
     return (
         KpiCard("Serviços", format_count(servicos), "CATSER"),
         KpiCard("Ativos", format_count(ativos), "Status"),
@@ -71,6 +76,7 @@ def _servico_cards(
 
 
 def _monthly(conn: AnalyticsConnection, pred: str) -> NamedSeries:
+    """Monta a série mensal de valor_total da origem servico no predicado pred."""
     rows = fetch_rows(conn, monthly_origem_sql("servico", pred))
     return NamedSeries(
         "Serviço", tuple(SeriesPoint(str(p), float(v)) for p, v in rows)
@@ -83,6 +89,7 @@ _SECAO_SQL = (
 
 
 def _grupo_spend_sql(pred: str) -> str:
+    """Monta o SQL dos oito grupos com maior SUM(valor_total) em kpi_mes_grupo_servico."""
     return (
         "SELECT nome_grupo, SUM(valor_total) "
         "FROM analytics.kpi_mes_grupo_servico "
@@ -93,5 +100,6 @@ def _grupo_spend_sql(pred: str) -> str:
 def _label_amounts(
     conn: AnalyticsConnection, query: str
 ) -> list[tuple[str, float]]:
+    """Converte as linhas (rótulo, valor) da consulta em pares de texto e float."""
     return [(str(label), float(amount)) for label, amount in fetch_rows(conn, query)]
 

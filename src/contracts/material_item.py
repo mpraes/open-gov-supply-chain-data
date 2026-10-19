@@ -1,10 +1,12 @@
+"""Contrato da linha de item de material de consultarItemMaterial."""
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class MaterialItemRecord(BaseModel):
-    """Validated material item row mapped from consultarItemMaterial.
+    """Linha validada de item de material mapeada de consultarItemMaterial.
 
-    Example:
+    Exemplo:
         MaterialItemRecord(
             cod_item=9001,
             cod_grupo=10,
@@ -43,6 +45,7 @@ class MaterialItemRecord(BaseModel):
     @field_validator("nome_grupo", "nome_classe", "nome_pdm", "descricao_item")
     @classmethod
     def text_must_be_upper_non_empty(cls, value: str) -> str:
+        """Rejeita nome_grupo, nome_classe, nome_pdm e descricao_item vazios e devolve o texto em maiúsculas."""
         cleaned = value.strip()
         if not cleaned:
             raise ValueError("text fields must be non-empty")
@@ -51,6 +54,7 @@ class MaterialItemRecord(BaseModel):
     @field_validator("descricao_ncm")
     @classmethod
     def descricao_ncm_upper(cls, value: str | None) -> str | None:
+        """Converte descricao_ncm para maiúsculas; None permanece None."""
         if value is None:
             return None
         return value.strip().upper()
@@ -58,6 +62,7 @@ class MaterialItemRecord(BaseModel):
     @field_validator("codigo_ncm")
     @classmethod
     def codigo_ncm_strip(cls, value: str | None) -> str | None:
+        """Remove espaços de codigo_ncm; None permanece None."""
         if value is None:
             return None
         return value.strip()

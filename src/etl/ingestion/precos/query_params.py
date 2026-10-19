@@ -1,19 +1,21 @@
+"""Monta os parâmetros de consulta de consultarMaterial e dos endpoints de detalhe e de serviço."""
+
 from clients.compras_api import QueryParams
 
 
 def material_preco_query_params(code: int) -> QueryParams:
-    """Query params for consultarMaterial by CATMAT PDM code.
+    """Parâmetros de consulta de consultarMaterial pelo código PDM do CATMAT.
 
-    Example:
+    Exemplo:
         material_preco_query_params(123) == {"tipo": "codigoPdm", "codigo": "123"}
     """
     return {"tipo": "codigoPdm", "codigo": str(code)}
 
 
 def catalogo_item_query_params(code: int) -> QueryParams:
-    """Query params for detalhe and serviço price endpoints.
+    """Parâmetros de consulta dos endpoints de detalhe e de preço de serviço.
 
-    Example:
+    Exemplo:
         catalogo_item_query_params(7250) == {"codigoItemCatalogo": 7250}
     """
     return {"codigoItemCatalogo": code}

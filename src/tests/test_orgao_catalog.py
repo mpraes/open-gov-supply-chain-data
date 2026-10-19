@@ -6,6 +6,8 @@ from etl.ingestion.orgao_catalog import read_buyer_cnpjs, read_orgao_codes
 
 
 class _Cursor:
+    """Cursor falso que grava o SQL executado e devolve linhas prontas."""
+
     def __init__(self, rows: list[tuple[object, ...]]) -> None:
         self._rows = rows
         self.sql = ""
@@ -24,6 +26,8 @@ class _Cursor:
 
 
 class _Conn:
+    """Conexão falsa que abre esse cursor e marca o fechamento."""
+
     def __init__(self, rows: list[tuple[object, ...]]) -> None:
         self.rows = rows
         self.closed = False
