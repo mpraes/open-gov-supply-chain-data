@@ -28,7 +28,8 @@ def test_factory_serializes_ingest_on_one_slot_pool() -> None:
     src = FACTORY.read_text(encoding="utf-8")
     assert "from airflow.sdk import dag, task" in src or "from airflow.sdk import Asset, dag, task" in src
     assert 'API_POOL = "open_gov_compras_api"' in src
-    assert "slots=1" in src
+    assert "airflow.models.pool" not in src
+    assert "create_or_update_pool" not in src
     assert "pool=API_POOL" in src
     assert "run_named_ingest" in src
     assert "max_active_tasks=1" in src

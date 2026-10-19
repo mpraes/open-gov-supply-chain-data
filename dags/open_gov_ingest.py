@@ -11,6 +11,8 @@ from open_gov_catalog import IngestStep
 
 _PROJECT_SRC = Path("/home/renan/personal/projects/open-gov-supply-chain-data/src")
 _DEFAULT_START = datetime(2026, 1, 1, tzinfo=timezone.utc)
+# Criado fora da DAG (`airflow pools set`). O Airflow 3 bloqueia o ORM
+# enquanto o dag processor importa este módulo.
 API_POOL = "open_gov_compras_api"
 
 
@@ -36,7 +38,6 @@ def register_family_dag(
             steps=CATMAT_STEPS,
         )
     """
-    _ensure_api_pool()
     _require_known_upstream(steps)
     _declare_family(
         dag_id=dag_id,
@@ -47,18 +48,6 @@ def register_family_dag(
         start_date=start_date or _DEFAULT_START,
         paused=paused,
         outlet_asset=outlet_asset,
-    )
-
-
-def _ensure_api_pool() -> None:
-    """Cria ou atualiza o pool da API com uma vaga."""
-    from airflow.models.pool import Pool
-
-    Pool.create_or_update_pool(
-        API_POOL,
-        slots=1,
-        description="One dadosabertos.compras.gov.br task at a time",
-        include_deferred=False,
     )
 
 
