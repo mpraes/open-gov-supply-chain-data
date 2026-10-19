@@ -3,7 +3,7 @@ from etl.ingestion.remaining_query_params import fornecedor_query_params, slice_
 from etl.ingestion.remaining_run import run_remaining_ingestion
 
 PAGE_SIZE = 500
-PARALLEL_PAGES = 4
+PARALLEL_PAGES = 1
 
 
 def main() -> None:

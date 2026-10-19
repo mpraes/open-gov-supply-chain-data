@@ -1,8 +1,7 @@
 from typing import Any
 
 from contracts.legado_compra_sem_licitacao import LegadoCompraSemLicitacaoRecord
-from config.load_secret_key import load_secret_key_func
-from etl.ingestion.legado.filters import legado_ano, legado_optional_uasg
+from etl.ingestion.full_dump import for_each_dump_year
 from etl.ingestion.legado.legado_sql import legado_upsert_sql
 from etl.ingestion.legado.map_legado_fields import legado_compra_sem_licitacao_fields
 from etl.ingestion.legado.query_params import (
@@ -10,7 +9,6 @@ from etl.ingestion.legado.query_params import (
     legado_job_name,
 )
 from etl.ingestion.page_runner import run_page_batch_ingestion
-from etl.ingestion.script_runner import DEFAULT_ENV_PATH
 
 ENDPOINT_PATH = "/modulo-legado/5_consultarComprasSemLicitacao"
 PAGE_SIZE = 100
@@ -30,8 +28,10 @@ def map_legado_compra_sem_licitacao_row(
 
 
 def main() -> None:
-    ano = legado_ano(DEFAULT_ENV_PATH, load_secret_key_func)
-    uasg = legado_optional_uasg(DEFAULT_ENV_PATH, load_secret_key_func)
+    for_each_dump_year(_ingest_year)
+
+
+def _ingest_year(ano: int) -> None:
     run_page_batch_ingestion(
         logger_name="legado_compra_sem_licitacao",
         endpoint_path=ENDPOINT_PATH,
@@ -39,8 +39,8 @@ def main() -> None:
         upsert_sql=UPSERT_SQL,
         map_row=map_legado_compra_sem_licitacao_row,
         table_name=TABLE_NAME,
-        query_params=legado_compra_sem_licitacao_query_params(ano, uasg),
-        job_name=legado_job_name("legado_compra_sem_licitacao", ano, uasg),
+        query_params=legado_compra_sem_licitacao_query_params(ano),
+        job_name=legado_job_name("legado_compra_sem_licitacao", ano),
     )
 
 

@@ -1,22 +1,28 @@
 from clients.compras_api import fetch_one_releases_page
-from config.load_secret_key import load_secret_key_func
 from etl.ingestion.dest_watermark import DateWatermark
-from etl.ingestion.remaining_filters import ocds_buyer_dates
+from etl.ingestion.full_dump import full_dump_dates
+from etl.ingestion.orgao_catalog import read_buyer_cnpjs
 from etl.ingestion.remaining_maps import map_ocds_release_row
-from etl.ingestion.remaining_query_params import ocds_query_params, slice_job_name
-from etl.ingestion.remaining_run import run_remaining_ingestion
-from etl.ingestion.script_runner import DEFAULT_ENV_PATH
+from etl.ingestion.remaining_query_params import ocds_query_params
+from etl.ingestion.remaining_run import run_sliced_remaining_ingestion
 
 
 def main() -> None:
-    buyer, inicial, final = ocds_buyer_dates(DEFAULT_ENV_PATH, load_secret_key_func)
-    run_remaining_ingestion(
+    inicial, final = full_dump_dates()
+    for buyer in read_buyer_cnpjs():
+        _ingest_buyer(buyer, inicial, final)
+
+
+def _ingest_buyer(buyer: str, inicial: str, final: str) -> None:
+    run_sliced_remaining_ingestion(
+        data_inicial=inicial,
+        data_final=final,
+        params_for_slice=lambda start, end: ocds_query_params(buyer, start, end),
+        job_prefix=f"ocds_release:{buyer}",
         logger_name="ocds_release",
         endpoint_path="/modulo-ocds/1_releases",
         table_name="ocds_release",
         map_row=map_ocds_release_row,
-        query_params=ocds_query_params(buyer, inicial, final),
-        job_name=slice_job_name("ocds_release", buyer, inicial, final),
         fetch_page_fn=fetch_one_releases_page,
         date_watermark=DateWatermark(
             table="ocds_release",

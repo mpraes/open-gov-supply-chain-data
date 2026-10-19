@@ -1,13 +1,12 @@
 from typing import Any
 
 from contracts.pgc_agregacao import PgcAgregacaoRecord
-from config.load_secret_key import load_secret_key_func
 from etl.ingestion.dest_schema import dest_table
+from etl.ingestion.full_dump import for_each_dump_year
+from etl.ingestion.orgao_catalog import read_orgao_codes
 from etl.ingestion.page_runner import run_page_batch_ingestion
 from etl.ingestion.planejamento.map_pgc_fields import pgc_agregacao_fields
-from etl.ingestion.planejamento.pgc_filters import pgc_orgao_ano
 from etl.ingestion.planejamento.query_params import pgc_agregacao_query_params
-from etl.ingestion.script_runner import DEFAULT_ENV_PATH
 
 ENDPOINT_PATH = "/modulo-pgc/3_consultarPgcAgregacao"
 PAGE_SIZE: int | None = None
@@ -43,7 +42,15 @@ def map_pgc_agregacao_row(row: dict[str, Any]) -> PgcAgregacaoRecord:
 
 
 def main() -> None:
-    orgao, ano = pgc_orgao_ano(DEFAULT_ENV_PATH, load_secret_key_func)
+    for code in read_orgao_codes():
+        _ingest_orgao(str(code))
+
+
+def _ingest_orgao(orgao: str) -> None:
+    for_each_dump_year(lambda ano: _ingest_agregacao(orgao, ano))
+
+
+def _ingest_agregacao(orgao: str, ano: int) -> None:
     run_page_batch_ingestion(
         logger_name="pgc_agregacao",
         endpoint_path=ENDPOINT_PATH,

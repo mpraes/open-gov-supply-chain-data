@@ -6,7 +6,7 @@ from etl.ingestion.remaining_query_params import slice_job_name
 
 def test_fornecedor_uses_page_size_500_and_limited_parallel() -> None:
     assert fornecedor.PAGE_SIZE == 500
-    assert fornecedor.PARALLEL_PAGES == 4
+    assert fornecedor.PARALLEL_PAGES == 1
     assert slice_job_name("fornecedor", "true", fornecedor.PAGE_SIZE) == "fornecedor:true:500"
 
 

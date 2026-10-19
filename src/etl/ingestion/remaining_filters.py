@@ -1,14 +1,8 @@
 from datetime import date
 from pathlib import Path
 
-from etl.ingestion.env_filters import (
-    default_iso_date_pair,
-    optional_iso_date_pair,
-    optional_text,
-    require_int_value,
-    require_iso_date_pair,
-    require_text,
-)
+from etl.ingestion.env_filters import optional_text
+from etl.ingestion.full_dump import full_dump_dates
 from etl.ingestion.script_runner import LoadSecret
 
 PNCP_CONTRATACAO_MODALIDADES: tuple[int, ...] = tuple(range(1, 14))
@@ -17,49 +11,37 @@ PNCP_CONTRATACAO_MODALIDADES: tuple[int, ...] = tuple(range(1, 14))
 def contratacoes_dates(
     env_path: Path, load_secret: LoadSecret, *, today: date | None = None
 ) -> tuple[str, str]:
-    """Load CONTRATACOES_DATA_* or a full dump window when both keys are missing.
+    """Full contratação window. Date keys in the env file are not applied.
 
     Example:
-        contratacoes_dates(Path(".env"), load)
+        contratacoes_dates(Path(".env"), load, today=date(2026, 9, 22))
     """
-    pair = optional_iso_date_pair(
-        env_path, load_secret, "CONTRATACOES_DATA_INICIAL", "CONTRATACOES_DATA_FINAL"
-    )
-    if pair is not None:
-        return pair
-    return default_iso_date_pair(today=today)
+    del env_path, load_secret
+    return full_dump_dates(today=today)
 
 
 def contratacoes_modalidades(
     env_path: Path, load_secret: LoadSecret
 ) -> tuple[int, ...]:
-    """Load CONTRATACOES_MODALIDADE or every PNCP code when the key is missing.
+    """Every PNCP modalidade. A single CONTRATACOES_MODALIDADE key is not applied.
 
     Example:
-        contratacoes_modalidades(Path(".env"), load)
+        contratacoes_modalidades(Path(".env"), load) == tuple(range(1, 14))
     """
-    raw = optional_text(env_path, load_secret, "CONTRATACOES_MODALIDADE")
-    if raw is None:
-        return PNCP_CONTRATACAO_MODALIDADES
-    if not raw.isdigit():
-        raise ValueError(f"CONTRATACOES_MODALIDADE expected digits, got {raw!r}")
-    return (int(raw),)
+    del env_path, load_secret
+    return PNCP_CONTRATACAO_MODALIDADES
 
 
 def arp_dates(
     env_path: Path, load_secret: LoadSecret, *, today: date | None = None
 ) -> tuple[str, str]:
-    """Load ARP_DATA_* or a full dump window when both keys are missing.
+    """Full ARP window. Date keys in the env file are not applied.
 
     Example:
-        arp_dates(Path(".env"), load)
+        arp_dates(Path(".env"), load, today=date(2026, 9, 22))
     """
-    pair = optional_iso_date_pair(
-        env_path, load_secret, "ARP_DATA_INICIAL", "ARP_DATA_FINAL"
-    )
-    if pair is not None:
-        return pair
-    return default_iso_date_pair(today=today)
+    del env_path, load_secret
+    return full_dump_dates(today=today)
 
 
 def arp_ata_header(env_path: Path, load_secret: LoadSecret) -> tuple[str, str] | None:
@@ -92,49 +74,16 @@ def arp_ata_keys(
     return header[0], header[1], item
 
 
-def contratos_orgao_dates(
-    env_path: Path, load_secret: LoadSecret
-) -> tuple[str, str, str]:
-    """Load CONTRATOS_ORGAO and CONTRATOS_DATA_*."""
-    orgao = require_text(env_path, load_secret, "CONTRATOS_ORGAO")
-    inicial, final = require_iso_date_pair(
-        env_path, load_secret, "CONTRATOS_DATA_INICIAL", "CONTRATOS_DATA_FINAL"
-    )
-    return orgao, inicial, final
-
-
-def ocds_buyer_dates(env_path: Path, load_secret: LoadSecret) -> tuple[str, str, str]:
-    """Load OCDS_BUYER_ID and OCDS_DATA_*."""
-    buyer = require_text(env_path, load_secret, "OCDS_BUYER_ID")
-    inicial, final = require_iso_date_pair(
-        env_path, load_secret, "OCDS_DATA_INICIAL", "OCDS_DATA_FINAL"
-    )
-    return buyer, inicial, final
-
-
-def indicadores_ano(env_path: Path, load_secret: LoadSecret) -> int:
-    """Load INDICADORES_ANO."""
-    return require_int_value(env_path, load_secret, "INDICADORES_ANO")
-
-
 def alice_datetimes(
     env_path: Path, load_secret: LoadSecret, *, today: date | None = None
 ) -> tuple[str, str]:
-    """Load ALICE_DATA_* or a full dump window when both keys are missing.
+    """Full Alice window. Datetime keys in the env file are not applied.
 
     Example:
-        alice_datetimes(Path(".env"), load)
+        alice_datetimes(Path(".env"), load, today=date(2026, 9, 22))
     """
-    inicial = optional_text(env_path, load_secret, "ALICE_DATA_INICIAL")
-    final = optional_text(env_path, load_secret, "ALICE_DATA_FINAL")
-    if inicial is None and final is None:
-        return _alice_full_window(today)
-    if inicial is None or final is None:
-        raise ValueError(
-            "expected both ALICE_DATA_INICIAL and ALICE_DATA_FINAL or neither, "
-            f"got {inicial!r} and {final!r}"
-        )
-    return inicial, final
+    del env_path, load_secret
+    return _alice_full_window(today)
 
 
 def _optional_pair(

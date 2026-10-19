@@ -75,8 +75,8 @@ def test_item_licitacao_script_walks_modalidades_without_required_env() -> None:
         Path(__file__).resolve().parents[1]
         / "etl/ingestion/legado/legado_item_licitacao.py"
     ).read_text(encoding="utf-8")
-    assert "legado_modalidade(" not in src
-    assert "legado_modalidades" in src
+    assert "LEGADO_ITEM_MODALIDADES" in src
+    assert "legado_optional_uasg" not in src
     assert "for modalidade in" in src
 
 

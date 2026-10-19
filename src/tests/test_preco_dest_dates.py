@@ -189,7 +189,7 @@ def test_run_preco_batch_ingestion_filters_by_dest_compra_and_resets_cursor(
             "tipo": "codigoPdm",
             "codigo": "10",
             "dataCompraInicio": "2024-03-01",
-            "parallel_codes": 4,
+            "parallel_codes": 1,
         }
     ]
     assert cursor.saved[-1] == 0

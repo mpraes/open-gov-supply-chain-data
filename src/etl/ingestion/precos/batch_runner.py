@@ -33,7 +33,7 @@ from etl.ingestion.script_runner import (
 from observability.logging_json import get_json_logger
 
 DEFAULT_BATCH_SIZE = 20
-DEFAULT_PARALLEL_CODES = 4
+DEFAULT_PARALLEL_CODES = 1
 
 
 def run_preco_batch_ingestion(
