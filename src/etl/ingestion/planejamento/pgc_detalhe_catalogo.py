@@ -1,9 +1,9 @@
 """Ingere consultarPgcDetalheCatalogo na tabela pgc_detalhe_catalogo."""
 
+from datetime import date
 from typing import Any
 
 from contracts.pgc_detalhe import PgcDetalheRecord
-from etl.ingestion.full_dump import for_each_dump_year
 from etl.ingestion.planejamento.map_pgc_fields import pgc_detalhe_fields
 from etl.ingestion.planejamento.pgc_detalhe_sql import pgc_detalhe_upsert_sql
 from etl.ingestion.planejamento.query_params import pgc_catalogo_query_params
@@ -14,6 +14,27 @@ PAGE_SIZE = 100
 BATCH_SIZE = 20
 TABLE_NAME = "pgc_detalhe_catalogo"
 UPSERT_SQL = pgc_detalhe_upsert_sql(TABLE_NAME)
+# Classe 4460: 2021 totalRegistros=0, 2022 totalRegistros=78.
+PGC_CATALOGO_FIRST_YEAR = 2022
+
+
+def pgc_catalogo_years(*, today: date | None = None) -> tuple[int, ...]:
+    """Anos de PCA do catálogo, de 2022 até o ano de `today`.
+
+    Exemplo:
+        pgc_catalogo_years(today=date(2026, 10, 19)) == (2022, 2023, 2024, 2025, 2026)
+    """
+    year = _calendar_year(today)
+    if year < PGC_CATALOGO_FIRST_YEAR:
+        return ()
+    return tuple(range(PGC_CATALOGO_FIRST_YEAR, year + 1))
+
+
+def _calendar_year(today: date | None) -> int:
+    """Devolve o ano de today, ou o ano corrente quando today é None."""
+    if today is not None:
+        return today.year
+    return date.today().year
 
 
 def map_pgc_detalhe_catalogo_row(row: dict[str, Any]) -> PgcDetalheRecord:
@@ -27,7 +48,8 @@ def map_pgc_detalhe_catalogo_row(row: dict[str, Any]) -> PgcDetalheRecord:
 
 def main() -> None:
     """Ingere consultarPgcDetalheCatalogo na tabela pgc_detalhe_catalogo."""
-    for_each_dump_year(_ingest_year)
+    for ano in pgc_catalogo_years():
+        _ingest_year(ano)
 
 
 def _ingest_year(ano: int) -> None:
