@@ -57,7 +57,7 @@ class PgcDetalheRecord(BaseModel):
     codigo_categoria_artefato: int | None = None
     descricao_artefato: str | None = None
     codigo_tipo_artefato: int | None = None
-    ordem_dfd: int
+    ordem_dfd: int | None = None
     descricao_objeto_dfd: str | None = None
     nivel_prioridade_dfd: int | None = None
     data_prevista_formalizacao_demanda: str | None = None

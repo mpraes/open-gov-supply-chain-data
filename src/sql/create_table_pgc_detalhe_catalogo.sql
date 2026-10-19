@@ -8,7 +8,8 @@ codigo_estado_artefato BIGINT,
 codigo_categoria_artefato BIGINT,
 descricao_artefato TEXT,
 codigo_tipo_artefato BIGINT,
-ordem_dfd BIGINT NOT NULL,
+-- A API envia ordemDfd nulo; NULLS NOT DISTINCT faz o upsert tratar esses nulos como a mesma chave.
+ordem_dfd BIGINT,
 descricao_objeto_dfd TEXT,
 nivel_prioridade_dfd BIGINT,
 data_prevista_formalizacao_demanda TIMESTAMP,
@@ -52,7 +53,7 @@ data_hora_atualizacao_projeto_compra TIMESTAMP,
 data_hora_atualizacao_dfd TIMESTAMP,
 data_hora_atualizacao_item TIMESTAMP,
 data_hora_carga TIMESTAMPTZ DEFAULT now(),
-PRIMARY KEY (
+CONSTRAINT pgc_detalhe_catalogo_identidade UNIQUE NULLS NOT DISTINCT (
     codigo_uasg, numero_artefato, ano_artefato, ordem_dfd,
     codigo_item_catalogo, ano_pca_projeto_compra
 )

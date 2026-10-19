@@ -41,6 +41,21 @@ def test_map_pgc_detalhe_row_requires_orgao() -> None:
         )
 
 
+def test_map_pgc_detalhe_catalogo_row_accepts_null_ordem_dfd() -> None:
+    record = map_pgc_detalhe_catalogo_row(
+        {
+            "codigoUasg": "114603",
+            "orgao": "33787094000140",
+            "numeroArtefato": 45,
+            "anoArtefato": 2021,
+            "ordemDfd": None,
+            "codigoItemCatalogo": "132",
+            "anoPcaProjetoCompra": 2022,
+        }
+    )
+    assert record.ordem_dfd is None
+
+
 def test_map_pgc_detalhe_catalogo_row_shares_detalhe_shape() -> None:
     record = map_pgc_detalhe_catalogo_row(
         {
