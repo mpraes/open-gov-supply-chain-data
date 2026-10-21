@@ -129,14 +129,19 @@ history.
 **raises the floor** (overlapping the last loaded day). `etl_code_cursor` is
 crash resume inside that raised slice only.
 
-Keyed children skip dest keys already loaded: `pgc_detalhe_catalogo` skips
+Keyed children skip dest keys already loaded: `material_caracteristica` skips
+`material_item` codes already present in dest; `pgc_detalhe_catalogo` skips
 class/group codes present for that `ano_artefato`; ARP empenho/unidade/adesão
 walk missing ATA keys from dest `arp` / `arp_item` (`.env` ATA is fallback when
 the parent table is empty).
 
-CATMAT, CATSER, UASG, fornecedor, indicadores, `pgc_detalhe`, `pgc_agregacao`,
-and legado modalidade/year dumps stay page-resume: those APIs cannot filter
-“not already in dest”.
+`material_caracteristica` asks the API by `codigoItem` (batch 20, 4 in
+parallel). The unfiltered catalog is 1.7M rows and deep pages exceed the 30s
+read timeout. Its cursor job is `material_caracteristica_item`, because the
+old page cursor stored a page number. Other CATMAT endpoints, CATSER, UASG,
+fornecedor, indicadores, `pgc_detalhe`, `pgc_agregacao`, and legado
+modalidade/year dumps stay page-resume: those APIs cannot filter “not already
+in dest”.
 
 ## PGC load order
 
