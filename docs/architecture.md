@@ -145,13 +145,13 @@ in dest”.
 
 ## PGC load order
 
-Detalhe and agregação require `PGC_ORGAO` + `PGC_ANO` in `.env`. Catalogo
-walks CATMAT classes and CATSER groups for one PCA year.
+Detalhe and agregação walk each buyer CNPJ in `uasg_orgao`. Catalogo
+walks CATMAT classes and CATSER groups for each PCA year since 2022.
 
 ```mermaid
 flowchart LR
-  ENV["PGC_ORGAO + PGC_ANO"] --> PD["pgc_detalhe"]
-  ENV --> PA["pgc_agregacao"]
+  O["uasg_orgao CNPJ"] --> PD["pgc_detalhe"]
+  O --> PA["pgc_agregacao"]
   MC["material_class"] --> PDC["pgc_detalhe_catalogo"]
   SG["servico_grupo"] --> PDC
 ```

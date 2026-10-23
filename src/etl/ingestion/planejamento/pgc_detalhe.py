@@ -4,7 +4,7 @@ from typing import Any
 
 from contracts.pgc_detalhe import PgcDetalheRecord
 from etl.ingestion.full_dump import for_each_dump_year
-from etl.ingestion.orgao_catalog import read_orgao_codes
+from etl.ingestion.orgao_catalog import read_buyer_cnpjs
 from etl.ingestion.page_runner import run_page_batch_ingestion
 from etl.ingestion.planejamento.map_pgc_fields import pgc_detalhe_fields
 from etl.ingestion.planejamento.pgc_detalhe_sql import pgc_detalhe_upsert_sql
@@ -26,18 +26,22 @@ def map_pgc_detalhe_row(row: dict[str, Any]) -> PgcDetalheRecord:
 
 
 def main() -> None:
-    """Ingere consultarPgcDetalhe na tabela pgc_detalhe."""
-    for code in read_orgao_codes():
-        _ingest_orgao(str(code))
+    """Ingere consultarPgcDetalhe de cada CNPJ de uasg_orgao na tabela pgc_detalhe.
+
+    Exemplo:
+        main()
+    """
+    for cnpj in read_buyer_cnpjs():
+        _ingest_cnpj(cnpj)
 
 
-def _ingest_orgao(orgao: str) -> None:
-    """Ingere consultarPgcDetalhe do órgão em cada ano do dump."""
-    for_each_dump_year(lambda ano: _ingest_detalhe(orgao, ano))
+def _ingest_cnpj(cnpj: str) -> None:
+    """Ingere consultarPgcDetalhe do CNPJ em cada ano do dump."""
+    for_each_dump_year(lambda ano: _ingest_detalhe(cnpj, ano))
 
 
-def _ingest_detalhe(orgao: str, ano: int) -> None:
-    """Ingere consultarPgcDetalhe do órgão e do ano na tabela pgc_detalhe."""
+def _ingest_detalhe(cnpj: str, ano: int) -> None:
+    """Ingere consultarPgcDetalhe do CNPJ e do ano na tabela pgc_detalhe."""
     run_page_batch_ingestion(
         logger_name="pgc_detalhe",
         endpoint_path=ENDPOINT_PATH,
@@ -45,8 +49,8 @@ def _ingest_detalhe(orgao: str, ano: int) -> None:
         upsert_sql=UPSERT_SQL,
         map_row=map_pgc_detalhe_row,
         table_name=TABLE_NAME,
-        query_params=pgc_detalhe_query_params(orgao, ano),
-        job_name=f"pgc_detalhe:{orgao}:{ano}",
+        query_params=pgc_detalhe_query_params(cnpj, ano),
+        job_name=f"pgc_detalhe:{cnpj}:{ano}",
     )
 
 

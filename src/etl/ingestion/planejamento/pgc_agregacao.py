@@ -5,7 +5,7 @@ from typing import Any
 from contracts.pgc_agregacao import PgcAgregacaoRecord
 from etl.ingestion.dest_schema import dest_table
 from etl.ingestion.full_dump import for_each_dump_year
-from etl.ingestion.orgao_catalog import read_orgao_codes
+from etl.ingestion.orgao_catalog import read_buyer_cnpjs
 from etl.ingestion.page_runner import run_page_batch_ingestion
 from etl.ingestion.planejamento.map_pgc_fields import pgc_agregacao_fields
 from etl.ingestion.planejamento.query_params import pgc_agregacao_query_params
@@ -44,18 +44,22 @@ def map_pgc_agregacao_row(row: dict[str, Any]) -> PgcAgregacaoRecord:
 
 
 def main() -> None:
-    """Ingere consultarPgcAgregacao na tabela pgc_agregacao."""
-    for code in read_orgao_codes():
-        _ingest_orgao(str(code))
+    """Ingere consultarPgcAgregacao de cada CNPJ de uasg_orgao na tabela pgc_agregacao.
+
+    Exemplo:
+        main()
+    """
+    for cnpj in read_buyer_cnpjs():
+        _ingest_cnpj(cnpj)
 
 
-def _ingest_orgao(orgao: str) -> None:
-    """Ingere consultarPgcAgregacao do órgão em cada ano do dump."""
-    for_each_dump_year(lambda ano: _ingest_agregacao(orgao, ano))
+def _ingest_cnpj(cnpj: str) -> None:
+    """Ingere consultarPgcAgregacao do CNPJ em cada ano do dump."""
+    for_each_dump_year(lambda ano: _ingest_agregacao(cnpj, ano))
 
 
-def _ingest_agregacao(orgao: str, ano: int) -> None:
-    """Ingere consultarPgcAgregacao do órgão e do ano na tabela pgc_agregacao."""
+def _ingest_agregacao(cnpj: str, ano: int) -> None:
+    """Ingere consultarPgcAgregacao do CNPJ e do ano na tabela pgc_agregacao."""
     run_page_batch_ingestion(
         logger_name="pgc_agregacao",
         endpoint_path=ENDPOINT_PATH,
@@ -63,8 +67,8 @@ def _ingest_agregacao(orgao: str, ano: int) -> None:
         upsert_sql=UPSERT_SQL,
         map_row=map_pgc_agregacao_row,
         table_name=TABLE_NAME,
-        query_params=pgc_agregacao_query_params(orgao, ano),
-        job_name=f"pgc_agregacao:{orgao}:{ano}",
+        query_params=pgc_agregacao_query_params(cnpj, ano),
+        job_name=f"pgc_agregacao:{cnpj}:{ano}",
     )
 
 

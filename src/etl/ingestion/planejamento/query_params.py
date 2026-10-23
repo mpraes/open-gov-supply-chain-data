@@ -8,11 +8,11 @@ def pgc_detalhe_query_params(
     ano: int,
     codigo_uasg: str | None = None,
 ) -> QueryParams:
-    """Parâmetros de consulta de consultarPgcDetalhe por órgão e ano do PCA.
+    """Parâmetros de consulta de consultarPgcDetalhe por CNPJ do órgão e ano do PCA.
 
     Exemplo:
-        pgc_detalhe_query_params("36000", 2026) == {
-            "orgao": "36000", "anoPcaProjetoCompra": 2026,
+        pgc_detalhe_query_params("25648387000118", 2026) == {
+            "orgao": "25648387000118", "anoPcaProjetoCompra": 2026,
         }
     """
     params: dict[str, str | int] = {
@@ -35,9 +35,11 @@ def pgc_catalogo_query_params(code: int, *, tipo: str, ano: int) -> QueryParams:
 
 
 def pgc_agregacao_query_params(orgao: str, ano: int) -> QueryParams:
-    """Parâmetros de consulta de consultarPgcAgregacao por órgão e ano.
+    """Parâmetros de consulta de consultarPgcAgregacao por CNPJ do órgão e ano.
 
     Exemplo:
-        pgc_agregacao_query_params("36000", 2026) == {"orgao": "36000", "ano": 2026}
+        pgc_agregacao_query_params("25648387000118", 2026) == {
+            "orgao": "25648387000118", "ano": 2026,
+        }
     """
     return {"orgao": orgao, "ano": ano}
